@@ -356,3 +356,51 @@ h2.landing-info-h2 {
     font-size: 75px;
   }
 }
+
+.switch-text {
+  display: inline-block;
+  min-width: max-content;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.letter {
+  display: inline-block;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.word-container {
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.space {
+  display: inline-block;
+  width: 8px;
+}
+
+/* Animation for letter switching */
+@keyframes letterSwitch {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  70% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.letter.switching {
+  animation: letterSwitch 0.8s ease-in-out forwards;
+}

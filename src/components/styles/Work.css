@@ -92,6 +92,7 @@
 }
 .work-image-in {
   position: relative;
+  display: inline-block;
 }
 .work-link {
   position: absolute;
@@ -128,6 +129,21 @@
 .work-image img {
   max-width: 100%;
   max-height: 350px;
+}
+.work-box:first-child .work-image {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  transform: translateX(-30px);
+}
+.work-box:first-child .work-image video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: -30px;
+  background-color: #000;
+  object-fit: cover;
 }
 @media only screen and (max-height: 900px) {
   .work-image img {

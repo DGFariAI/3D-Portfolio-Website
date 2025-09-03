@@ -60,14 +60,18 @@ const Work = () => {
                   <h3>0{index + 1}</h3>
 
                   <div>
-                    <h4>Project Name</h4>
-                    <p>Category</p>
+                    <h4>{index === 0 ? "OmniGenesis" : index === 1 ? "Simple Charm" : "Project Name"}</h4>
+                    <p>{index === 0 ? "Agentic AI Startup" : index === 1 ? "Luxury E-Commerce Brand" : "Category"}</p>
                   </div>
                 </div>
                 <h4>Tools and features</h4>
-                <p>Javascript, TypeScript, React, Threejs</p>
+                <p>{index === 0 ? "HTML, JavaScript, CSS" : index === 1 ? "Pantheon, SureCart, Tidio, Mailchimp" : "Javascript, TypeScript, React, Threejs"}</p>
               </div>
-              <WorkImage image="/images/placeholder.webp" alt="" />
+              <WorkImage 
+                image="/images/placeholder.webp" 
+                alt="" 
+                video={index === 0 ? "/videos/OmniGenesis.mp4" : undefined}
+              />
             </div>
           ))}
         </div>

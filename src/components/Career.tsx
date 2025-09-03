@@ -50,7 +50,7 @@ const Career = () => {
             </div>
             <p>
               Learning and applying real-world startup strategies and
-              skills in entrepreneurship, digital marketing, branding,
+              skills in entrepreneurship, branding, software,
               and AI to build purpose-driven, impactful ventures/products.
             </p>
           </div>

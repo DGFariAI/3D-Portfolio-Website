@@ -37,6 +37,12 @@ const setCharacter = (
               }
             });
             resolve(gltf);
+            
+            // Ensure smooth initial positioning
+            character.position.set(0, 0, 0);
+            character.rotation.set(0, 0, 0);
+            character.scale.set(1, 1, 1);
+            
             setCharTimeline(character, camera);
             setAllTimeline();
             character!.getObjectByName("footR")!.position.y = 3.36;

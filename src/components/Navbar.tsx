@@ -30,6 +30,7 @@ const Navbar = () => {
     <>
       <div className="header">
         <a href="/#" className="navbar-title" data-cursor="disable">
+          <img src="/itsdgfari_icon.svg" alt="itsdgfari icon" className="navbar-icon" />
           itsdgfari
         </a>
         <a

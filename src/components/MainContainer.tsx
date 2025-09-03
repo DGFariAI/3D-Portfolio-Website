@@ -5,13 +5,16 @@ import Contact from "./Contact";
 import Cursor from "./Cursor";
 import Landing from "./Landing";
 import Navbar from "./Navbar";
+
 import SocialIcons from "./SocialIcons";
 import TechStack from "./TechStack";
 import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import setSplitText from "./utils/splitText";
 
-const MainContainer = ({ children }: PropsWithChildren) => {
+interface MainContainerProps extends PropsWithChildren {}
+
+const MainContainer = ({ children }: MainContainerProps) => {
   const [isDesktopView, setIsDesktopView] = useState<boolean>(
     window.innerWidth > 1024
   );
@@ -23,6 +26,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
+    
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
@@ -33,6 +37,7 @@ const MainContainer = ({ children }: PropsWithChildren) => {
       <Cursor />
       <Navbar />
       <SocialIcons />
+
       {isDesktopView && children}
       <div id="smooth-wrapper">
         <div id="smooth-content">

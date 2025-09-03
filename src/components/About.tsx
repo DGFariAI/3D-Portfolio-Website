@@ -6,9 +6,9 @@ const About = () => {
       <div className="about-me">
         <h3 className="title">About Me</h3>
         <p className="para">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic quis
-          dolores numquam iusto Ratione earum ducimus autem id iure pariatur
-          dolorum quae maiores.
+          I'm a product manager & designer with a passion for bringing visions
+          to life. Driven by purpose, I always aim to create meaningful solutions
+          and deliver lasting impact.
         </p>
       </div>
     </div>

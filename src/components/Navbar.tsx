@@ -12,15 +12,19 @@ const Navbar = () => {
     links.forEach((elem) => {
       let element = elem as HTMLAnchorElement;
       element.addEventListener("click", (e) => {
-        if (window.innerWidth > 1024) {
-          e.preventDefault();
-          let elem = e.currentTarget as HTMLAnchorElement;
-          let section = elem.getAttribute("data-href");
-          if (section) {
-            const targetElement = document.querySelector(section);
-            if (targetElement) {
-              targetElement.scrollIntoView({ behavior: "smooth" });
-            }
+        e.preventDefault();
+        // Force-complete landing fade immediately so we don't need a second click
+        try {
+          window.dispatchEvent(new Event("landingFadeComplete"));
+        } catch {}
+
+        const elem = e.currentTarget as HTMLAnchorElement;
+        const section = elem.getAttribute("data-href");
+        if (section) {
+          const targetElement = document.querySelector(section) as HTMLElement | null;
+          if (targetElement) {
+            const y = targetElement.getBoundingClientRect().top + window.scrollY - 40; // small offset for header
+            window.scrollTo({ top: y, behavior: "smooth" });
           }
         }
       });

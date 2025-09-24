@@ -13,14 +13,14 @@ import {
 
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
-  "/images/react2.webp",
-  "/images/next2.webp",
-  "/images/node2.webp",
-  "/images/express.webp",
-  "/images/mongo.webp",
-  "/images/mysql.webp",
-  "/images/typescript.webp",
-  "/images/javascript.webp",
+  "/images/ChatGPT.svg",
+  "/images/CapCut.svg",
+  "/images/Claude.svg",
+  "/images/Canva.svg",
+  "/images/Power BI.svg",
+  "/images/Jira.svg",
+  "/images/Notion.svg",
+  "/images/Google Sheets.svg",
 ];
 const textures = imageUrls.map((url) => textureLoader.load(url));
 
@@ -129,11 +129,11 @@ const TechStack = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-      const threshold = document
-        .getElementById("work")!
-        .getBoundingClientRect().top;
-      setIsActive(scrollY > threshold);
+      const techEl = document.querySelector(".techstack");
+      if (!techEl) return;
+      const rectTop = (techEl as HTMLElement).getBoundingClientRect().top;
+      // Activate as soon as the section's top reaches 90% of the viewport height (earlier reveal)
+      setIsActive(rectTop <= window.innerHeight * 0.9);
     };
     document.querySelectorAll(".header a").forEach((elem) => {
       const element = elem as HTMLAnchorElement;
@@ -147,8 +147,12 @@ const TechStack = () => {
       });
     });
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    // Run once on mount
+    handleScroll();
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
     };
   }, []);
   const materials = useMemo(() => {

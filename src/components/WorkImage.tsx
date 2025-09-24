@@ -6,6 +6,7 @@ interface Props {
   alt?: string;
   video?: string;
   link?: string;
+  videoLeft?: number;
 }
 
 const WorkImage = (props: Props) => {
@@ -57,12 +58,12 @@ const WorkImage = (props: Props) => {
             }}
             onLoadStart={() => console.log('Video started loading')}
             onCanPlay={() => console.log('Video can play')}
-            onPause={() => {
+            onPause={(e) => {
               // Force the video to resume if it gets paused
               const videoElement = e.target as HTMLVideoElement;
               videoElement.play();
             }}
-            onEnded={() => {
+            onEnded={(e) => {
               // Restart the video if it ends (though loop should handle this)
               const videoElement = e.target as HTMLVideoElement;
               videoElement.currentTime = 0;
@@ -73,7 +74,7 @@ const WorkImage = (props: Props) => {
               width: '120%',
               height: '100%',
               top: 0,
-              left: 0,
+              left: props.videoLeft || 0,
               backgroundColor: '#000',
               objectFit: 'cover',
               zIndex: 1

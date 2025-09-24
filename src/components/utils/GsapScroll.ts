@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function setCharTimeline(
   character: THREE.Object3D<THREE.Object3DEventMap> | null,
@@ -9,6 +10,10 @@ export function setCharTimeline(
   setInterval(() => {
     intensity = Math.random();
   }, 200);
+  gsap.registerPlugin(ScrollTrigger);
+
+  let hasDispatchedFadeComplete = false;
+
   const tl1 = gsap.timeline({
     scrollTrigger: {
       trigger: ".landing-section",
@@ -16,6 +21,34 @@ export function setCharTimeline(
       end: "bottom top",
       scrub: 1,
       invalidateOnRefresh: true,
+      onEnter: () => {
+        document.body.classList.add("landing-pinned");
+        hasDispatchedFadeComplete = false;
+      },
+      onEnterBack: () => {
+        document.body.classList.add("landing-pinned");
+      },
+      onLeave: () => {
+        document.body.classList.remove("landing-pinned");
+      },
+      onLeaveBack: () => {
+        document.body.classList.remove("landing-pinned");
+        hasDispatchedFadeComplete = false;
+        window.dispatchEvent(new CustomEvent("landingFadeReset"));
+      },
+      onUpdate: (self) => {
+        // Fade the landing text out smoothly based on scroll progress
+        const progress = self.progress; // 0 -> 1 over the section
+        // Make fade finish a bit before the section ends so it feels responsive
+        const fadeProgress = Math.min(progress / 0.4, 1); // complete by 40% scroll
+        const opacity = 1 - fadeProgress;
+        gsap.set([".landing-intro", ".landing-info"], { autoAlpha: opacity });
+
+        if (!hasDispatchedFadeComplete && opacity <= 0.01) {
+          hasDispatchedFadeComplete = true;
+          window.dispatchEvent(new CustomEvent("landingFadeComplete"));
+        }
+      },
     },
   });
   const tl2 = gsap.timeline({
@@ -66,9 +99,7 @@ export function setCharTimeline(
       tl1
         .fromTo(character.rotation, { y: 0 }, { y: 0.7, duration: 1, ease: "power2.out" }, 0)
         .to(camera.position, { z: 22, ease: "power2.out" }, 0)
-        .fromTo(".character-model", { x: 0 }, { x: "-25%", duration: 1, ease: "power2.out" }, 0)
-        .to(".landing-container", { opacity: 0, duration: 0.4, ease: "power2.out" }, 0)
-        .to(".landing-container", { y: "40%", duration: 0.8, ease: "power2.out" }, 0)
+        // Do not move the landing container; fade handled in onUpdate above
         .fromTo(".about-me", { y: "-50%" }, { y: "0%", ease: "power2.out" }, 0);
 
       tl2
@@ -79,10 +110,11 @@ export function setCharTimeline(
         )
         .to(".about-section", { y: "30%", duration: 6, ease: "power2.out" }, 0)
         .to(".about-section", { opacity: 0, delay: 3, duration: 2, ease: "power2.out" }, 0)
+        // Do not move character-model on about scroll; only disable pointer if needed
         .fromTo(
           ".character-model",
           { pointerEvents: "inherit" },
-          { pointerEvents: "none", x: "-12%", delay: 2, duration: 5, ease: "power2.out" },
+          { pointerEvents: "none", x: "0%", delay: 2, duration: 0.01, ease: "none" },
           0
         )
         .to(character.rotation, { y: 0.92, x: 0.12, delay: 3, duration: 3, ease: "power2.out" }, 0)
@@ -109,12 +141,13 @@ export function setCharTimeline(
         );
 
       tl3
-        .fromTo(
-          ".character-model",
-          { y: "0%" },
-          { y: "-100%", duration: 4, ease: "power2.inOut", delay: 1 },
-          0
-        )
+        // Keep landing image fixed; do not move out on What I Do
+        //.fromTo(
+        //  ".character-model",
+        //  { y: "0%" },
+        //  { y: "-100%", duration: 4, ease: "power2.inOut", delay: 1 },
+        //  0
+        //)
         .fromTo(".whatIDO", { y: 0 }, { y: "15%", duration: 2, ease: "power2.out" }, 0)
         .to(character.rotation, { x: -0.04, duration: 2, delay: 1, ease: "power2.out" }, 0);
     }
@@ -188,4 +221,102 @@ export function setAllTimeline() {
       0
     );
   }
+}
+
+export function setWhatIDoTimeline() {
+  gsap.registerPlugin(ScrollTrigger);
+  // Reveal What I Do container and then its panels (Design/Manage)
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: ".about-section",
+      start: "center 55%",
+      end: "bottom top",
+      toggleActions: "restart none none none",
+      invalidateOnRefresh: true,
+      onLeaveBack: () => {
+        tl.pause(0).progress(0);
+        gsap.set(".what-box-in", { clearProps: "all", display: "none", autoAlpha: 0, y: 40 });
+        gsap.set(".what-content", { clearProps: "opacity,transform", autoAlpha: 0, y: 20 });
+      },
+    },
+  });
+
+  tl.set(".what-box-in", { display: "flex" });
+
+  tl.fromTo(
+    ".what-box-in",
+    { autoAlpha: 0, y: 40 },
+    { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }
+  );
+
+  tl.fromTo(
+    ".what-content",
+    { autoAlpha: 0, y: 20 },
+    { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.15 },
+    "-=0.2"
+  );
+}
+
+// Sets up the landing text fade and pinned state independently of the 3D character
+export function setLandingFadeTimeline() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  let hasDispatchedFadeComplete = false;
+
+  // Pin the intro and info blocks without adding pin spacing
+  const pinIntro = ScrollTrigger.create({
+    trigger: ".landing-section",
+    start: "top top",
+    end: "bottom top",
+    pin: ".landing-intro",
+    pinSpacing: false,
+    anticipatePin: 1,
+  });
+  const pinInfo = ScrollTrigger.create({
+    trigger: ".landing-section",
+    start: "top top",
+    end: "bottom top",
+    pin: ".landing-info",
+    pinSpacing: false,
+    anticipatePin: 1,
+  });
+
+  const st = ScrollTrigger.create({
+    trigger: ".landing-section",
+    start: "top top",
+    end: "bottom top",
+    scrub: 1,
+    invalidateOnRefresh: true,
+    onEnter: () => {
+      hasDispatchedFadeComplete = false;
+    },
+    onEnterBack: () => {},
+    onLeave: () => {},
+    onLeaveBack: () => {
+      hasDispatchedFadeComplete = false;
+      window.dispatchEvent(new CustomEvent("landingFadeReset"));
+    },
+    onUpdate: (self) => {
+      const progress = self.progress;
+      const fadeProgress = Math.min(progress / 0.4, 1);
+      const opacity = 1 - fadeProgress;
+      gsap.set([".landing-intro", ".landing-info"], { autoAlpha: opacity });
+
+      if (!hasDispatchedFadeComplete && opacity <= 0.01) {
+        hasDispatchedFadeComplete = true;
+        window.dispatchEvent(new CustomEvent("landingFadeComplete"));
+      }
+      if (hasDispatchedFadeComplete && opacity > 0.05) {
+        // If user scrolls back up before leaveBack, reset flag so we can re-fire on next fade-out
+        hasDispatchedFadeComplete = false;
+        window.dispatchEvent(new CustomEvent("landingFadeReset"));
+      }
+    },
+  });
+
+  return () => {
+    st.kill();
+    pinIntro.kill();
+    pinInfo.kill();
+  };
 }

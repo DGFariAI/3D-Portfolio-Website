@@ -3,6 +3,7 @@ import {
     PropsWithChildren,
     useContext,
     useState,
+    useEffect,
   } from "react";
   
   interface LoadingType {
@@ -17,6 +18,26 @@ import {
     export const LoadingProvider = ({ children }: PropsWithChildren) => {
     const [isLoading, setIsLoading] = useState(true);
     const [loading, setLoading] = useState(0);
+
+    // Ensure scroll position is at top on component mount
+    useEffect(() => {
+      // Reset scroll position when loading provider mounts
+      const resetScroll = () => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      };
+      
+      // Apply immediately
+      resetScroll();
+      
+      // Also handle load event in case of timing issues
+      window.addEventListener('load', resetScroll);
+      
+      return () => {
+        window.removeEventListener('load', resetScroll);
+      };
+    }, []);
 
     // Disabled fallback mechanism to prevent conflicts with external loading
     // The Character Scene component handles all loading progress

@@ -11,6 +11,7 @@ import TechStack from "./TechStack";
 import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import setSplitText from "./utils/splitText";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface MainContainerProps extends PropsWithChildren {}
 
@@ -31,6 +32,23 @@ const MainContainer = ({ children }: MainContainerProps) => {
       window.removeEventListener("resize", resizeHandler);
     };
   }, [isDesktopView]);
+
+  // Ensure ScrollTrigger is refreshed and scroll is reset on mount
+  useEffect(() => {
+    // Reset scroll to top on component mount
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Refresh ScrollTrigger instances with a slight delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+    
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
 
   return (
     <div className="container-main">

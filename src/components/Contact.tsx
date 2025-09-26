@@ -24,8 +24,9 @@ const Contact = () => {
           <div className="contact-box">
             <h4>Social</h4>
             <a
-              href="linkedin.com/in/danica-gabriella-fariñas-melecio-itsdgfari"
+              href="https://linkedin.com/in/danica-gabriella-fariñas-melecio-itsdgfari"
               target="_blank"
+              rel="noopener noreferrer"
               data-cursor="disable"
               className="contact-social"
             >
@@ -34,6 +35,7 @@ const Contact = () => {
             <a
               href="https://www.instagram.com/itsdgfari/"
               target="_blank"
+              rel="noopener noreferrer"
               data-cursor="disable"
               className="contact-social"
             >
@@ -42,6 +44,7 @@ const Contact = () => {
             <a
               href="https://www.facebook.com/itsdgfari/"
               target="_blank"
+              rel="noopener noreferrer"
               data-cursor="disable"
               className="contact-social"
             >
@@ -50,6 +53,7 @@ const Contact = () => {
             <a
               href="https://www.youtube.com/@itsdgfari"
               target="_blank"
+              rel="noopener noreferrer"
               data-cursor="disable"
               className="contact-social"
             >

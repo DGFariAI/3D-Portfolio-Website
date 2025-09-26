@@ -60,22 +60,22 @@ const SocialIcons = () => {
     <div className="icons-section">
       <div className="social-icons" data-cursor="icons" id="social">
         <span>
-          <a href="linkedin.com/in/danica-gabriella-fariñas-melecio-itsdgfari" target="_blank">
+          <a href="https://linkedin.com/in/danica-gabriella-fariñas-melecio-itsdgfari" target="_blank" rel="noopener noreferrer">
             <FaLinkedinIn />
           </a>
         </span>
         <span>
-          <a href="https://www.instagram.com/itsdgfari/" target="_blank">
+          <a href="https://www.instagram.com/itsdgfari/" target="_blank" rel="noopener noreferrer">
             <FaInstagram />
           </a>
         </span>
         <span>
-          <a href="https://www.facebook.com/itsdgfari/" target="_blank">
+          <a href="https://www.facebook.com/itsdgfari/" target="_blank" rel="noopener noreferrer">
             <FaFacebook />
           </a>
         </span>
         <span>
-          <a href="https://www.youtube.com/@itsdgfari" target="_blank">
+          <a href="https://www.youtube.com/@itsdgfari" target="_blank" rel="noopener noreferrer">
             <FaYoutube />
           </a>
         </span>

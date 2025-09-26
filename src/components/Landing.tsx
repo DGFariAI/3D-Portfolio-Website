@@ -214,7 +214,9 @@ const Landing = ({ children }: PropsWithChildren) => {
             isFrozen && frozenTop !== null
               ? {
                   top: `${frozenTop}px`,
-                  transform: 'translate(calc(-50% - 40px), -50%)',
+                  transform: currentImage === '/models/What I Do.png' 
+                    ? 'translate(-50%, -50%)' 
+                    : 'translate(calc(-50% - 40px), -50%)',
                   zIndex: isPastWhatIDo ? 0 : 8,
                 }
               : undefined
@@ -254,7 +256,7 @@ const Landing = ({ children }: PropsWithChildren) => {
               ? {
                   top: `${Math.max(0, frozenTop - 300)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
-                  transform: 'translate(calc(-50% - 60px), -50%) scale(1.4)',
+                  transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }
               : undefined
           }

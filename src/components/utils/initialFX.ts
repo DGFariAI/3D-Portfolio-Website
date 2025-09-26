@@ -68,6 +68,8 @@ export function initialFX() {
   // LoopText(".landing-h2-1", ".landing-h2-2");
 }
 
+// Commented out unused function to prevent build errors
+/*
 function LoopText(selector1: string, selector2: string) {
   var tl = gsap.timeline({ repeat: -1, repeatDelay: 1 });
   const delay = 4;
@@ -109,3 +111,4 @@ function LoopText(selector1: string, selector2: string) {
       }, "-=1.2"
     );
 }
+*/

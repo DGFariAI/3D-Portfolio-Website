@@ -55,8 +55,8 @@ const Career = () => {
             </div>
             <p>
               Driving brand awareness and customer acquisition to 
-              strengthen the company's global presence by developing and
-              executing marketing strategies across multiple countries.
+              strengthen the company's global presence by developing
+              and executing marketing strategies across countries.
             </p>
           </div>
         </div>

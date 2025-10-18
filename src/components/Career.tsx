@@ -20,20 +20,6 @@ const Career = () => {
           <div className="career-info-box">
             <div className="career-info-in">
               <div className="career-role">
-                <h4>Independent<br />Artist</h4>
-                <h5>DGFari Art</h5>
-              </div>
-              <h3>2023</h3>
-            </div>
-            <p>
-              Created and sold artworks inspired by personal emotions
-              and experiences, each piece carrying hidden meanings and
-              stories that connected with and were cherished by others.
-            </p>
-          </div>
-          <div className="career-info-box">
-            <div className="career-info-in">
-              <div className="career-role">
                 <h4>Customer Service Representative</h4>
                 <h5>Amazon</h5>
               </div>
@@ -51,12 +37,26 @@ const Career = () => {
                 <h4>Digital Business Student</h4>
                 <h5>Lithan Academy Singapore</h5>
               </div>
-              <h3>NOW</h3>
+              <h3>2025</h3>
             </div>
             <p>
               Learning and applying real-world startup strategies and
               skills in entrepreneurship, branding, software,
               and AI to build purpose-driven, impactful ventures/products.
+            </p>
+          </div>
+          <div className="career-info-box">
+            <div className="career-info-in">
+              <div className="career-role">
+                <h4>Global Marketing Associate</h4>
+                <h5>eduCLaaS Pte Ltd</h5>
+              </div>
+              <h3>NOW</h3>
+            </div>
+            <p>
+              Contributed to the growth of the company's global presence by
+              developing and executing marketing strategies across multiple
+              countries, driving brand awareness and customer acquisition.
             </p>
           </div>
         </div>

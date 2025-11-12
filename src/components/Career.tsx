@@ -48,15 +48,15 @@ const Career = () => {
           <div className="career-info-box">
             <div className="career-info-in">
               <div className="career-role">
-                <h4>Global Content Marketing Associate</h4>
+                <h4>Global Marketing Associate</h4>
                 <h5>CLaaS2SaaS</h5>
               </div>
               <h3>NOW</h3>
             </div>
             <p>
               Producing multi-country content marketing for Corporations,
-              Universities, and SMEs across Southeast Asia to enhance
-              brand identity and strengthen global brand presence.
+              Universities, and SMEs to enhance brand identity and
+              strengthen global brand presence.
             </p>
           </div>
         </div>

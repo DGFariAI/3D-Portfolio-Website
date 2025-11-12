@@ -17,10 +17,10 @@ const imageUrls = [
   "/images/CapCut.svg",
   "/images/Claude.svg",
   "/images/Canva.svg",
-  "/images/Power BI.svg",
-  "/images/Jira.svg",
+  "/images/HeyGen.svg",
+  "/images/ClickUp.svg",
   "/images/Notion.svg",
-  "/images/Google Sheets.svg",
+  "/images/Dreamina.svg",
 ];
 const textures = imageUrls.map((url) => textureLoader.load(url));
 

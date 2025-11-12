@@ -35,7 +35,7 @@ const Career = () => {
             <div className="career-info-in">
               <div className="career-role">
                 <h4>Digital Business Student</h4>
-                <h5>Lithan Academy Singapore</h5>
+                <h5>Lithan Singapore</h5>
               </div>
               <h3>2025</h3>
             </div>
@@ -48,15 +48,15 @@ const Career = () => {
           <div className="career-info-box">
             <div className="career-info-in">
               <div className="career-role">
-                <h4>Global Marketing Associate</h4>
-                <h5>eduCLaaS Pte Ltd</h5>
+                <h4>Global Content Marketing Associate</h4>
+                <h5>CLaaS2SaaS</h5>
               </div>
               <h3>NOW</h3>
             </div>
             <p>
-              Driving brand awareness and customer acquisition to 
-              strengthen the company's global presence by developing
-              and executing marketing strategies across countries.
+              Producing multi-country content marketing for Corporations,
+              Universities, and SMEs across Southeast Asia to enhance
+              brand identity and strengthen global brand presence.
             </p>
           </div>
         </div>

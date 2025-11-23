@@ -49,14 +49,14 @@ const Career = () => {
             <div className="career-info-in">
               <div className="career-role">
                 <h4>Global Marketing Associate</h4>
-                <h5>CLaaS2SaaS</h5>
+                <h5>CLaaS2SaaS Pte Ltd</h5>
               </div>
               <h3>NOW</h3>
             </div>
             <p>
               Producing multi-country content marketing for Corporations,
-              Universities, and SMEs to enhance brand identity and
-              strengthen global brand presence.
+              Universities, and SMEs to strengthen global brand presence
+              and foster long-term, high-value partnerships.
             </p>
           </div>
         </div>

@@ -56,7 +56,7 @@ const Career = () => {
             <p>
               Producing multi-country content marketing for Corporations,
               Universities, and SMEs to strengthen global brand presence
-              and foster long-term, high-value partnerships.
+              and foster high-value partnerships.
             </p>
           </div>
         </div>

@@ -19,7 +19,7 @@ const imageUrls = [
   "/images/Canva.svg",
   "/images/HeyGen.svg",
   "/images/ClickUp.svg",
-  "/images/Notion.svg",
+  "/images/Gemini.svg",
   "/images/Dreamina.svg",
 ];
 const textures = imageUrls.map((url) => textureLoader.load(url));

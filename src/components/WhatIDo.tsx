@@ -93,7 +93,7 @@ const WhatIDo = () => {
               <h3>DESIGN</h3>
               <h4>Description</h4>
               <p>
-                I design the core of brands and products—from identity to UI/UX—
+                I design the core of brands and products from identity to UI/UX,
                 creating experiences that are functional, memorable, and engaging.
               </p>
               <h5>Skillset & tools</h5>

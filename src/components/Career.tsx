@@ -37,7 +37,7 @@ const Career = () => {
                 <h4>Digital Business Student</h4>
                 <h5>Lithan Academy Singapore</h5>
               </div>
-              <h3>2025</h3>
+              <h3>NOW</h3>
             </div>
             <p>
               Learning and applying real-world startup strategies and

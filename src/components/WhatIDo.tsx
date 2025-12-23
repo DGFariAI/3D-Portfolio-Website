@@ -93,18 +93,17 @@ const WhatIDo = () => {
               <h3>DESIGN</h3>
               <h4>Description</h4>
               <p>
-                I design the core of brands and products from identity to UI/UX,
-                creating experiences that are functional, memorable, and engaging.
+                I design the core of brands and products from marketing to software,
+                creating experiences that are functional, scalable, and memorable.
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">
                 <div className="what-tags">Brand Storytelling</div>
+                <div className="what-tags">Video Editing</div>
                 <div className="what-tags">Positioning</div>
-                <div className="what-tags">Systems Design</div>
-                <div className="what-tags">Frontend Coding</div>
+                <div className="what-tags">Product Strategy</div>
+                <div className="what-tags">Full-Stack Development</div>
                 <div className="what-tags">Prototyping</div>
-                <div className="what-tags">UI/UX</div>
-                <div className="what-tags">Animation</div>
               </div>
               <div className="what-arrow"></div>
             </div>

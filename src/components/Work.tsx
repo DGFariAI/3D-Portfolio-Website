@@ -60,17 +60,17 @@ const Work = () => {
                   <h3>0{index + 1}</h3>
 
                   <div>
-                    <h4>{index === 0 ? "OmniGenesis" : index === 1 ? "DGFari Learn" : index === 2 ? "N.O.V.A." : index === 3 ? "Simple Charm" : index === 4 ? "Phoenix" : index === 5 ? "eduCLaaS TaskMate" : "Project Name"}</h4>
-                    <p>{index === 0 ? "Agentic AI SaaS Startup" : index === 1 ? "Personal Development Blog" : index === 2 ? "AI Product Analytics" : index === 3 ? "Luxury E-Commerce Brand" : index === 4 ? "Burnout Companion" : index === 5 ? "Productivity Web Application" : "Category"}</p>
+                    <h4>{index === 0 ? "OmniGenesis" : index === 1 ? "DGFari Learn" : index === 2 ? "N.O.V.A." : index === 3 ? "EcoCity" : index === 4 ? "Simple Charm" : index === 5 ? "Phoenix" : "Project Name"}</h4>
+                    <p>{index === 0 ? "Agentic AI SaaS Startup" : index === 1 ? "Personal Development Blog" : index === 2 ? "AI Product Analytics" : index === 3 ? "Gamified Green Mobility Platform" : index === 4 ? "Luxury E-Commerce Brand" : index === 5 ? "Burnout Companion" : "Category"}</p>
                   </div>
                 </div>
                 <h4>Tools and features</h4>
-                <p>{index === 0 ? "Tailwind CSS, Node.js, Express, MongoDB" : index === 1 ? "Python, Flask, Werkzeug, Jinja2" : index === 2 ? "HTML5, CSS3, Vanilla JS, Chart.js" : index === 3 ? "Pantheon, SureCart, Tidio, Mailchimp" : index === 4 ? "Blender, HTML, CSS, JavaScript" : index === 5 ? "Python, Flask, HTML/JS, Custom CSS" : "Javascript, TypeScript, React, Threejs"}</p>
+                <p>{index === 0 ? "Tailwind CSS, Node.js, Express, MongoDB" : index === 1 ? "Python, Flask, Werkzeug, Jinja2" : index === 2 ? "HTML5, CSS3, Vanilla JS, Chart.js" : index === 3 ? "React, TypeScript, Vite, Supabase" : index === 4 ? "Pantheon, SureCart, Tidio, Mailchimp" : index === 5 ? "Blender, HTML, CSS, JavaScript" : "Javascript, TypeScript, React, Threejs"}</p>
               </div>
               <WorkImage 
                 image="/images/placeholder.webp" 
                 alt="" 
-                video={index === 0 ? "/videos/OmniGenesis.mp4" : index === 1 ? "/videos/DGFari Learn.mp4" : index === 2 ? "/videos/NOVA.mp4" : index === 3 ? "/videos/Simple Charm.mp4" : index === 4 ? "/videos/Phoenix.mp4" : index === 5 ? "/videos/eduCLaaS TaskMate.mp4" : undefined}
+                video={index === 0 ? "/videos/OmniGenesis.mp4" : index === 1 ? "/videos/DGFari Learn.mp4" : index === 2 ? "/videos/NOVA.mp4" : index === 3 ? "/videos/EcoCity.mp4" : index === 4 ? "/videos/Simple Charm.mp4" : index === 5 ? "/videos/Phoenix.mp4" : undefined}
                 videoLeft={index === 0 ? -1 : index === 1 ? -30 : index === 2 ? -30 : index === 3 ? -30 : index === 4 ? -30 : index === 5 ? -30 : 0}
               />
             </div>

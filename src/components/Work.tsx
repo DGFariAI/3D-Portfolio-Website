@@ -61,7 +61,7 @@ const Work = () => {
 
                   <div>
                     <h4>{index === 0 ? "OmniGenesis" : index === 1 ? "DGFari Learn" : index === 2 ? "N.O.V.A." : index === 3 ? "EcoCity" : index === 4 ? "Simple Charm" : index === 5 ? "Phoenix" : "Project Name"}</h4>
-                    <p>{index === 0 ? "Agentic AI SaaS Startup" : index === 1 ? "Personal Development Blog" : index === 2 ? "AI Product Analytics" : index === 3 ? "Gamified Green Mobility Platform" : index === 4 ? "Luxury E-Commerce Brand" : index === 5 ? "Burnout Companion" : "Category"}</p>
+                    <p>{index === 0 ? "Agentic AI SaaS Startup" : index === 1 ? "Personal Development Blog" : index === 2 ? "AI Product Analytics" : index === 3 ? "Green Mobility Platform" : index === 4 ? "Luxury E-Commerce Brand" : index === 5 ? "Burnout Companion" : "Category"}</p>
                   </div>
                 </div>
                 <h4>Tools and features</h4>

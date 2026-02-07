@@ -54,9 +54,9 @@ const Career = () => {
               <h3>NOW</h3>
             </div>
             <p>
-              Producing multi-country content marketing for Corporations,
-              Universities, and SMEs to strengthen global brand presence
-              and foster high-value partnerships.
+              Producing multi-country content marketing for corporations,
+              universities, and enterprises to strengthen global brand
+              presence and partnerships.
             </p>
           </div>
         </div>

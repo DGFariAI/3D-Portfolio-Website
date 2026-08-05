@@ -2,6 +2,25 @@ import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import "./styles/Landing.css";
 import { setLandingFadeTimeline } from "./utils/GsapScroll";
 
+type VisualKey = "hero" | "about" | "whatido";
+
+// VP9-alpha WebM (real per-pixel transparency) — she's a true cutout, no
+// background box. Ping-pong looped so the restart is imperceptible.
+const VISUALS: Record<VisualKey, { webm: string; poster: string }> = {
+  hero: {
+    webm: "/videos/character/hero.webm",
+    poster: "/videos/character/hero-poster.webp",
+  },
+  about: {
+    webm: "/videos/character/about.webm",
+    poster: "/videos/character/about-poster.webp",
+  },
+  whatido: {
+    webm: "/videos/character/what-i-do.webm",
+    poster: "/videos/character/what-i-do-poster.webp",
+  },
+};
+
 const Landing = ({ children }: PropsWithChildren) => {
   const [isSwitched, setIsSwitched] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -9,12 +28,12 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [hasFadedOut, setHasFadedOut] = useState(false);
   const [isInWhatIDo, setIsInWhatIDo] = useState(false);
   const [lockWhatImage, setLockWhatImage] = useState(false);
-  const [currentImage, setCurrentImage] = useState('/models/Landing.png');
   const [isFrozen, setIsFrozen] = useState(false);
   const [frozenTop, setFrozenTop] = useState<number | null>(null);
   const [hideBelowWhat, setHideBelowWhat] = useState(false);
   const [isPastWhatIDo, setIsPastWhatIDo] = useState(false);
-  const [imageOpacity, setImageOpacity] = useState(1);
+  const [activeSection, setActiveSection] = useState<VisualKey>('hero');
+  const videoRefs = useRef<Partial<Record<VisualKey, HTMLVideoElement | null>>>({});
   const hasFrozenRef = useRef(false);
   const frozenTopRef = useRef<number | null>(null);
   const scrollScheduledRef = useRef(false);
@@ -122,6 +141,14 @@ const Landing = ({ children }: PropsWithChildren) => {
           if (lockWhatImage) setLockWhatImage(false);
         }
       }
+
+      // Deterministic active character based purely on scroll position, so the
+      // right video always shows and it's symmetric scrolling up or down.
+      const vh = window.innerHeight;
+      let section: VisualKey = 'hero';
+      if (aboutSection && aboutSection.getBoundingClientRect().top < vh * 0.6) section = 'about';
+      if (whatIDoSection && whatIDoSection.getBoundingClientRect().top < vh * 0.5) section = 'whatido';
+      setActiveSection((prev) => (prev === section ? prev : section));
     };
 
     const handleScroll = () => {
@@ -155,32 +182,18 @@ const Landing = ({ children }: PropsWithChildren) => {
   // Drop About positioning as soon as What I Do threshold is reached so switch occurs centered
   const aboutReady = isInAboutSection && hasFadedOut && !isInWhatIDo;
 
-  // Smooth crossfade image swap without moving position
-  useEffect(() => {
-    const desiredImage = aboutReady
-      ? '/models/About.png'
-      : (isInWhatIDo || lockWhatImage)
-      ? '/models/What I Do.png'
-      : '/models/Landing.png';
+  // Which character video is shown — driven by scroll position (see handler)
+  const activeVisual: VisualKey = activeSection;
 
-    if (desiredImage !== currentImage) {
-      const img = new Image();
-      img.src = desiredImage;
-      const swap = () => {
-        setImageOpacity(0);
-        requestAnimationFrame(() => {
-          setCurrentImage(desiredImage);
-          setTimeout(() => setImageOpacity(1), 16);
-        });
-      };
-      if ((img as any).decode) {
-        (img as any).decode().then(swap).catch(swap);
-      } else {
-        img.onload = swap;
-        img.onerror = swap;
-      }
-    }
-  }, [aboutReady, isInWhatIDo, lockWhatImage, currentImage]);
+  // Only play the visible section's clip to save CPU/battery
+  useEffect(() => {
+    (Object.keys(VISUALS) as VisualKey[]).forEach((key) => {
+      const v = videoRefs.current[key];
+      if (!v) return;
+      if (key === activeVisual) v.play().catch(() => {});
+      else v.pause();
+    });
+  }, [activeVisual]);
 
   const renderAnimatedText = (text: string) => {
     return text.split('').map((letter, index) => (
@@ -214,20 +227,57 @@ const Landing = ({ children }: PropsWithChildren) => {
             isFrozen && frozenTop !== null
               ? {
                   top: `${frozenTop}px`,
-                  transform: currentImage === '/models/What I Do.png' 
-                    ? 'translate(-50%, -50%)' 
+                  transform: activeVisual === 'whatido'
+                    ? 'translate(-50%, -50%)'
                     : 'translate(calc(-50% - 40px), -50%)',
                   zIndex: isPastWhatIDo ? 0 : 8,
                 }
               : undefined
           }
           >
-            <img
-              src={currentImage}
-              alt="Landing visual"
-              className={`landing-sticky-image ${aboutReady ? 'about-image' : ''}`}
-              style={{ opacity: imageOpacity }}
-            />
+            <div className="character-tilt">
+              {(['hero', 'about'] as VisualKey[]).map((key) => (
+                <video
+                  key={key}
+                  ref={(el) => {
+                    videoRefs.current[key] = el;
+                  }}
+                  className={`landing-sticky-video visual-${key} ${
+                    activeVisual === key ? 'active' : ''
+                  }`}
+                  src={VISUALS[key].webm}
+                  poster={VISUALS[key].poster}
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  preload="auto"
+                  disablePictureInPicture
+                />
+              ))}
+              {/* What I Do: transparent cutout + a small floor-light beneath her */}
+              <div
+                className={`landing-sticky-video visual-whatido whatido-wrap ${
+                  activeVisual === 'whatido' ? 'active' : ''
+                }`}
+              >
+                <span className="whatido-floor-glow" aria-hidden="true" />
+                <video
+                  ref={(el) => {
+                    videoRefs.current.whatido = el;
+                  }}
+                  className="whatido-video"
+                  src={VISUALS.whatido.webm}
+                  poster={VISUALS.whatido.poster}
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  preload="auto"
+                  disablePictureInPicture
+                />
+              </div>
+            </div>
           </div>
           <div className="landing-info">
             <h3>A Product</h3>
@@ -250,7 +300,7 @@ const Landing = ({ children }: PropsWithChildren) => {
           </div>
         </div>
         <div
-          className={`character-rim ${aboutReady ? 'about-position' : ''} ${hideBelowWhat ? 'hide-below-what' : ''} ${isFrozen ? 'frozen' : ''}`}
+          className={`character-rim ${aboutReady ? 'about-position' : ''} ${hideBelowWhat || activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isFrozen ? 'frozen' : ''}`}
           style={
             isFrozen && frozenTop !== null
               ? {

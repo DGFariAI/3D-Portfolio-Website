@@ -138,13 +138,90 @@
 .landing-sticky-image.about-image {
   opacity: 1;
 }
+
+/* Cursor-follow tilt wrapper: all section videos stack in the same cell */
+.character-tilt {
+  display: grid;
+  place-items: center;
+  position: relative;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+.landing-sticky-video {
+  grid-area: 1 / 1;
+  width: min(840px, 92vw);
+  max-width: 95vw;
+  height: auto;
+  display: block;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+  /* Real-alpha cutout — no background box. */
+}
+
+.landing-sticky-video.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+
+/* Keep the character essentially fully opaque so she sits ON TOP of the glow
+   (only the very bottom edge softens, into the dark page — not the glow). */
+.landing-sticky-video.visual-hero,
+.landing-sticky-video.visual-about {
+  -webkit-mask-image: linear-gradient(to bottom, #000 93%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 93%, transparent 100%);
+}
+
+/* Hero is the largest — the first thing visitors see. */
+.landing-sticky-video.visual-hero {
+  width: min(900px, 94vw);
+}
+
+/* What I Do is a transparent cutout (character, desk, PC, keyboard), nudged
+   left and up. Its floor light is the .whatido-floor-glow element below. */
+.landing-sticky-video.visual-whatido {
+  width: min(580px, 82vw);
+  transform: translate(-6%, -6%);
+}
+.whatido-wrap {
+  position: relative;
+}
+.whatido-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 1;
+}
+/* Small oval floor light beneath her feet, behind the character. */
+.whatido-floor-glow {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  width: 44%;
+  height: 10%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(206, 138, 255, 0.55),
+    rgba(150, 80, 255, 0.22) 45%,
+    transparent 72%
+  );
+  filter: blur(22px);
+  pointer-events: none;
+  z-index: 0;
+}
 .character-rim {
   position: fixed;
   width: 400px;
   height: 400px;
   z-index: 1;
   background-color: #f59bf8;
-  transform: translate(-50%, 36%) scale(1.4);
+  transform: translate(-50%, -28%) scale(1.35);
   box-shadow: inset 66px 35px 85px 0px rgba(85, 0, 255, 0.65);
   filter: blur(50px);
   border-radius: 50%;
@@ -161,13 +238,14 @@
 }
 
 .character-rim.hide-below-what {
-  opacity: 0;
+  opacity: 0 !important;
+  animation: none !important;
 }
 
 .character-rim.about-position {
   top: 60%;
   left: 25%;
-  transform: translate(-50%, 36%) scale(1.4);
+  transform: translate(-50%, -28%) scale(1.35);
 }
 .character-model {
   height: 80%;
@@ -211,17 +289,17 @@
 @keyframes backlight {
   0% {
     opacity: 0;
-    transform: translate(-50%, 50%) scale(1.1);
+    transform: translate(-50%, 6%) scale(1.1);
     box-shadow: inset 20px 12px 30px 0px rgba(85, 0, 255, 0.3);
   }
   60% {
     opacity: 1;
-    transform: translate(-50%, 36%) scale(1.4);
+    transform: translate(-50%, -28%) scale(1.35);
     box-shadow: inset 66px 35px 85px 0px rgba(85, 0, 255, 0.65);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, 36%) scale(1.4);
+    transform: translate(-50%, -28%) scale(1.35);
     box-shadow: inset 66px 35px 85px 0px rgba(85, 0, 255, 0.65);
   }
 }

@@ -183,8 +183,8 @@
 /* What I Do is a transparent cutout (character, desk, PC, keyboard), nudged
    left and up. Its floor light is the .whatido-floor-glow element below. */
 .landing-sticky-video.visual-whatido {
-  width: min(580px, 82vw);
-  transform: translate(-6%, -6%);
+  width: min(500px, 72vw);
+  transform: translate(-15%, -14%);
 }
 .whatido-wrap {
   position: relative;
@@ -196,6 +196,28 @@
   position: relative;
   z-index: 1;
 }
+/* Small backlight behind her head. Placed from the clip's own alpha channel:
+   her head sits at 32% across and 16% down the frame, so the glow tracks her
+   automatically at any size the video is rendered. */
+.whatido-head-glow {
+  position: absolute;
+  left: 32%;
+  top: 16%;
+  width: 38%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(206, 138, 255, 0.5),
+    rgba(150, 80, 255, 0.22) 45%,
+    transparent 70%
+  );
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* Small oval floor light beneath her feet, behind the character. */
 .whatido-floor-glow {
   position: absolute;

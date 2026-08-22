@@ -327,6 +327,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   activeVisual === 'whatido' ? 'active' : ''
                 }`}
               >
+                <span className="whatido-head-glow" aria-hidden="true" />
                 <span className="whatido-floor-glow" aria-hidden="true" />
                 <video
                   ref={(el) => {

@@ -542,20 +542,18 @@ h2.landing-info-h2 {
 
   /* She carries the whole hero on a phone (the About and What I Do clips don't
      mount here), so she runs a touch past the screen edges — but nowhere near
-     the 130vw this used to be. The +1cm is a deliberate small bump on top of
-     the 110vw. Overrides the base `max-width: 95vw` cap too. */
+     the 130vw this used to be. Overrides the base `max-width: 95vw` cap too. */
   .landing-sticky-video,
   .landing-sticky-video.visual-hero {
-    width: calc(110vw + 1cm);
-    max-width: calc(110vw + 1cm);
+    width: 114vw;
+    max-width: 114vw;
   }
 
   /* Lift her clear of the "A Product" headline pinned to the bottom of the
-     hero. The 10% is a share of her own height, so it holds across phone
-     sizes; the extra 1cm is a fixed nudge on top of it. Only the video moves —
-     the text and the backlight stay put. */
+     hero. Percentage of her own height, so the gap holds across phone sizes.
+     Only the video moves — the text and the backlight stay put. */
   .landing-sticky-video.visual-hero {
-    transform: translateY(calc(-10% - 1cm));
+    transform: translateY(-13%);
   }
 
   /* Tighter halo — a glow behind her head, not a wash over the whole screen. */

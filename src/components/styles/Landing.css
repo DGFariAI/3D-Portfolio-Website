@@ -553,7 +553,7 @@ h2.landing-info-h2 {
      hero. Percentage of her own height, so the gap holds across phone sizes.
      Only the video moves — the text and the backlight stay put. */
   .landing-sticky-video.visual-hero {
-    transform: translateY(-18%);
+    transform: translateY(-10%);
   }
 
   /* Tighter halo — a glow behind her head, not a wash over the whole screen. */

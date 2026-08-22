@@ -358,7 +358,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   // offset has to stay well inside it. Wins over
                   // .character-rim.about-position in the stylesheet, so it is
                   // the number that actually moves the About glow.
-                  top: `${Math.max(0, frozenTop - 180)}px`,
+                  top: `${Math.max(0, frozenTop - 250)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
                   transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }

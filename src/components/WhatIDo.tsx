@@ -94,7 +94,7 @@ const WhatIDo = () => {
               <h4>Description</h4>
               <p>
                 I build with purpose, shaping brands and digital products that
-                carry a message — functional, scalable, and made to outlast the
+                carry a message. Functional, scalable, and made to outlast the
                 trend cycle.
               </p>
               <h5>Skillset & tools</h5>
@@ -130,7 +130,7 @@ const WhatIDo = () => {
               <h3>MARKET</h3>
               <h4>Description</h4>
               <p>
-                I take products to market through story-driven campaigns —
+                I take products to market through story-driven campaigns,
                 sharpening positioning, growing audiences, and turning attention
                 into lasting trust.
               </p>

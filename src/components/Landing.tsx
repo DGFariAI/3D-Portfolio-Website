@@ -207,6 +207,12 @@ const Landing = ({ children }: PropsWithChildren) => {
   // On mobile there is only ever the hero clip.
   const activeVisual: VisualKey = isDesktop ? activeSection : 'hero';
 
+  // How far above her centre the backlight sits. The clips are different sizes
+  // (About renders 840x778, What I Do 580x672 and then shifts up 6%) and they
+  // all sit centred in one box, so her head is lower once What I Do takes over.
+  // A single fixed lift would leave the glow hanging above her head there.
+  const rimLift = activeVisual === 'about' && !isInWhatIDo ? 250 : 140;
+
   // On mobile she is anchored inside the hero section (see Landing.css), so she
   // simply scrolls out of view — pause her once she's gone so an off-screen
   // video isn't decoding on battery.
@@ -358,7 +364,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   // offset has to stay well inside it. Wins over
                   // .character-rim.about-position in the stylesheet, so it is
                   // the number that actually moves the About glow.
-                  top: `${Math.max(0, frozenTop - 250)}px`,
+                  top: `${Math.max(0, frozenTop - rimLift)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
                   transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }

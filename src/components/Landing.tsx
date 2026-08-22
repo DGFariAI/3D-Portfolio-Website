@@ -356,7 +356,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   // Sits above the frozen character. This inline top wins over
                   // .character-rim.about-position in the stylesheet, so it is
                   // the number that actually raises or lowers the About glow.
-                  top: `${Math.max(0, frozenTop - 380)}px`,
+                  top: `${Math.max(0, frozenTop - 450)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
                   transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }

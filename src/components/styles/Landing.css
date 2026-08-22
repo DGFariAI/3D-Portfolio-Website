@@ -230,7 +230,11 @@
   opacity: 0;
   animation: backlight 1.6s ease-out forwards;
   animation-delay: 0.3s;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Everything but `top`: that is driven frame by frame to track her head, so
+     a transition on it would leave the glow permanently trailing her. */
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .character-rim.frozen {

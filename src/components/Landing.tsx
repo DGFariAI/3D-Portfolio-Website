@@ -22,6 +22,13 @@ const VISUALS: Record<VisualKey, { webm: string; poster: string }> = {
   },
 };
 
+// Backlight offsets above the frozen anchor, in px. FAR applies while the What
+// I Do section is still a full viewport away; NEAR once it is close, which is
+// when she has risen far enough that the old offset left the glow hanging above
+// her head. Between the two thresholds the lift interpolates.
+const RIM_LIFT_FAR = 250;
+const RIM_LIFT_NEAR = -20;
+
 const Landing = ({ children }: PropsWithChildren) => {
   const [isSwitched, setIsSwitched] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -35,6 +42,11 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [isPastWhatIDo, setIsPastWhatIDo] = useState(false);
   const [activeSection, setActiveSection] = useState<VisualKey>('hero');
   const [heroOffscreen, setHeroOffscreen] = useState(false);
+  // How far above the frozen anchor the backlight sits. She rises into view as
+  // What I Do approaches, so a single value cannot stay behind her head: high
+  // while About still owns the screen, then easing down onto her head as she
+  // comes up. Measured in the browser, not guessed.
+  const [rimLift, setRimLift] = useState(RIM_LIFT_FAR);
   // Mobile only ever gets the hero clip — the About and What I Do videos are
   // never mounted there, so phones don't pay their download/decode cost.
   const [isDesktop, setIsDesktop] = useState<boolean>(
@@ -119,6 +131,14 @@ const Landing = ({ children }: PropsWithChildren) => {
         const aboveViewport = rect.bottom <= 0; // scrolled past What I Do
         const belowViewport = rect.top >= window.innerHeight; // haven't reached What I Do yet
         const passedImageSwitchThreshold = rect.top < window.innerHeight * 0.4 && rect.bottom > 0; // switch slightly after middle
+
+        // Ease the backlight down onto her head as she rises into view. Uses
+        // its own thresholds: the ones above fire after the clip has already
+        // switched, far too late to matter for the About glow.
+        const vhNow = window.innerHeight;
+        const t = Math.min(1, Math.max(0, (vhNow - rect.top) / (vhNow * 0.45)));
+        const lift = Math.round(RIM_LIFT_FAR + (RIM_LIFT_NEAR - RIM_LIFT_FAR) * t);
+        setRimLift((prev) => (Math.abs(prev - lift) > 2 ? lift : prev));
 
         // Update proximity state for image switching (later threshold so About holds longer)
         setIsInWhatIDo(passedImageSwitchThreshold);
@@ -206,12 +226,6 @@ const Landing = ({ children }: PropsWithChildren) => {
   // Which character video is shown — driven by scroll position (see handler).
   // On mobile there is only ever the hero clip.
   const activeVisual: VisualKey = isDesktop ? activeSection : 'hero';
-
-  // How far above her centre the backlight sits. The clips are different sizes
-  // (About renders 840x778, What I Do 580x672 and then shifts up 6%) and they
-  // all sit centred in one box, so her head is lower once What I Do takes over.
-  // A single fixed lift would leave the glow hanging above her head there.
-  const rimLift = activeVisual === 'about' && !isInWhatIDo ? 250 : 90;
 
   // On mobile she is anchored inside the hero section (see Landing.css), so she
   // simply scrolls out of view — pause her once she's gone so an off-screen

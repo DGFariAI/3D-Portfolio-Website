@@ -99,11 +99,11 @@ const WhatIDo = () => {
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">
-                <div className="what-tags">Brand Storytelling</div>
-                <div className="what-tags">Copywriting</div>
-                <div className="what-tags">Content & Video</div>
                 <div className="what-tags">Product Strategy</div>
                 <div className="what-tags">Full-Stack Development</div>
+                <div className="what-tags">AI Integration</div>
+                <div className="what-tags">Rapid Prototyping</div>
+                <div className="what-tags">Design Systems</div>
               </div>
               <div className="what-arrow"></div>
             </div>
@@ -136,12 +136,12 @@ const WhatIDo = () => {
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">
-                <div className="what-tags">Sprint Planning</div>
-                <div className="what-tags">Communication</div>
-                <div className="what-tags">AI Integration</div>
+                <div className="what-tags">Brand Storytelling</div>
+                <div className="what-tags">Copywriting</div>
+                <div className="what-tags">Content & Video</div>
+                <div className="what-tags">Positioning</div>
                 <div className="what-tags">Data Analysis</div>
-                <div className="what-tags">Collaboration</div>
-                <div className="what-tags">Risk Management</div>
+                <div className="what-tags">Community Building</div>
               </div>
               <div className="what-arrow"></div>
             </div>

@@ -237,6 +237,19 @@ const Landing = ({ children }: PropsWithChildren) => {
     ));
   };
 
+  // The two lines trade the same pair of words at different font sizes, so the
+  // shrink-to-fit .landing-info box would resize on every switch and slide the
+  // centred text sideways. Each slot stacks the live word over a hidden copy of
+  // the other one, so its width is always the wider of the two.
+  const renderSwitchText = (live: string, other: string) => (
+    <span className="switch-text">
+      <span className="switch-text-live">{renderAnimatedText(live)}</span>
+      <span className="switch-text-ghost" aria-hidden="true">
+        {renderAnimatedText(other)}
+      </span>
+    </span>
+  );
+
   return (
     <>
       <div className="landing-section" id="landingDiv">
@@ -313,17 +326,19 @@ const Landing = ({ children }: PropsWithChildren) => {
             <h3>A Kingdom</h3>
             <h2 className="landing-info-h2">
               <div className="landing-h2-1">
-                <span className="switch-text">
-                  {renderAnimatedText(isSwitched ? 'Marketer' : 'Builder')}
-                </span>
+                {renderSwitchText(
+                  isSwitched ? 'Marketer' : 'Builder',
+                  isSwitched ? 'Builder' : 'Marketer'
+                )}
               </div>
               <div className="landing-h2-2"></div>
             </h2>
             <h2>
               <div className="landing-h2-info">
-                <span className="switch-text">
-                  {renderAnimatedText(isSwitched ? 'Builder' : 'Marketer')}
-                </span>
+                {renderSwitchText(
+                  isSwitched ? 'Builder' : 'Marketer',
+                  isSwitched ? 'Marketer' : 'Builder'
+                )}
               </div>
               <div className="landing-h2-info-1"></div>
             </h2>

@@ -566,10 +566,23 @@ h2.landing-info-h2 {
 }
 
 .switch-text {
-  display: inline-block;
+  display: inline-grid;
   min-width: max-content;
   white-space: nowrap;
   overflow: hidden;
+}
+
+/* Live word and its hidden twin share one grid cell, so the cell is always as
+   wide as the wider word and the line never reflows when they swap. */
+.switch-text-live,
+.switch-text-ghost {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+
+.switch-text-ghost {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .letter {

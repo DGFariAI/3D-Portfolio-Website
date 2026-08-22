@@ -245,9 +245,9 @@
 /* About section (desktop only: .about-position is gated on isDesktop). The
    glow sits higher behind her here than it does in the hero.
 
-   Move it with `top`, not `transform`: GSAP tweens this element (see the
-   .character-rim fromTo in GsapScroll) and writes its own inline transform,
-   which wins over anything set here. `top` and `left` it leaves alone. */
+   Note: once the freeze kicks in (which happens while About is still on
+   screen) Landing.tsx sets `top` and `transform` inline on this element, and
+   those win over everything here. The inline offset is the real lever. */
 .character-rim.about-position {
   top: 54%;
   left: 25%;

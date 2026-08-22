@@ -93,8 +93,9 @@ const WhatIDo = () => {
               <h3>BUILD</h3>
               <h4>Description</h4>
               <p>
-                I design the core of brands and digital products from marketing to software,
-                creating experiences that are functional, scalable, and memorable.
+                I build with purpose, shaping brands and digital products that
+                carry a message — functional, scalable, and made to outlast the
+                trend cycle.
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">
@@ -129,8 +130,9 @@ const WhatIDo = () => {
               <h3>MARKET</h3>
               <h4>Description</h4>
               <p>
-                I manage projects with clarity and speed, prioritizing what
-                matters and delivering excellence through agile practices.
+                I take products to market through story-driven campaigns —
+                sharpening positioning, growing audiences, and turning attention
+                into lasting trust.
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">

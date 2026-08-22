@@ -310,11 +310,11 @@ const Landing = ({ children }: PropsWithChildren) => {
             </div>
           </div>
           <div className="landing-info">
-            <h3>A Product</h3>
+            <h3>A Kingdom</h3>
             <h2 className="landing-info-h2">
               <div className="landing-h2-1">
                 <span className="switch-text">
-                  {renderAnimatedText(isSwitched ? 'Designer' : 'Manager')}
+                  {renderAnimatedText(isSwitched ? 'Marketer' : 'Builder')}
                 </span>
               </div>
               <div className="landing-h2-2"></div>
@@ -322,7 +322,7 @@ const Landing = ({ children }: PropsWithChildren) => {
             <h2>
               <div className="landing-h2-info">
                 <span className="switch-text">
-                  {renderAnimatedText(isSwitched ? 'Manager' : 'Designer')}
+                  {renderAnimatedText(isSwitched ? 'Builder' : 'Marketer')}
                 </span>
               </div>
               <div className="landing-h2-info-1"></div>

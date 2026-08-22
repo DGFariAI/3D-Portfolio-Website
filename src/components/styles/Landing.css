@@ -549,7 +549,7 @@ h2.landing-info-h2 {
     max-width: 112vw;
   }
 
-  /* Lift her clear of the "A Product" headline pinned to the bottom of the
+  /* Lift her clear of the "A Kingdom" headline pinned to the bottom of the
      hero. Percentage of her own height, so the gap holds across phone sizes.
      Only the video moves — the text and the backlight stay put. */
   .landing-sticky-video.visual-hero {

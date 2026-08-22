@@ -17,8 +17,8 @@ const VISUALS: Record<VisualKey, { webm: string; poster: string }> = {
   },
   whatido: {
     // ?v= busts stale browser/CDN caches after matte fixes — bump when the file changes
-    webm: "/videos/character/what-i-do.webm?v=10",
-    poster: "/videos/character/what-i-do-poster.webp?v=10",
+    webm: "/videos/character/what-i-do-v2.webm?v=11",
+    poster: "/videos/character/what-i-do-v2-poster.webp?v=11",
   },
 };
 

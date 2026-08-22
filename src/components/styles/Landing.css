@@ -558,9 +558,9 @@ h2.landing-info-h2 {
 
   /* Tighter halo — a glow behind her head, not a wash over the whole screen. */
   .character-rim {
-    width: 200px;
-    height: 200px;
-    filter: blur(38px);
+    width: 175px;
+    height: 175px;
+    filter: blur(34px);
     transform: translate(-50%, -30%) scale(1);
   }
 }

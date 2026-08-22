@@ -6,7 +6,7 @@ const About = () => {
       <div className="about-me">
         <h3 className="title">About Me</h3>
         <p className="para">
-          I'm a product manager & designer with a passion for bringing visions
+          I'm a kingdom builder & marketer with a passion for bringing visions
           to life. Driven by purpose, I always aim to create meaningful solutions
           and deliver lasting impact.
         </p>

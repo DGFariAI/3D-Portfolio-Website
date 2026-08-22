@@ -1,7 +1,15 @@
 import { MdArrowOutward, MdCopyright } from "react-icons/md";
 import "./styles/Contact.css";
 
+const LAUNCH_YEAR = 2025;
+
 const Contact = () => {
+  // Shows "2025" through the launch year and "2025-2026", "2025-2027" and so
+  // on after it, so the footer never goes stale on its own.
+  const thisYear = new Date().getFullYear();
+  const copyrightYears =
+    thisYear > LAUNCH_YEAR ? `${LAUNCH_YEAR}-${thisYear}` : `${LAUNCH_YEAR}`;
+
   return (
     <div className="contact-section section-container" id="contact">
       <div className="contact-container">
@@ -62,10 +70,10 @@ const Contact = () => {
           </div>
           <div className="contact-box">
             <h2>
-              Designed and Developed <br /> by <span>DGFari</span>
+              Designed and Developed <br /> by <span>Danica Gabriella</span>
             </h2>
             <h5>
-              <MdCopyright /> 2025-2026
+              <MdCopyright /> {copyrightYears}
             </h5>
           </div>
         </div>

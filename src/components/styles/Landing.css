@@ -243,11 +243,15 @@
 }
 
 /* About section (desktop only: .about-position is gated on isDesktop). The
-   glow sits higher behind her here than it does in the hero. */
+   glow sits higher behind her here than it does in the hero.
+
+   Move it with `top`, not `transform`: GSAP tweens this element (see the
+   .character-rim fromTo in GsapScroll) and writes its own inline transform,
+   which wins over anything set here. `top` and `left` it leaves alone. */
 .character-rim.about-position {
-  top: 60%;
+  top: 54%;
   left: 25%;
-  transform: translate(-50%, -40%) scale(1.35);
+  transform: translate(-50%, -28%) scale(1.35);
 }
 .character-model {
   height: 80%;

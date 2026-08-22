@@ -8,16 +8,17 @@ type VisualKey = "hero" | "about" | "whatido";
 // background box. Ping-pong looped so the restart is imperceptible.
 const VISUALS: Record<VisualKey, { webm: string; poster: string }> = {
   hero: {
-    webm: "/videos/character/hero.webm",
-    poster: "/videos/character/hero-poster.webp",
+    webm: "/videos/character/hero.webm?v=8",
+    poster: "/videos/character/hero-poster.webp?v=8",
   },
   about: {
     webm: "/videos/character/about.webm",
     poster: "/videos/character/about-poster.webp",
   },
   whatido: {
-    webm: "/videos/character/what-i-do.webm",
-    poster: "/videos/character/what-i-do-poster.webp",
+    // ?v= busts stale browser/CDN caches after matte fixes — bump when the file changes
+    webm: "/videos/character/what-i-do.webm?v=10",
+    poster: "/videos/character/what-i-do-poster.webp?v=10",
   },
 };
 
@@ -33,6 +34,12 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [hideBelowWhat, setHideBelowWhat] = useState(false);
   const [isPastWhatIDo, setIsPastWhatIDo] = useState(false);
   const [activeSection, setActiveSection] = useState<VisualKey>('hero');
+  const [heroOffscreen, setHeroOffscreen] = useState(false);
+  // Mobile only ever gets the hero clip — the About and What I Do videos are
+  // never mounted there, so phones don't pay their download/decode cost.
+  const [isDesktop, setIsDesktop] = useState<boolean>(
+    () => typeof window !== 'undefined' && window.innerWidth > 1024
+  );
   const videoRefs = useRef<Partial<Record<VisualKey, HTMLVideoElement | null>>>({});
   const hasFrozenRef = useRef(false);
   const frozenTopRef = useRef<number | null>(null);
@@ -44,6 +51,14 @@ const Landing = ({ children }: PropsWithChildren) => {
     content: HTMLElement | null;
     container: HTMLElement | null;
   } | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1025px)');
+    const onChange = () => setIsDesktop(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -67,7 +82,7 @@ const Landing = ({ children }: PropsWithChildren) => {
 
   useEffect(() => {
     // Ensure landing scroll fade/pin is initialized
-    const cleanupFade = setLandingFadeTimeline();
+    const cleanupFade = setLandingFadeTimeline(isDesktop);
 
     const readEls = () => {
       if (!cachedElsRef.current) {
@@ -144,6 +159,13 @@ const Landing = ({ children }: PropsWithChildren) => {
 
       // Deterministic active character based purely on scroll position, so the
       // right video always shows and it's symmetric scrolling up or down.
+      // The landing section ends where About begins — once that edge passes the
+      // top of the viewport the mobile character is fully scrolled away.
+      if (aboutSection) {
+        const past = aboutSection.getBoundingClientRect().top <= 0;
+        setHeroOffscreen((prev) => (prev === past ? prev : past));
+      }
+
       const vh = window.innerHeight;
       let section: VisualKey = 'hero';
       if (aboutSection && aboutSection.getBoundingClientRect().top < vh * 0.6) section = 'about';
@@ -166,7 +188,7 @@ const Landing = ({ children }: PropsWithChildren) => {
       window.removeEventListener('scroll', handleScroll);
       if (typeof cleanupFade === 'function') cleanupFade();
     };
-  }, [isInAboutSection]);
+  }, [isInAboutSection, isDesktop]);
 
   useEffect(() => {
     const onFadeComplete = () => setHasFadedOut(true);
@@ -180,20 +202,26 @@ const Landing = ({ children }: PropsWithChildren) => {
   }, []);
 
   // Drop About positioning as soon as What I Do threshold is reached so switch occurs centered
-  const aboutReady = isInAboutSection && hasFadedOut && !isInWhatIDo;
+  const aboutReady = isDesktop && isInAboutSection && hasFadedOut && !isInWhatIDo;
 
-  // Which character video is shown — driven by scroll position (see handler)
-  const activeVisual: VisualKey = activeSection;
+  // Which character video is shown — driven by scroll position (see handler).
+  // On mobile there is only ever the hero clip.
+  const activeVisual: VisualKey = isDesktop ? activeSection : 'hero';
+
+  // On mobile she is anchored inside the hero section (see Landing.css), so she
+  // simply scrolls out of view — pause her once she's gone so an off-screen
+  // video isn't decoding on battery.
+  const mobileParked = !isDesktop && heroOffscreen;
 
   // Only play the visible section's clip to save CPU/battery
   useEffect(() => {
     (Object.keys(VISUALS) as VisualKey[]).forEach((key) => {
       const v = videoRefs.current[key];
       if (!v) return;
-      if (key === activeVisual) v.play().catch(() => {});
+      if (key === activeVisual && !mobileParked) v.play().catch(() => {});
       else v.pause();
     });
-  }, [activeVisual]);
+  }, [activeVisual, mobileParked]);
 
   const renderAnimatedText = (text: string) => {
     return text.split('').map((letter, index) => (
@@ -222,9 +250,9 @@ const Landing = ({ children }: PropsWithChildren) => {
             </h1>
           </div>
           <div
-            className={`landing-sticky-visual ${aboutReady ? 'about-position' : ''} ${hideBelowWhat ? 'hide-below-what' : ''} ${isFrozen ? 'frozen' : ''}`}
+            className={`landing-sticky-visual ${aboutReady ? 'about-position' : ''} ${hideBelowWhat ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
           style={
-            isFrozen && frozenTop !== null
+            isDesktop && isFrozen && frozenTop !== null
               ? {
                   top: `${frozenTop}px`,
                   transform: activeVisual === 'whatido'
@@ -236,7 +264,7 @@ const Landing = ({ children }: PropsWithChildren) => {
           }
           >
             <div className="character-tilt">
-              {(['hero', 'about'] as VisualKey[]).map((key) => (
+              {(isDesktop ? (['hero', 'about'] as VisualKey[]) : (['hero'] as VisualKey[])).map((key) => (
                 <video
                   key={key}
                   ref={(el) => {
@@ -256,6 +284,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                 />
               ))}
               {/* What I Do: transparent cutout + a small floor-light beneath her */}
+              {isDesktop && (
               <div
                 className={`landing-sticky-video visual-whatido whatido-wrap ${
                   activeVisual === 'whatido' ? 'active' : ''
@@ -277,6 +306,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   disablePictureInPicture
                 />
               </div>
+              )}
             </div>
           </div>
           <div className="landing-info">
@@ -300,9 +330,9 @@ const Landing = ({ children }: PropsWithChildren) => {
           </div>
         </div>
         <div
-          className={`character-rim ${aboutReady ? 'about-position' : ''} ${hideBelowWhat || activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isFrozen ? 'frozen' : ''}`}
+          className={`character-rim ${aboutReady ? 'about-position' : ''} ${hideBelowWhat || activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
           style={
-            isFrozen && frozenTop !== null
+            isDesktop && isFrozen && frozenTop !== null
               ? {
                   top: `${Math.max(0, frozenTop - 300)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,

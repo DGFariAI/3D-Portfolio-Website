@@ -522,6 +522,42 @@ h2.landing-info-h2 {
   }
 }
 
+/* Mobile / tablet: the character belongs to the hero section. Anchoring her
+   absolutely inside .landing-container (instead of fixed to the viewport)
+   means she scrolls away with the hero instead of tracking the page down over
+   About and What I Do. Desktop keeps the fixed, section-tracking behaviour. */
+@media screen and (max-width: 1024px) {
+  .landing-sticky-visual,
+  .landing-sticky-visual.frozen {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .character-rim,
+  .character-rim.frozen {
+    position: absolute;
+  }
+
+  /* She carries the whole hero on a phone (the About and What I Do clips don't
+     mount here), so give her the width to do it. Overrides the base
+     `max-width: 95vw` cap as well as the width. */
+  .landing-sticky-video,
+  .landing-sticky-video.visual-hero {
+    width: 130vw;
+    max-width: 130vw;
+  }
+
+  /* Tighter halo — a glow behind her head, not a wash over the whole screen. */
+  .character-rim {
+    width: 200px;
+    height: 200px;
+    filter: blur(38px);
+    transform: translate(-50%, -30%) scale(1);
+  }
+}
+
 .switch-text {
   display: inline-block;
   min-width: max-content;

@@ -40,10 +40,14 @@ const Work = () => {
     ease: "none",
   });
 
-  // Clean up (optional, good practice)
+  // Clean up. kill(true) REVERTS the pin, which unwraps the .pin-spacer this
+  // trigger injected around .work-section. Without the revert flag the spacer
+  // is left in the DOM, and the next mount (React StrictMode double-invokes
+  // effects in dev) wraps a second spacer around the stale one — the nested
+  // pair overflows the page and gives .main-body its own scrollbar.
   return () => {
+    ScrollTrigger.getById("work")?.kill(true);
     timeline.kill();
-    ScrollTrigger.getById("work")?.kill();
   };
 }, []);
   return (

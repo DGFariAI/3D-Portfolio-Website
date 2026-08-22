@@ -257,29 +257,45 @@ export function setWhatIDoTimeline() {
   );
 }
 
-// Sets up the landing text fade and pinned state independently of the 3D character
-export function setLandingFadeTimeline() {
+// Sets up the landing text fade and pinned state independently of the 3D character.
+// Both the pin and the scroll fade are desktop-only. On desktop the intro/info
+// blocks are held at a fixed viewport position and dissolved as you scroll past.
+// On a phone that reads as the text sliding down the page and then vanishing, so
+// mobile does neither — the text simply scrolls away with the hero section.
+export function setLandingFadeTimeline(isDesktop: boolean = window.innerWidth > 1024) {
   gsap.registerPlugin(ScrollTrigger);
 
   let hasDispatchedFadeComplete = false;
 
+  // Clear any inline opacity/visibility a previous desktop-width init left behind.
+  if (!isDesktop) {
+    gsap.set([".landing-intro", ".landing-info"], {
+      clearProps: "opacity,visibility",
+    });
+  }
+
   // Pin the intro and info blocks without adding pin spacing
-  const pinIntro = ScrollTrigger.create({
-    trigger: ".landing-section",
-    start: "top top",
-    end: "bottom top",
-    pin: ".landing-intro",
-    pinSpacing: false,
-    anticipatePin: 1,
-  });
-  const pinInfo = ScrollTrigger.create({
-    trigger: ".landing-section",
-    start: "top top",
-    end: "bottom top",
-    pin: ".landing-info",
-    pinSpacing: false,
-    anticipatePin: 1,
-  });
+  const pins: ScrollTrigger[] = [];
+  if (isDesktop) {
+    pins.push(
+      ScrollTrigger.create({
+        trigger: ".landing-section",
+        start: "top top",
+        end: "bottom top",
+        pin: ".landing-intro",
+        pinSpacing: false,
+        anticipatePin: 1,
+      }),
+      ScrollTrigger.create({
+        trigger: ".landing-section",
+        start: "top top",
+        end: "bottom top",
+        pin: ".landing-info",
+        pinSpacing: false,
+        anticipatePin: 1,
+      })
+    );
+  }
 
   const st = ScrollTrigger.create({
     trigger: ".landing-section",
@@ -300,7 +316,9 @@ export function setLandingFadeTimeline() {
       const progress = self.progress;
       const fadeProgress = Math.min(progress / 0.4, 1);
       const opacity = 1 - fadeProgress;
-      gsap.set([".landing-intro", ".landing-info"], { autoAlpha: opacity });
+      if (isDesktop) {
+        gsap.set([".landing-intro", ".landing-info"], { autoAlpha: opacity });
+      }
 
       if (!hasDispatchedFadeComplete && opacity <= 0.01) {
         hasDispatchedFadeComplete = true;
@@ -316,7 +334,8 @@ export function setLandingFadeTimeline() {
 
   return () => {
     st.kill();
-    pinIntro.kill();
-    pinInfo.kill();
+    // kill(true) reverts the pin so GSAP unwraps the .pin-spacer it injected —
+    // without it the stale spacers pile up on every re-init.
+    pins.forEach((pin) => pin.kill(true));
   };
 }

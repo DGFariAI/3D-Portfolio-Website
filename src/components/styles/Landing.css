@@ -184,7 +184,7 @@
    left and up. Its floor light is the .whatido-floor-glow element below. */
 .landing-sticky-video.visual-whatido {
   width: min(560px, 78vw);
-  transform: translate(-11%, -13%);
+  transform: translate(-11%, -20%);
 }
 .whatido-wrap {
   position: relative;
@@ -196,15 +196,16 @@
   position: relative;
   z-index: 1;
 }
-/* Small backlight behind her head. Placed from the clip's own alpha channel:
-   her head sits at 32% across and 16% down the frame, so the glow tracks her
-   automatically at any size the video is rendered. */
+/* Backlight behind her head and shoulders. Sized from the clip's own alpha:
+   her head runs from 6% to 30% down the frame and her shoulders widen through
+   36%, where the white chair and desk begin. The ellipse stops there so it
+   lights her, not the chair. Percentages, so it tracks any rendered size. */
 .whatido-head-glow {
   position: absolute;
-  left: 32%;
-  top: 16%;
-  width: 38%;
-  aspect-ratio: 1;
+  left: 30%;
+  top: 20%;
+  width: 50%;
+  height: 40%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(

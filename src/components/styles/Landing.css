@@ -572,24 +572,38 @@ h2.landing-info-h2 {
   overflow: hidden;
 }
 
-/* Live word and its hidden twin share one grid cell, so the cell is always as
-   wide as the wider word and the line never reflows when they swap. */
-.switch-text-live,
-.switch-text-ghost {
+/* Both words of a pair share one grid cell, so the cell is always as wide as
+   the wider word and the line never reflows when they swap. */
+.switch-word {
   grid-area: 1 / 1;
   white-space: nowrap;
+  pointer-events: none;
 }
 
-.switch-text-ghost {
-  visibility: hidden;
-  pointer-events: none;
+/* The switch itself: the spent word rises out of the cell as the next one
+   rises in from below, letter by letter. Neither ever changes character while
+   it is visible. */
+.switch-word.is-active .letter {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.switch-word.is-leaving .letter {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.switch-word.is-parked .letter {
+  transform: translateY(100%);
+  opacity: 0;
 }
 
 .letter {
   display: inline-block;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(0);
   opacity: 1;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease;
 }
 
 .word-container {
@@ -602,26 +616,3 @@ h2.landing-info-h2 {
   width: 8px;
 }
 
-/* Animation for letter switching */
-@keyframes letterSwitch {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  30% {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  70% {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.letter.switching {
-  animation: letterSwitch 0.8s ease-in-out forwards;
-}

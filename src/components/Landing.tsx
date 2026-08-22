@@ -63,14 +63,13 @@ const Landing = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (!isAnimating) {
+        // Both flip in the same tick: the outgoing word starts leaving at the
+        // exact moment the incoming one starts arriving.
         setIsAnimating(true);
-        
-        // Change text early in the animation (while letters are going up)
-        setTimeout(() => {
-          setIsSwitched(prev => !prev);
-        }, 200); // Switch at 25% of animation (200ms of 800ms)
-        
-        // Reset animation state after completion
+        setIsSwitched(prev => !prev);
+
+        // Long enough for the last letter (0.05s stagger) to finish its 0.4s
+        // move before the spent word is parked back below.
         setTimeout(() => {
           setIsAnimating(false);
         }, 800);
@@ -223,30 +222,35 @@ const Landing = ({ children }: PropsWithChildren) => {
     });
   }, [activeVisual, mobileParked]);
 
-  const renderAnimatedText = (text: string) => {
-    return text.split('').map((letter, index) => (
-      <span
-        key={index}
-        className={`letter ${isAnimating ? 'switching' : ''}`}
-        style={{
-          animationDelay: `${index * 0.05}s`
-        }}
-      >
-        {letter}
-      </span>
-    ));
-  };
+  // One word of a switching pair. Keyed by its own text so React keeps each
+  // word on its own DOM node across a switch — a word never rewrites itself
+  // into the other one mid-flight, it only changes state.
+  const renderWord = (text: string, state: 'active' | 'leaving' | 'parked') => (
+    <span
+      key={text}
+      className={`switch-word is-${state}`}
+      aria-hidden={state !== 'active'}
+    >
+      {text.split('').map((letter, index) => (
+        <span
+          key={index}
+          className="letter"
+          style={{ transitionDelay: `${index * 0.05}s` }}
+        >
+          {letter}
+        </span>
+      ))}
+    </span>
+  );
 
-  // The two lines trade the same pair of words at different font sizes, so the
-  // shrink-to-fit .landing-info box would resize on every switch and slide the
-  // centred text sideways. Each slot stacks the live word over a hidden copy of
-  // the other one, so its width is always the wider of the two.
+  // Both words of a pair stay mounted, stacked in one grid cell. That keeps the
+  // cell as wide as the wider word — the shrink-to-fit, centre-anchored
+  // .landing-info would otherwise slide sideways on every switch — and lets the
+  // outgoing word rise out while the incoming one rises in behind it.
   const renderSwitchText = (live: string, other: string) => (
     <span className="switch-text">
-      <span className="switch-text-live">{renderAnimatedText(live)}</span>
-      <span className="switch-text-ghost" aria-hidden="true">
-        {renderAnimatedText(other)}
-      </span>
+      {renderWord(live, 'active')}
+      {renderWord(other, isAnimating ? 'leaving' : 'parked')}
     </span>
   );
 

@@ -353,10 +353,12 @@ const Landing = ({ children }: PropsWithChildren) => {
           style={
             isDesktop && isFrozen && frozenTop !== null
               ? {
-                  // Sits above the frozen character. This inline top wins over
+                  // Behind her head, not above it. frozenTop is her centre and
+                  // the video frame is only ~330px tall above that, so this
+                  // offset has to stay well inside it. Wins over
                   // .character-rim.about-position in the stylesheet, so it is
-                  // the number that actually raises or lowers the About glow.
-                  top: `${Math.max(0, frozenTop - 450)}px`,
+                  // the number that actually moves the About glow.
+                  top: `${Math.max(0, frozenTop - 180)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
                   transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }

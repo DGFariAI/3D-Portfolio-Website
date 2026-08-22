@@ -183,8 +183,8 @@
 /* What I Do is a transparent cutout (character, desk, PC, keyboard), nudged
    left and up. Its floor light is the .whatido-floor-glow element below. */
 .landing-sticky-video.visual-whatido {
-  width: min(500px, 72vw);
-  transform: translate(-15%, -14%);
+  width: min(560px, 78vw);
+  transform: translate(-11%, -13%);
 }
 .whatido-wrap {
   position: relative;

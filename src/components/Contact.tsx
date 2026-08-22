@@ -62,10 +62,10 @@ const Contact = () => {
           </div>
           <div className="contact-box">
             <h2>
-              Designed and Developed <br /> by <span>Danica Gabriella</span>
+              Designed and Developed <br /> by <span>DGFari</span>
             </h2>
             <h5>
-              <MdCopyright /> 2025
+              <MdCopyright /> 2025-2026
             </h5>
           </div>
         </div>

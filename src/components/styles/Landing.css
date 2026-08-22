@@ -541,12 +541,12 @@ h2.landing-info-h2 {
   }
 
   /* She carries the whole hero on a phone (the About and What I Do clips don't
-     mount here), so give her the width to do it. Overrides the base
-     `max-width: 95vw` cap as well as the width. */
+     mount here), but at 130vw she overflowed the screen edges. Keep her within
+     the viewport. Overrides the base `max-width: 95vw` cap as well. */
   .landing-sticky-video,
   .landing-sticky-video.visual-hero {
-    width: 130vw;
-    max-width: 130vw;
+    width: 100vw;
+    max-width: 100vw;
   }
 
   /* Tighter halo — a glow behind her head, not a wash over the whole screen. */

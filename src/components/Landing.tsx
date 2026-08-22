@@ -211,7 +211,7 @@ const Landing = ({ children }: PropsWithChildren) => {
   // (About renders 840x778, What I Do 580x672 and then shifts up 6%) and they
   // all sit centred in one box, so her head is lower once What I Do takes over.
   // A single fixed lift would leave the glow hanging above her head there.
-  const rimLift = activeVisual === 'about' && !isInWhatIDo ? 250 : 140;
+  const rimLift = activeVisual === 'about' && !isInWhatIDo ? 250 : 90;
 
   // On mobile she is anchored inside the hero section (see Landing.css), so she
   // simply scrolls out of view — pause her once she's gone so an off-screen

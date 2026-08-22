@@ -90,7 +90,7 @@ const WhatIDo = () => {
             <div className="what-corner"></div>
 
             <div className="what-content-in">
-              <h3>DESIGN</h3>
+              <h3>BUILD</h3>
               <h4>Description</h4>
               <p>
                 I design the core of brands and digital products from marketing to software,
@@ -126,7 +126,7 @@ const WhatIDo = () => {
             </div>
             <div className="what-corner"></div>
             <div className="what-content-in">
-              <h3>MANAGE</h3>
+              <h3>MARKET</h3>
               <h4>Description</h4>
               <p>
                 I manage projects with clarity and speed, prioritizing what

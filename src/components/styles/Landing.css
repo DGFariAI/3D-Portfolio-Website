@@ -545,15 +545,15 @@ h2.landing-info-h2 {
      the 130vw this used to be. Overrides the base `max-width: 95vw` cap too. */
   .landing-sticky-video,
   .landing-sticky-video.visual-hero {
-    width: 114vw;
-    max-width: 114vw;
+    width: 112vw;
+    max-width: 112vw;
   }
 
   /* Lift her clear of the "A Product" headline pinned to the bottom of the
      hero. Percentage of her own height, so the gap holds across phone sizes.
      Only the video moves — the text and the backlight stay put. */
   .landing-sticky-video.visual-hero {
-    transform: translateY(-13%);
+    transform: translateY(-11%);
   }
 
   /* Tighter halo — a glow behind her head, not a wash over the whole screen. */

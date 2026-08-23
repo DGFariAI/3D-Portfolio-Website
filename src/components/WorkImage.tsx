@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
 
 interface Props {
@@ -10,22 +10,42 @@ interface Props {
 }
 
 const WorkImage = (props: Props) => {
-  const [isVideo, setIsVideo] = useState(!!props.video);
-  const [video, setVideo] = useState(props.video || "");
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  // Whether this card's video may start loading at all. Every card used to
+  // mount its <video> with preload="auto" on first render, so a single page
+  // visit began fetching all six work clips at once. They are large, so that
+  // was hundreds of megabytes of traffic before the visitor had scrolled
+  // anywhere near the Work section.
+  const [shouldLoad, setShouldLoad] = useState(false);
 
-  const handleMouseEnter = () => {
-    if (props.video) {
-      setIsVideo(true);
-      setVideo(props.video);
+  useEffect(() => {
+    if (!props.video || !wrapRef.current) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setShouldLoad(true);
+      return;
     }
-  };
+
+    const el = wrapRef.current;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      // Start a little before the card is on screen so it is playing by the
+      // time it is actually looked at.
+      { rootMargin: "300px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [props.video]);
 
   return (
-    <div className="work-image">
+    <div className="work-image" ref={wrapRef}>
       <a
         className="work-image-in"
         href={props.link}
-        onMouseEnter={handleMouseEnter}
         target="_blank"
         rel="noopener noreferrer"
         data-cursor={"disable"}
@@ -35,25 +55,28 @@ const WorkImage = (props: Props) => {
             <MdArrowOutward />
           </div>
         )}
-        <img src={props.image} alt={props.alt} />
-        {isVideo && video && (
+        <img src={props.image} alt={props.alt} loading="lazy" />
+        {props.video && shouldLoad && (
           <video
-            src={video}
+            src={props.video}
             autoPlay
             muted
             playsInline
             loop
-            preload="auto"
-            onError={() => setIsVideo(false)}
+            preload="metadata"
+            onError={(e) => {
+              // Leave the placeholder image in place if the clip cannot play.
+              (e.currentTarget as HTMLVideoElement).style.display = "none";
+            }}
             style={{
-              position: 'absolute',
-              width: '120%',
-              height: '100%',
+              position: "absolute",
+              width: "120%",
+              height: "100%",
               top: 0,
               left: props.videoLeft || 0,
-              backgroundColor: '#000',
-              objectFit: 'cover',
-              zIndex: 1
+              backgroundColor: "#000",
+              objectFit: "cover",
+              zIndex: 1,
             }}
           />
         )}

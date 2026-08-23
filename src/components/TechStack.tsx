@@ -13,14 +13,14 @@ import {
 
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
-  "/images/ChatGPT.svg",
-  "/images/CapCut.svg",
-  "/images/Claude.svg",
-  "/images/Canva.svg",
-  "/images/HeyGen.svg",
-  "/images/ClickUp.svg",
-  "/images/Gemini.svg",
-  "/images/Dreamina.svg",
+  "/images/ChatGPT.png",
+  "/images/CapCut.png",
+  "/images/Claude.png",
+  "/images/Canva.png",
+  "/images/HeyGen.png",
+  "/images/ClickUp.png",
+  "/images/Gemini.png",
+  "/images/Dreamina.png",
 ];
 const textures = imageUrls.map((url) => textureLoader.load(url));
 

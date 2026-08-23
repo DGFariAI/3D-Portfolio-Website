@@ -3,9 +3,13 @@ import "./App.css";
 import MainContainer from "./components/MainContainer";
 import Loading from "./components/Loading";
 import { LoadingProvider, useLoading } from "./context/LoadingProvider";
+import { useDeviceTier } from "./hooks/useDeviceTier";
 
 const AppContent = () => {
   const { isLoading, setLoading } = useLoading();
+  // Publishes tier-high / tier-medium / tier-low on <html> so the stylesheets
+  // can scale their own expensive effects to the device.
+  useDeviceTier();
   useEffect(() => {
     setLoading(100);
   }, [setLoading]);

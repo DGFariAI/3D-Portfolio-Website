@@ -148,3 +148,45 @@ html {
     font-size: 40px;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Device tiers. <html> carries tier-high / tier-medium / tier-low, set from the
+   visitor's own hardware (see hooks/useDeviceTier).
+
+   Nothing here hides an element or removes a feature: the same glows, the same
+   layout, the same sections. Large blur radii are resolved by the compositor
+   every frame they change, so on weak hardware they are the single most
+   expensive decoration on the page. These rules soften them rather than
+   dropping them, and park the purely decorative infinite rotations, which are
+   invisible on a radially symmetric blur but cost a repaint forever.
+   --------------------------------------------------------------------------- */
+.tier-low .landing-circle1,
+.tier-low .landing-circle2 {
+  filter: blur(34px);
+  animation: none;
+}
+
+.tier-medium .landing-circle1,
+.tier-medium .landing-circle2 {
+  filter: blur(44px);
+}
+
+.tier-low .character-rim {
+  filter: blur(32px);
+}
+
+.tier-low .whatido-head-glow {
+  filter: blur(18px);
+}
+
+.tier-low .whatido-floor-glow {
+  filter: blur(14px);
+}
+
+/* Honour the platform preference everywhere, not just in the tier logic. */
+@media (prefers-reduced-motion: reduce) {
+  .landing-circle1,
+  .landing-circle2 {
+    animation: none;
+  }
+}

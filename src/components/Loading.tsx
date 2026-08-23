@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import "./styles/Loading.css";
 import { useLoading } from "../context/LoadingProvider";
+import { detectDeviceTier, introPace } from "../hooks/useDeviceTier";
+
+// The intro's timings are pacing, not work. A capable machine keeps the full
+// cinematic reveal; a slow one has already made the visitor wait to get here,
+// so it hands over the page almost immediately.
+const PACE = introPace(detectDeviceTier());
+const paced = (ms: number) => Math.round(ms * PACE);
 
 const Loading = () => {
   const { setIsLoading, loading } = useLoading();
@@ -15,8 +22,8 @@ const Loading = () => {
         setLoaded(true);
         setTimeout(() => {
           setIsLoaded(true);
-        }, 1000); // Balanced delay
-      }, 800); // Balanced delay
+        }, paced(1000));
+      }, paced(800));
     }
   }, [loading]);
 
@@ -28,11 +35,11 @@ const Loading = () => {
           if (module.initialFX) {
             module.initialFX();
           }
-          // Wait for the loading-clicked transition to complete before hiding loading screen
+          // Let the reveal transition finish before the screen is torn down.
           setTimeout(() => {
             setIsLoading(false);
-          }, 700); // Balanced timing - not too fast, not too slow
-        }, 700); // Balanced timing - not too fast, not too slow
+          }, paced(700));
+        }, paced(700));
       });
     }
   }, [isLoaded, loading, setIsLoading]);

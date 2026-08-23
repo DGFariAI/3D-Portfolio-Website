@@ -6,6 +6,60 @@ import { useEffect } from "react";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// One row per card. This replaced six parallel chains of index ternaries, where
+// adding or reordering a project meant editing the same index in six places and
+// any mismatch silently paired the wrong copy with the wrong clip.
+const PROJECTS = [
+  {
+    title: "OmniGenesis",
+    category: "Agentic AI SaaS Startup",
+    tools: "Tailwind CSS, Node.js, Express, MongoDB",
+    video: "/videos/OmniGenesis.mp4",
+    poster: "/images/posters/OmniGenesis.webp",
+    videoLeft: -1,
+  },
+  {
+    title: "DGFari Learn",
+    category: "Personal Development Blog",
+    tools: "Python, Flask, Werkzeug, Jinja2",
+    video: "/videos/DGFari Learn.mp4",
+    poster: "/images/posters/DGFari Learn.webp",
+    videoLeft: -30,
+  },
+  {
+    title: "N.O.V.A.",
+    category: "AI Product Analytics",
+    tools: "HTML5, CSS3, Vanilla JS, Chart.js",
+    video: "/videos/NOVA.mp4",
+    poster: "/images/posters/NOVA.webp",
+    videoLeft: -30,
+  },
+  {
+    title: "EcoCity",
+    category: "Gamified Green Mobility App",
+    tools: "React, TypeScript, Vite, Supabase",
+    video: "/videos/EcoCity.mp4",
+    poster: "/images/posters/EcoCity.webp",
+    videoLeft: -30,
+  },
+  {
+    title: "Simple Charm",
+    category: "Luxury E-Commerce Brand",
+    tools: "Pantheon, SureCart, Tidio, Mailchimp",
+    video: "/videos/Simple Charm.mp4",
+    poster: "/images/posters/Simple Charm.webp",
+    videoLeft: -30,
+  },
+  {
+    title: "Phoenix",
+    category: "Burnout Companion",
+    tools: "Blender, HTML, CSS, JavaScript",
+    video: "/videos/Phoenix.mp4",
+    poster: "/images/posters/Phoenix.webp",
+    videoLeft: -30,
+  },
+];
+
 const Work = () => {
   useEffect(() => {
   let translateX: number = 0;
@@ -57,25 +111,25 @@ const Work = () => {
           My <span>Work</span>
         </h2>
         <div className="work-flex">
-          {[...Array(6)].map((_value, index) => (
-            <div className="work-box" key={index}>
+          {PROJECTS.map((project, index) => (
+            <div className="work-box" key={project.title}>
               <div className="work-info">
                 <div className="work-title">
                   <h3>0{index + 1}</h3>
 
                   <div>
-                    <h4>{index === 0 ? "OmniGenesis" : index === 1 ? "DGFari Learn" : index === 2 ? "N.O.V.A." : index === 3 ? "EcoCity" : index === 4 ? "Simple Charm" : index === 5 ? "Phoenix" : "Project Name"}</h4>
-                    <p>{index === 0 ? "Agentic AI SaaS Startup" : index === 1 ? "Personal Development Blog" : index === 2 ? "AI Product Analytics" : index === 3 ? "Gamified Green Mobility App" : index === 4 ? "Luxury E-Commerce Brand" : index === 5 ? "Burnout Companion" : "Category"}</p>
+                    <h4>{project.title}</h4>
+                    <p>{project.category}</p>
                   </div>
                 </div>
                 <h4>Tools and features</h4>
-                <p>{index === 0 ? "Tailwind CSS, Node.js, Express, MongoDB" : index === 1 ? "Python, Flask, Werkzeug, Jinja2" : index === 2 ? "HTML5, CSS3, Vanilla JS, Chart.js" : index === 3 ? "React, TypeScript, Vite, Supabase" : index === 4 ? "Pantheon, SureCart, Tidio, Mailchimp" : index === 5 ? "Blender, HTML, CSS, JavaScript" : "Javascript, TypeScript, React, Threejs"}</p>
+                <p>{project.tools}</p>
               </div>
               <WorkImage
-                image="/images/placeholder.webp"
-                alt=""
-                video={index === 0 ? "/videos/OmniGenesis.mp4" : index === 1 ? "/videos/DGFari Learn.mp4" : index === 2 ? "/videos/NOVA.mp4" : index === 3 ? "/videos/EcoCity.mp4" : index === 4 ? "/videos/Simple Charm.mp4" : index === 5 ? "/videos/Phoenix.mp4" : undefined}
-                videoLeft={index === 0 ? -1 : index === 1 ? -30 : index === 2 ? -30 : index === 3 ? -30 : index === 4 ? -30 : index === 5 ? -30 : 0}
+                image={project.poster}
+                alt={`${project.title} preview`}
+                video={project.video}
+                videoLeft={project.videoLeft}
               />
             </div>
           ))}

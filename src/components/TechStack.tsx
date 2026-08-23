@@ -10,6 +10,7 @@ import {
   CylinderCollider,
   RapierRigidBody,
 } from "@react-three/rapier";
+import { sceneQuality, useDeviceTier } from "../hooks/useDeviceTier";
 
 const textureLoader = new THREE.TextureLoader();
 const imageUrls = [
@@ -26,6 +27,8 @@ const textures = imageUrls.map((url) => textureLoader.load(url));
 
 const sphereGeometry = new THREE.SphereGeometry(1, 28, 28);
 
+// The full set. Weaker devices simulate a subset of these rather than losing
+// the section: same scene, fewer rigid bodies to solve each frame.
 const spheres = [...Array(30)].map(() => ({
   scale: [0.7, 1, 0.8, 1, 1][Math.floor(Math.random() * 5)],
 }));
@@ -170,12 +173,24 @@ const TechStack = () => {
     );
   }, []);
 
+  const tier = useDeviceTier();
+  const quality = sceneQuality(tier);
+  const visibleSpheres = useMemo(
+    () => spheres.slice(0, quality.sphereCount),
+    [quality.sphereCount]
+  );
+
   return (
     <div className="techstack">
       <h2> My Techstack</h2>
 
       <Canvas
-        shadows
+        // Quality is chosen from the device's own capability rather than fixed.
+        // Uncapped, dpr follows devicePixelRatio, so a phone would render this
+        // scene at 3x resolution: the most expensive possible setting on the
+        // least capable hardware.
+        dpr={quality.dpr}
+        shadows={quality.shadows}
         gl={{ alpha: true, stencil: false, depth: false, antialias: false }}
         camera={{ position: [0, 0, 20], fov: 32.5, near: 1, far: 100 }}
         onCreated={(state) => (state.gl.toneMappingExposure = 1.5)}
@@ -187,13 +202,13 @@ const TechStack = () => {
           penumbra={1}
           angle={0.2}
           color="white"
-          castShadow
+          castShadow={quality.shadows}
           shadow-mapSize={[512, 512]}
         />
         <directionalLight position={[0, 5, -4]} intensity={2} />
         <Physics gravity={[0, 0, 0]}>
           <Pointer isActive={isActive} />
-          {spheres.map((props, i) => (
+          {visibleSpheres.map((props, i) => (
             <SphereGeo
               key={i}
               {...props}
@@ -207,9 +222,11 @@ const TechStack = () => {
           environmentIntensity={0.5}
           environmentRotation={[0, 4, 2]}
         />
-        <EffectComposer enableNormalPass={false}>
-          <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
-        </EffectComposer>
+        {quality.ambientOcclusion && (
+          <EffectComposer enableNormalPass={false}>
+            <N8AO color="#0f002c" aoRadius={2} intensity={1.15} />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );

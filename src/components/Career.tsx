@@ -27,7 +27,7 @@ const Career = () => {
             </div>
             <p>
               Provided top-quality customer support to North American
-              retail clients, consistently exceeding expectations and 
+              retail clients, consistently exceeding expectations and
               earning recognition for performance and dedication.
             </p>
           </div>

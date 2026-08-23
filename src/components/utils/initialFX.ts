@@ -51,7 +51,7 @@ export function initialFX() {
       delay: 0.3,
     }
   );
-  
+
   gsap.fromTo(
     [".header", ".icons-section", ".nav-fade"],
     { opacity: 0 },
@@ -85,7 +85,7 @@ function LoopText(selector1: string, selector2: string) {
     ease: "power3.inOut",
     delay: delay,
   })
-    .fromTo(selector2, 
+    .fromTo(selector2,
       { y: -80, opacity: 0 },
       {
         y: 0,

@@ -100,7 +100,13 @@
   pointer-events: none;
   width: 100%;
   height: 100%;
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Deliberately not `all`. When she freezes, `position` flips fixed/absolute
+     and `top` switches reference frame in the same instant; animating `top`
+     across that made her drift to the new anchor instead of being there, which
+     read as a hesitation on the way back up. `left` and `opacity` are safe to
+     animate because they mean the same thing in both frames. */
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.45s ease;
 }
 
 .landing-sticky-visual.about-position {
@@ -375,7 +381,7 @@
 }
 
 /* .landing-intro h1 span {
-   font-weight: 200; 
+   font-weight: 200;
 } */
 
 .landing-info {

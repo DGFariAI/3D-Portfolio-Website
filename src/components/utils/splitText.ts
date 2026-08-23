@@ -38,12 +38,12 @@ export default function setSplitText() {
       }
     );
   });
-  
+
   titles.forEach((title: ParaElement) => {
     if (title.anim) {
       title.anim.progress(1).kill();
     }
-    
+
     title.anim = gsap.fromTo(
       title,
       { autoAlpha: 0, y: 80, rotate: 10 },

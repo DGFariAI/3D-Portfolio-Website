@@ -20,7 +20,7 @@ const AppContent = () => {
       root.classList.remove("no-scrollbar");
     };
   }, [isLoading]);
-  
+
   return (
     <>
       {isLoading && <Loading />}
@@ -30,67 +30,20 @@ const AppContent = () => {
 };
 
 const App = () => {
-  // Scroll to top on page refresh/reload - Enhanced version 
+  // Land at the top on every entry: reload, back/forward, and bfcache restore.
+  // This used to be four overlapping listeners plus a timeout, all racing each
+  // other and a duplicate copy in LoadingProvider. `scrollRestoration = manual`
+  // plus one handler covers the same cases.
   useEffect(() => {
-    // Disable automatic scroll restoration
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
 
-    // Immediate scroll to top - call this first
-    const scrollToTop = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
-      // Also set document level scroll position
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
-    
-    // Apply immediately
-    scrollToTop();
-    
-    // Also handle on load in case it didn't work
-    const handleLoad = () => {
-      scrollToTop();
-    };
-    
-    // Handle popstate for browser navigation
-    const handlePopState = () => {
-      scrollToTop();
-    };
-    
-    // Handle page show (including refresh)  
-    const handlePageShow = (event: PageTransitionEvent) => {
-      // Force scroll to top on any page show event, especially refresh
-      scrollToTop();
-      if ((event as any).persisted) {
-        scrollToTop();
-      }
-    };
-    
-    // Handle beforeunload to set a flag for refresh detection
-    const handleBeforeUnload = () => {
-      // Force scroll to top just before navigation
-      scrollToTop();
-    };
-    
-    // Add event listeners with better timing
-    window.addEventListener('load', handleLoad); 
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('pageshow', handlePageShow as any);
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    // Also set a small delay scroll after component mount
-    const timeoutId = setTimeout(() => {
-      scrollToTop();
-    }, 100);
+    const scrollToTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
-    return () => {
-      window.removeEventListener('load', handleLoad);
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('pageshow', handlePageShow as any);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      clearTimeout(timeoutId);
-    };
+    scrollToTop();
+    window.addEventListener('pageshow', scrollToTop);
+    return () => window.removeEventListener('pageshow', scrollToTop);
   }, []);
 
   return (

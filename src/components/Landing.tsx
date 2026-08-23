@@ -35,10 +35,8 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [isInAboutSection, setIsInAboutSection] = useState(false);
   const [hasFadedOut, setHasFadedOut] = useState(false);
   const [isInWhatIDo, setIsInWhatIDo] = useState(false);
-  const [lockWhatImage, setLockWhatImage] = useState(false);
   const [isFrozen, setIsFrozen] = useState(false);
   const [frozenTop, setFrozenTop] = useState<number | null>(null);
-  const [hideBelowWhat, setHideBelowWhat] = useState(false);
   const [isPastWhatIDo, setIsPastWhatIDo] = useState(false);
   const [activeSection, setActiveSection] = useState<VisualKey>('hero');
   const [heroOffscreen, setHeroOffscreen] = useState(false);
@@ -57,6 +55,7 @@ const Landing = ({ children }: PropsWithChildren) => {
   const frozenTopRef = useRef<number | null>(null);
   const scrollScheduledRef = useRef(false);
   const cachedElsRef = useRef<{
+    landing: HTMLElement | null;
     about: HTMLElement | null;
     what: HTMLElement | null;
     title: HTMLElement | null;
@@ -73,23 +72,26 @@ const Landing = ({ children }: PropsWithChildren) => {
   }, []);
 
   useEffect(() => {
+    // One interval for the life of the component. Keying this on isAnimating
+    // restarted the timer on every switch, so the real period drifted to 6.8s
+    // and the settle timeout outlived unmount.
+    let settle: ReturnType<typeof setTimeout>;
     const interval = setInterval(() => {
-      if (!isAnimating) {
-        // Both flip in the same tick: the outgoing word starts leaving at the
-        // exact moment the incoming one starts arriving.
-        setIsAnimating(true);
-        setIsSwitched(prev => !prev);
+      // Both flip in the same tick: the outgoing word starts leaving at the
+      // exact moment the incoming one starts arriving.
+      setIsAnimating(true);
+      setIsSwitched((prev) => !prev);
 
-        // Long enough for the last letter (0.05s stagger) to finish its 0.4s
-        // move before the spent word is parked back below.
-        setTimeout(() => {
-          setIsAnimating(false);
-        }, 800);
-      }
+      // Long enough for the last letter (0.05s stagger) to finish its 0.4s
+      // move before the spent word is parked back below.
+      settle = setTimeout(() => setIsAnimating(false), 800);
     }, 6000);
 
-    return () => clearInterval(interval);
-  }, [isAnimating]);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(settle);
+    };
+  }, []);
 
   useEffect(() => {
     // Ensure landing scroll fade/pin is initialized
@@ -98,6 +100,7 @@ const Landing = ({ children }: PropsWithChildren) => {
     const readEls = () => {
       if (!cachedElsRef.current) {
         cachedElsRef.current = {
+          landing: document.getElementById('landingDiv'),
           about: document.getElementById('about'),
           what: document.querySelector('.whatIDO') as HTMLElement | null,
           title: document.querySelector('.whatIDO .title') as HTMLElement | null,
@@ -109,83 +112,88 @@ const Landing = ({ children }: PropsWithChildren) => {
     };
 
     const handleScrollCore = () => {
-      const { about: aboutSection, what: whatIDoSection, title: titleEl, content: contentEl, container: containerEl } = readEls();
+      const {
+        landing: landingSection,
+        about: aboutSection,
+        what: whatIDoSection,
+        title: titleEl,
+        content: contentEl,
+        container: containerEl,
+      } = readEls();
+      const vh = window.innerHeight;
 
-      // About section visibility (enter once the top reaches 85% of viewport for a faster return)
+      // Every branch below writes state unconditionally, through a plain or
+      // functional setter. Reading component state here would capture it in
+      // this closure and let it go stale between effect re-runs, which is what
+      // used to leave her stuck in the frozen position on the way back up.
+      // React bails out when a value is unchanged, so writing every frame is
+      // cheap.
+
       if (aboutSection) {
         const rect = aboutSection.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight * 0.85 && rect.bottom > 0;
-        if (isVisible && !isInAboutSection) {
-          setIsInAboutSection(true);
-          // As soon as About is visible again, release any What I Do image lock so About.png returns promptly
-          if (lockWhatImage) setLockWhatImage(false);
-        } else if (!isVisible && isInAboutSection) {
-          setIsInAboutSection(false);
-        }
+        // Enter once the top reaches 85% of the viewport, for a faster return.
+        setIsInAboutSection(rect.top < vh * 0.85 && rect.bottom > 0);
+        setHeroOffscreen(rect.top <= 0);
       }
 
-      // What I Do section visibility (switch when section reaches middle of viewport)
+      // The landing fade used to be reported by GSAP's scrubbed timeline, which
+      // trails the scroll by about a second and made her hesitate before
+      // repositioning. Derive it from geometry so it is exact and symmetric.
+      // The two thresholds are hysteresis, so the flag cannot chatter.
+      if (landingSection) {
+        const rect = landingSection.getBoundingClientRect();
+        const progress = rect.height > 0 ? -rect.top / rect.height : 0;
+        setHasFadedOut((prev) => (prev ? progress >= 0.36 : progress >= 0.4));
+      }
+
       if (whatIDoSection) {
         const rect = whatIDoSection.getBoundingClientRect();
-        const withinViewport = rect.top < window.innerHeight && rect.bottom > 0;
+        const withinViewport = rect.top < vh && rect.bottom > 0;
         const aboveViewport = rect.bottom <= 0; // scrolled past What I Do
-        const belowViewport = rect.top >= window.innerHeight; // haven't reached What I Do yet
-        const passedImageSwitchThreshold = rect.top < window.innerHeight * 0.4 && rect.bottom > 0; // switch slightly after middle
+        const belowViewport = rect.top >= vh; // not yet reached What I Do
 
-        // Ease the backlight down onto her head as she rises into view. Uses
-        // its own thresholds: the ones above fire after the clip has already
+        // Ease the backlight down onto her head as she rises into view. Its own
+        // threshold: the section ones below fire after the clip has already
         // switched, far too late to matter for the About glow.
-        const vhNow = window.innerHeight;
-        const t = Math.min(1, Math.max(0, (vhNow - rect.top) / (vhNow * 0.45)));
+        const t = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.45)));
         const lift = Math.round(RIM_LIFT_FAR + (RIM_LIFT_NEAR - RIM_LIFT_FAR) * t);
         setRimLift((prev) => (Math.abs(prev - lift) > 2 ? lift : prev));
 
-        // Update proximity state for image switching (later threshold so About holds longer)
-        setIsInWhatIDo(passedImageSwitchThreshold);
-        if (passedImageSwitchThreshold && !lockWhatImage) setLockWhatImage(true);
+        // Switch slightly after the middle so About holds a little longer.
+        setIsInWhatIDo(rect.top < vh * 0.4 && rect.bottom > 0);
 
         if (withinViewport || aboveViewport) {
-          setHideBelowWhat(false);
+          // Freeze her at the gap between the What I Do title and its panels,
+          // measured once per pass, so she stops tracking the scroll there.
           if (!hasFrozenRef.current && titleEl && contentEl && containerEl) {
             const titleRect = titleEl.getBoundingClientRect();
             const contentRect = contentEl.getBoundingClientRect();
             const containerRect = containerEl.getBoundingClientRect();
             const gapTop = titleRect.bottom;
             const gapBottom = contentRect.top;
-            const gapMidViewportY = gapTop + Math.max(0, (gapBottom - gapTop)) / 2;
-            const freezeOffset = -60; // raise higher
-            const topWithinContainer = gapMidViewportY - containerRect.top + freezeOffset;
+            const gapMid = gapTop + Math.max(0, gapBottom - gapTop) / 2;
+            const freezeOffset = -60; // sit a little above the exact midpoint
+            const topWithinContainer = gapMid - containerRect.top + freezeOffset;
 
-            // Freeze at the midpoint position (only once)
             hasFrozenRef.current = true;
             frozenTopRef.current = topWithinContainer;
             setIsFrozen(true);
             setFrozenTop(topWithinContainer);
           }
-          if (aboveViewport && !isPastWhatIDo) setIsPastWhatIDo(true);
-          if (withinViewport && isPastWhatIDo) setIsPastWhatIDo(false);
+          setIsPastWhatIDo(aboveViewport);
         } else if (belowViewport) {
-          // Release when scrolling up before the section (no freeze before section)
-          setHideBelowWhat(false);
-          if (isFrozen) setIsFrozen(false);
-          if (frozenTop !== null) setFrozenTop(null);
+          // Same boundary as the freeze above, so scrolling up releases her at
+          // exactly the point scrolling down caught her.
           hasFrozenRef.current = false;
           frozenTopRef.current = null;
-          if (isPastWhatIDo) setIsPastWhatIDo(false);
-          if (lockWhatImage) setLockWhatImage(false);
+          setIsFrozen(false);
+          setFrozenTop(null);
+          setIsPastWhatIDo(false);
         }
       }
 
-      // Deterministic active character based purely on scroll position, so the
-      // right video always shows and it's symmetric scrolling up or down.
-      // The landing section ends where About begins — once that edge passes the
-      // top of the viewport the mobile character is fully scrolled away.
-      if (aboutSection) {
-        const past = aboutSection.getBoundingClientRect().top <= 0;
-        setHeroOffscreen((prev) => (prev === past ? prev : past));
-      }
-
-      const vh = window.innerHeight;
+      // Which clip is shown, from scroll position alone, so it is identical
+      // going up and going down.
       let section: VisualKey = 'hero';
       if (aboutSection && aboutSection.getBoundingClientRect().top < vh * 0.6) section = 'about';
       if (whatIDoSection && whatIDoSection.getBoundingClientRect().top < vh * 0.5) section = 'whatido';
@@ -201,24 +209,26 @@ const Landing = ({ children }: PropsWithChildren) => {
       });
     };
 
-    window.addEventListener('scroll', handleScroll);
+    // A resize invalidates every measurement the freeze was computed from, so
+    // drop the cached nodes and let the next frame re-measure.
+    const handleResize = () => {
+      cachedElsRef.current = null;
+      hasFrozenRef.current = false;
+      frozenTopRef.current = null;
+      setIsFrozen(false);
+      setFrozenTop(null);
+      handleScrollCore();
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize);
     handleScroll();
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
       if (typeof cleanupFade === 'function') cleanupFade();
     };
-  }, [isInAboutSection, isDesktop]);
-
-  useEffect(() => {
-    const onFadeComplete = () => setHasFadedOut(true);
-    const onFadeReset = () => setHasFadedOut(false);
-    window.addEventListener('landingFadeComplete', onFadeComplete as EventListener);
-    window.addEventListener('landingFadeReset', onFadeReset as EventListener);
-    return () => {
-      window.removeEventListener('landingFadeComplete', onFadeComplete as EventListener);
-      window.removeEventListener('landingFadeReset', onFadeReset as EventListener);
-    };
-  }, []);
+  }, [isDesktop]);
 
   // Drop About positioning as soon as What I Do threshold is reached so switch occurs centered
   const aboutReady = isDesktop && isInAboutSection && hasFadedOut && !isInWhatIDo;
@@ -287,7 +297,7 @@ const Landing = ({ children }: PropsWithChildren) => {
             </h1>
           </div>
           <div
-            className={`landing-sticky-visual ${aboutReady ? 'about-position' : ''} ${hideBelowWhat ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
+            className={`landing-sticky-visual ${aboutReady ? 'about-position' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
           style={
             isDesktop && isFrozen && frozenTop !== null
               ? {
@@ -370,7 +380,7 @@ const Landing = ({ children }: PropsWithChildren) => {
           </div>
         </div>
         <div
-          className={`character-rim ${aboutReady ? 'about-position' : ''} ${hideBelowWhat || activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
+          className={`character-rim ${aboutReady ? 'about-position' : ''} ${activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
           style={
             isDesktop && isFrozen && frozenTop !== null
               ? {

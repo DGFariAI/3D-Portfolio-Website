@@ -12,20 +12,12 @@ interface Props {
 const WorkImage = (props: Props) => {
   const [isVideo, setIsVideo] = useState(!!props.video);
   const [video, setVideo] = useState(props.video || "");
-  
-  // Debug logging
-  console.log('WorkImage rendered with props:', props);
-  console.log('isVideo state:', isVideo);
-  console.log('video state:', video);
-  
-  const handleMouseEnter = async () => {
+
+  const handleMouseEnter = () => {
     if (props.video) {
       setIsVideo(true);
       setVideo(props.video);
     }
-  };
-
-  const handleMouseLeave = () => {
   };
 
   return (
@@ -34,8 +26,8 @@ const WorkImage = (props: Props) => {
         className="work-image-in"
         href={props.link}
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         target="_blank"
+        rel="noopener noreferrer"
         data-cursor={"disable"}
       >
         {props.link && (
@@ -45,30 +37,14 @@ const WorkImage = (props: Props) => {
         )}
         <img src={props.image} alt={props.alt} />
         {isVideo && video && (
-          <video 
-            src={video} 
-            autoPlay 
-            muted 
-            playsInline 
+          <video
+            src={video}
+            autoPlay
+            muted
+            playsInline
             loop
             preload="auto"
-            onError={(e) => {
-              console.error('Video failed to load:', e);
-              setIsVideo(false);
-            }}
-            onLoadStart={() => console.log('Video started loading')}
-            onCanPlay={() => console.log('Video can play')}
-            onPause={(e) => {
-              // Force the video to resume if it gets paused
-              const videoElement = e.target as HTMLVideoElement;
-              videoElement.play();
-            }}
-            onEnded={(e) => {
-              // Restart the video if it ends (though loop should handle this)
-              const videoElement = e.target as HTMLVideoElement;
-              videoElement.currentTime = 0;
-              videoElement.play();
-            }}
+            onError={() => setIsVideo(false)}
             style={{
               position: 'absolute',
               width: '120%',

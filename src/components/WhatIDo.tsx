@@ -11,19 +11,22 @@ const WhatIDo = () => {
     setWhatIDoTimeline();
 
     const isTouch = ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
-    if (isTouch) {
-      containerRef.current.forEach((container) => {
-        if (container) {
-          container.classList.remove("what-noTouch");
-          container.addEventListener("click", () => handleClick(container));
-        }
-      });
-    }
+    if (!isTouch) return;
+
+    // Keep the exact listener references. Passing a fresh arrow to
+    // removeEventListener never matches the one that was added, so the old
+    // cleanup removed nothing and the handlers outlived the component.
+    const bound = containerRef.current.map((container) => {
+      if (!container) return null;
+      container.classList.remove("what-noTouch");
+      const onClick = () => handleClick(container);
+      container.addEventListener("click", onClick);
+      return { container, onClick };
+    });
+
     return () => {
-      containerRef.current.forEach((container) => {
-        if (container) {
-          container.removeEventListener("click", () => handleClick(container));
-        }
+      bound.forEach((entry) => {
+        entry?.container.removeEventListener("click", entry.onClick);
       });
     };
   }, []);

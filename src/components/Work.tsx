@@ -17,14 +17,14 @@ const Work = () => {
       .getBoundingClientRect().left;
     const rect = box[0].getBoundingClientRect();
     const parentWidth = box[0].parentElement!.getBoundingClientRect().width;
-    let padding: number =
+    const padding: number =
       parseInt(window.getComputedStyle(box[0]).padding) / 2;
     translateX = rect.width * box.length - (rectLeft + parentWidth) + padding;
   }
 
   setTranslateX();
 
-  let timeline = gsap.timeline({
+  const timeline = gsap.timeline({
     scrollTrigger: {
       trigger: ".work-section",
       start: "top top",
@@ -71,9 +71,9 @@ const Work = () => {
                 <h4>Tools and features</h4>
                 <p>{index === 0 ? "Tailwind CSS, Node.js, Express, MongoDB" : index === 1 ? "Python, Flask, Werkzeug, Jinja2" : index === 2 ? "HTML5, CSS3, Vanilla JS, Chart.js" : index === 3 ? "React, TypeScript, Vite, Supabase" : index === 4 ? "Pantheon, SureCart, Tidio, Mailchimp" : index === 5 ? "Blender, HTML, CSS, JavaScript" : "Javascript, TypeScript, React, Threejs"}</p>
               </div>
-              <WorkImage 
-                image="/images/placeholder.webp" 
-                alt="" 
+              <WorkImage
+                image="/images/placeholder.webp"
+                alt=""
                 video={index === 0 ? "/videos/OmniGenesis.mp4" : index === 1 ? "/videos/DGFari Learn.mp4" : index === 2 ? "/videos/NOVA.mp4" : index === 3 ? "/videos/EcoCity.mp4" : index === 4 ? "/videos/Simple Charm.mp4" : index === 5 ? "/videos/Phoenix.mp4" : undefined}
                 videoLeft={index === 0 ? -1 : index === 1 ? -30 : index === 2 ? -30 : index === 3 ? -30 : index === 4 ? -30 : index === 5 ? -30 : 0}
               />

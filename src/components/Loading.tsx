@@ -9,9 +9,7 @@ const Loading = () => {
   const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
-    console.log("Loading percentage:", loading);
     if (loading >= 100) {
-      console.log("Loading reached 100%, starting transition sequence");
       // Balanced timing - not too fast, not too slow
       setTimeout(() => {
         setLoaded(true);
@@ -86,7 +84,7 @@ export const setProgress = (setLoading: (value: number) => void) => {
 
   let interval = setInterval(() => {
     if (percent <= 50) {
-      let rand = Math.round(Math.random() * 5);
+      const rand = Math.round(Math.random() * 5);
       percent = percent + rand;
       setLoading(percent);
     } else {

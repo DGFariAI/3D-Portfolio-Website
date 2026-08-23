@@ -13,9 +13,7 @@ import Work from "./Work";
 import setSplitText from "./utils/splitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-interface MainContainerProps extends PropsWithChildren {}
-
-const MainContainer = ({ children }: MainContainerProps) => {
+const MainContainer = ({ children }: PropsWithChildren) => {
   const [isDesktopView, setIsDesktopView] = useState<boolean>(
     window.innerWidth > 1024
   );
@@ -27,11 +25,13 @@ const MainContainer = ({ children }: MainContainerProps) => {
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
-    
+
     return () => {
       window.removeEventListener("resize", resizeHandler);
     };
-  }, [isDesktopView]);
+    // Registered once: the handler only reads live values, so re-subscribing
+    // whenever the breakpoint flipped just churned listeners.
+  }, []);
 
   // Ensure ScrollTrigger is refreshed and scroll is reset on mount
   useEffect(() => {
@@ -39,12 +39,12 @@ const MainContainer = ({ children }: MainContainerProps) => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
-    
+
     // Refresh ScrollTrigger instances with a slight delay to ensure DOM is ready
     const timeoutId = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 100);
-    
+
     return () => {
       clearTimeout(timeoutId);
     };

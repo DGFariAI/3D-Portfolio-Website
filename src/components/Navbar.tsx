@@ -8,15 +8,11 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Navbar = () => {
   useEffect(() => {
-    let links = document.querySelectorAll(".header ul a");
+    const links = document.querySelectorAll(".header ul a");
     links.forEach((elem) => {
-      let element = elem as HTMLAnchorElement;
+      const element = elem as HTMLAnchorElement;
       element.addEventListener("click", (e) => {
         e.preventDefault();
-        // Force-complete landing fade immediately so we don't need a second click
-        try {
-          window.dispatchEvent(new Event("landingFadeComplete"));
-        } catch {}
 
         const elem = e.currentTarget as HTMLAnchorElement;
         const section = elem.getAttribute("data-href");

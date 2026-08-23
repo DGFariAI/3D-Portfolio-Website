@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import About from "./About";
 import Career from "./Career";
 import Contact from "./Contact";
@@ -12,16 +12,14 @@ import WhatIDo from "./WhatIDo";
 import Work from "./Work";
 import setSplitText from "./utils/splitText";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useIsDesktop } from "../hooks/useIsDesktop";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
-  const [isDesktopView, setIsDesktopView] = useState<boolean>(
-    window.innerWidth > 1024
-  );
+  const isDesktopView = useIsDesktop();
 
   useEffect(() => {
     const resizeHandler = () => {
       setSplitText();
-      setIsDesktopView(window.innerWidth > 1024);
     };
     resizeHandler();
     window.addEventListener("resize", resizeHandler);
@@ -33,14 +31,9 @@ const MainContainer = ({ children }: PropsWithChildren) => {
     // whenever the breakpoint flipped just churned listeners.
   }, []);
 
-  // Ensure ScrollTrigger is refreshed and scroll is reset on mount
   useEffect(() => {
-    // Reset scroll to top on component mount
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-
-    // Refresh ScrollTrigger instances with a slight delay to ensure DOM is ready
+    // Scroll restoration is handled once in App.tsx. Refresh ScrollTrigger
+    // after the DOM settles so its measurements match the final layout.
     const timeoutId = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 100);

@@ -1,5 +1,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { isDesktopViewport } from "../../hooks/useIsDesktop";
 
 export function setAllTimeline() {
   const careerTimeline = gsap.timeline({
@@ -42,7 +43,7 @@ export function setAllTimeline() {
       0
     );
 
-  if (window.innerWidth > 1024) {
+  if (isDesktopViewport()) {
     careerTimeline.fromTo(
       ".career-section",
       { y: 0 },
@@ -98,7 +99,7 @@ export function setWhatIDoTimeline() {
 // blocks are held at a fixed viewport position and dissolved as you scroll past.
 // On a phone that reads as the text sliding down the page and then vanishing, so
 // mobile does neither — the text simply scrolls away with the hero section.
-export function setLandingFadeTimeline(isDesktop: boolean = window.innerWidth > 1024) {
+export function setLandingFadeTimeline(isDesktop: boolean = isDesktopViewport()) {
   gsap.registerPlugin(ScrollTrigger);
 
   // Clear any inline opacity/visibility a previous desktop-width init left behind.

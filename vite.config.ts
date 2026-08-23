@@ -11,6 +11,8 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    // three-stdlib is no longer a direct dependency, but @react-three/drei
+    // still pulls it in and it does not survive Vite's pre-bundling.
     exclude: ['three-stdlib']
   },
   assetsInclude: ['**/*.wasm']

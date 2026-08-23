@@ -119,22 +119,6 @@ html {
   margin: auto;
   position: relative;
 }
-.container1 {
-  width: var(--cWidth);
-  height: var(--vh);
-  margin: auto;
-  position: relative;
-}
-.split-line {
-  overflow: hidden;
-}
-.split-h2 {
-  overflow: hidden;
-  display: flex;
-  white-space: nowrap;
-  flex-wrap: nowrap;
-}
-
 .techstack {
   width: 100%;
   position: relative;

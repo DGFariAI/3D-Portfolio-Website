@@ -69,25 +69,6 @@
     transform: translate(calc(100% - 2px), -50%) rotate(360deg);
   }
 }
-.landing-video,
-.landing-image {
-  position: absolute;
-  bottom: 0;
-  height: 95%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Ensure the hero image renders smaller than the default */
-.character-model .landing-image {
-  height: 100%;
-  bottom: -100px;
-}
-.landing-image {
-  height: 100%;
-  z-index: 2;
-  position: relative;
-}
 .landing-sticky-visual {
   position: fixed;
   top: 60%;
@@ -124,25 +105,10 @@
   opacity: 0;
   pointer-events: none;
 }
-.landing-sticky-image {
-  width: min(550px, 80vw);
-  max-width: 95vw;
-  height: auto;
-  display: block;
-  transition: opacity 0.3s ease-in-out;
-}
 
 /* Keep About.png the same size as Landing.png */
 .landing-sticky-visual.about-position .landing-sticky-image {
   width: min(550px, 80vw);
-}
-
-.landing-sticky-image.landing-image {
-  opacity: 1;
-}
-
-.landing-sticky-image.about-image {
-  opacity: 1;
 }
 
 /* Cursor-follow tilt wrapper: all section videos stack in the same cell */
@@ -171,7 +137,6 @@
   opacity: 1;
   z-index: 1;
 }
-
 
 /* Keep the character essentially fully opaque so she sits ON TOP of the glow
    (only the very bottom edge softens, into the dark page — not the glow). */
@@ -286,45 +251,6 @@
   left: 25%;
   transform: translate(-50%, -28%) scale(1.35);
 }
-.character-model {
-  height: 80%;
-  height: 80vh;
-  position: absolute;
-  max-width: 1920px;
-  max-height: 1080px;
-  transform: translateX(-50%);
-  width: 100%;
-  left: 50%;
-  z-index: 0;
-  bottom: 50px;
-  pointer-events: inherit;
-}
-.character-model::after {
-  content: "";
-  width: 100vw;
-  height: 250px;
-  background-image: linear-gradient(
-    to bottom,
-    transparent,
-    var(--backgroundColor) 70%
-  );
-  bottom: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9;
-  position: absolute;
-}
-.character-model::before {
-  content: "";
-  width: 100vw;
-  height: 700px;
-  background-color: var(--backgroundColor);
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9;
-  position: absolute;
-}
 @keyframes backlight {
   0% {
     opacity: 0;
@@ -341,21 +267,6 @@
     transform: translate(-50%, -28%) scale(1.35);
     box-shadow: inset 66px 35px 85px 0px rgba(85, 0, 255, 0.65);
   }
-}
-.character-model canvas {
-  position: relative;
-  pointer-events: none;
-  z-index: 2;
-}
-.character-hover {
-  position: absolute;
-  width: 280px;
-  height: 280px;
-  top: 50%;
-  left: 50%;
-  z-index: 3;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
 }
 .landing-intro {
   position: absolute;
@@ -452,9 +363,6 @@ h2.landing-info-h2 {
   .landing-circle2 {
     display: block;
   }
-  .character-model {
-    z-index: 0;
-  }
   .landing-info h3 {
     font-size: 18px;
   }
@@ -474,9 +382,6 @@ h2.landing-info-h2 {
   }
 }
 @media screen and (min-width: 768px) {
-  .character-model {
-    height: 80vh;
-  }
   .landing-intro h2 {
     font-size: 25px;
   }
@@ -496,16 +401,6 @@ h2.landing-info-h2 {
   }
 }
 @media screen and (min-width: 1025px) {
-  .character-model {
-    height: 100vh;
-    bottom: 0;
-    z-index: 11;
-    position: fixed;
-  }
-  .character-model::after,
-  .character-model::before {
-    display: none;
-  }
   .landing-intro {
     top: 50%;
     left: auto;
@@ -643,15 +538,5 @@ h2.landing-info-h2 {
   opacity: 1;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.4s ease;
-}
-
-.word-container {
-  display: inline-block;
-  margin-right: 8px;
-}
-
-.space {
-  display: inline-block;
-  width: 8px;
 }
 

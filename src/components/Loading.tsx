@@ -22,7 +22,6 @@ const Loading = () => {
 
   useEffect(() => {
     if (isLoaded && loading >= 100) {
-      console.log("Setting clicked to true, loading:", loading);
       import("./utils/initialFX").then((module) => {
         setClicked(true);
         setTimeout(() => {

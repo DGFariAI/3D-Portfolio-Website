@@ -1,6 +1,7 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
 import "./styles/Landing.css";
 import { setLandingFadeTimeline } from "./utils/GsapScroll";
+import { useIsDesktop } from "../hooks/useIsDesktop";
 
 type VisualKey = "hero" | "about" | "whatido";
 
@@ -47,9 +48,7 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [rimLift, setRimLift] = useState(RIM_LIFT_FAR);
   // Mobile only ever gets the hero clip — the About and What I Do videos are
   // never mounted there, so phones don't pay their download/decode cost.
-  const [isDesktop, setIsDesktop] = useState<boolean>(
-    () => typeof window !== 'undefined' && window.innerWidth > 1024
-  );
+  const isDesktop = useIsDesktop();
   const videoRefs = useRef<Partial<Record<VisualKey, HTMLVideoElement | null>>>({});
   const hasFrozenRef = useRef(false);
   const frozenTopRef = useRef<number | null>(null);
@@ -62,14 +61,6 @@ const Landing = ({ children }: PropsWithChildren) => {
     content: HTMLElement | null;
     container: HTMLElement | null;
   } | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1025px)');
-    const onChange = () => setIsDesktop(mq.matches);
-    onChange();
-    mq.addEventListener('change', onChange);
-    return () => mq.removeEventListener('change', onChange);
-  }, []);
 
   useEffect(() => {
     // One interval for the life of the component. Keying this on isAnimating

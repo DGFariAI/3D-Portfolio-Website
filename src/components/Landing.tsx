@@ -1,5 +1,4 @@
 import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { flushSync } from "react-dom";
 import "./styles/Landing.css";
 import { setLandingFadeTimeline } from "./utils/GsapScroll";
 import { useIsDesktop } from "../hooks/useIsDesktop";
@@ -31,8 +30,15 @@ const VISUALS: Record<VisualKey, { webm: string; poster: string }> = {
 // Where she rests while following the viewport, as a fraction of its height.
 // Must track `top: 60%` on .landing-sticky-visual in Landing.css.
 const RESTING_TOP = 0.6;
-// Matches the `top` transition duration on .landing-sticky-visual.settling.
-const SETTLE_MS = 800;
+
+// The scroll window over which she travels from that resting spot down to her
+// place in the What I Do section, expressed as the section's top edge in
+// viewport heights. Driving the move from scroll position rather than from a
+// timer means it tracks the wheel exactly, reverses when the visitor reverses,
+// and never has to animate across the fixed/absolute switch, which is what made
+// earlier attempts read as a jump.
+const SLIDE_START = 1.05;
+const SLIDE_END = 0.55;
 
 const RIM_LIFT_FAR = 250;
 const RIM_LIFT_NEAR = -20;
@@ -45,10 +51,6 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [isInWhatIDo, setIsInWhatIDo] = useState(false);
   const [isFrozen, setIsFrozen] = useState(false);
   const [frozenTop, setFrozenTop] = useState<number | null>(null);
-  // Enables the `top` transition, but only across a freeze or release. It stays
-  // off the rest of the time: while she is merely following the scroll, a
-  // transition on a value that changes every frame would leave her trailing.
-  const [isSettling, setIsSettling] = useState(false);
   const [isPastWhatIDo, setIsPastWhatIDo] = useState(false);
   const [activeSection, setActiveSection] = useState<VisualKey>('hero');
   const [heroOffscreen, setHeroOffscreen] = useState(false);
@@ -61,11 +63,10 @@ const Landing = ({ children }: PropsWithChildren) => {
   // never mounted there, so phones don't pay their download/decode cost.
   const isDesktop = useIsDesktop();
   const videoRefs = useRef<Partial<Record<VisualKey, HTMLVideoElement | null>>>({});
-  const hasFrozenRef = useRef(false);
-  const frozenTopRef = useRef<number | null>(null);
   const scrollScheduledRef = useRef(false);
-  const settleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const releasingRef = useRef(false);
+  // Her destination inside .landing-container. Scroll-invariant, so it is
+  // measured once per layout rather than every frame.
+  const gapTargetRef = useRef<number | null>(null);
   const cachedElsRef = useRef<{
     landing: HTMLElement | null;
     about: HTMLElement | null;
@@ -152,9 +153,7 @@ const Landing = ({ children }: PropsWithChildren) => {
 
       if (whatIDoSection) {
         const rect = whatIDoSection.getBoundingClientRect();
-        const withinViewport = rect.top < vh && rect.bottom > 0;
         const aboveViewport = rect.bottom <= 0; // scrolled past What I Do
-        const belowViewport = rect.top >= vh; // not yet reached What I Do
 
         // Ease the backlight down onto her head as she rises into view. Its own
         // threshold: the section ones below fire after the clip has already
@@ -166,82 +165,44 @@ const Landing = ({ children }: PropsWithChildren) => {
         // Switch slightly after the middle so About holds a little longer.
         setIsInWhatIDo(rect.top < vh * 0.4 && rect.bottom > 0);
 
-        if (withinViewport || aboveViewport) {
-          // Freeze her at the gap between the What I Do title and its panels,
-          // measured once per pass, so she stops tracking the scroll there.
-          if (!hasFrozenRef.current && titleEl && contentEl && containerEl) {
+        // Her vertical position is a pure function of scroll: at SLIDE_START she
+        // is still resting where she follows the viewport, by SLIDE_END she has
+        // arrived in the What I Do gap, and in between she travels smoothly.
+        if (containerEl) {
+          const containerRect = containerEl.getBoundingClientRect();
+          // Where she currently sits, expressed in container coordinates. At
+          // progress 0 this equals her fixed position exactly, so handing over
+          // between the two positioning modes is seamless.
+          const restingTop = vh * RESTING_TOP - containerRect.top;
+
+          if (gapTargetRef.current === null && titleEl && contentEl) {
             const titleRect = titleEl.getBoundingClientRect();
             const contentRect = contentEl.getBoundingClientRect();
-            const containerRect = containerEl.getBoundingClientRect();
             const gapTop = titleRect.bottom;
             const gapBottom = contentRect.top;
             const gapMid = gapTop + Math.max(0, gapBottom - gapTop) / 2;
             const freezeOffset = -60; // sit a little above the exact midpoint
-            const topWithinContainer = gapMid - containerRect.top + freezeOffset;
-
-            // Switching from fixed to absolute changes what `top` is measured
-            // against, so animating straight to the target would interpolate
-            // between two different coordinate systems. Land her at exactly the
-            // spot she already occupies, expressed in container coordinates, so
-            // the switch itself is invisible...
-            const continuityTop = vh * RESTING_TOP - containerRect.top;
-
-            hasFrozenRef.current = true;
-            releasingRef.current = false;
-            frozenTopRef.current = topWithinContainer;
-
-            // flushSync, because React would otherwise defer this commit and
-            // the browser would never paint the continuity position: the next
-            // frame would already carry the target, and the transition would
-            // have nothing to travel from. That is precisely what turned this
-            // into a teleport.
-            flushSync(() => {
-              setIsFrozen(true);
-              setFrozenTop(continuityTop);
-            });
-
-            // Now that she is painted where she already was, slide to the gap.
-            // Both values are in the same coordinate system, so this is a true
-            // slide rather than a jump between reference frames.
-            requestAnimationFrame(() => {
-              setIsSettling(true);
-              setFrozenTop(topWithinContainer);
-            });
-
-            if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
-            settleTimerRef.current = setTimeout(() => setIsSettling(false), SETTLE_MS + 100);
-          }
-          setIsPastWhatIDo(aboveViewport);
-        } else if (belowViewport) {
-          // Same boundary as the freeze above, so scrolling up releases her at
-          // exactly the point scrolling down caught her.
-          if (hasFrozenRef.current && containerEl) {
-            // Begin sliding back rather than snapping. She stays absolutely
-            // positioned for the whole slide; only when it finishes does she
-            // hand back to position: fixed, by which point the two agree.
-            hasFrozenRef.current = false;
-            releasingRef.current = true;
-            setIsSettling(true);
-            if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
-            settleTimerRef.current = setTimeout(() => {
-              releasingRef.current = false;
-              setIsSettling(false);
-              setIsFrozen(false);
-              setFrozenTop(null);
-              frozenTopRef.current = null;
-            }, SETTLE_MS + 100);
+            gapTargetRef.current = gapMid - containerRect.top + freezeOffset;
           }
 
-          // While releasing, keep re-aiming at the resting anchor: the page is
-          // still scrolling under her, so the target moves in container
-          // coordinates and a fixed target would drift.
-          if (releasingRef.current && containerEl) {
-            const containerRect = containerEl.getBoundingClientRect();
-            setFrozenTop(vh * RESTING_TOP - containerRect.top);
-          }
+          const span = (SLIDE_START - SLIDE_END) * vh;
+          const raw = span > 0 ? (SLIDE_START * vh - rect.top) / span : 0;
+          const progress = Math.min(1, Math.max(0, raw));
+          // Smoothstep, so she eases out of the resting spot and into the gap
+          // instead of starting and stopping abruptly.
+          const eased = progress * progress * (3 - 2 * progress);
+          const target = gapTargetRef.current;
 
-          setIsPastWhatIDo(false);
+          if (progress <= 0 || target === null) {
+            setIsFrozen(false);
+            setFrozenTop(null);
+          } else {
+            setIsFrozen(true);
+            setFrozenTop(Math.round(restingTop + (target - restingTop) * eased));
+          }
         }
+
+        setIsPastWhatIDo(aboveViewport);
       }
 
       // Which clip is shown, from scroll position alone, so it is identical
@@ -265,11 +226,7 @@ const Landing = ({ children }: PropsWithChildren) => {
     // drop the cached nodes and let the next frame re-measure.
     const handleResize = () => {
       cachedElsRef.current = null;
-      hasFrozenRef.current = false;
-      frozenTopRef.current = null;
-      releasingRef.current = false;
-      if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
-      setIsSettling(false);
+      gapTargetRef.current = null;
       setIsFrozen(false);
       setFrozenTop(null);
       handleScrollCore();
@@ -281,7 +238,6 @@ const Landing = ({ children }: PropsWithChildren) => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
-      if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
       if (typeof cleanupFade === 'function') cleanupFade();
     };
   }, [isDesktop]);
@@ -353,7 +309,7 @@ const Landing = ({ children }: PropsWithChildren) => {
             </h1>
           </div>
           <div
-            className={`landing-sticky-visual ${aboutReady ? 'about-position' : ''} ${isDesktop && isFrozen ? 'frozen' : ''} ${isSettling ? 'settling' : ''}`}
+            className={`landing-sticky-visual ${aboutReady ? 'about-position' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
           style={
             isDesktop && isFrozen && frozenTop !== null
               ? {
@@ -436,7 +392,7 @@ const Landing = ({ children }: PropsWithChildren) => {
           </div>
         </div>
         <div
-          className={`character-rim ${aboutReady ? 'about-position' : ''} ${activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''} ${isSettling ? 'settling' : ''}`}
+          className={`character-rim ${aboutReady ? 'about-position' : ''} ${activeVisual === 'whatido' ? 'hide-below-what' : ''} ${isDesktop && isFrozen ? 'frozen' : ''}`}
           style={
             isDesktop && isFrozen && frozenTop !== null
               ? {

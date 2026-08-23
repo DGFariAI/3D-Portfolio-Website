@@ -36,6 +36,10 @@ const MainContainer = ({ children }: PropsWithChildren) => {
     // after the DOM settles so its measurements match the final layout.
     const timeoutId = setTimeout(() => {
       ScrollTrigger.refresh();
+      // refresh() calls clearScrollMemory internally, which resets
+      // history.scrollRestoration to "auto" and undoes what App.tsx set. Hand
+      // it back as "manual" so the browser does not restore a stale position.
+      ScrollTrigger.clearScrollMemory("manual");
     }, 100);
 
     return () => {

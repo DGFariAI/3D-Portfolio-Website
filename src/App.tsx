@@ -21,6 +21,16 @@ const AppContent = () => {
     };
   }, [isLoading]);
 
+  // The document is locked (body overflow hidden) while the loading screen is
+  // up, so a pending scroll restoration from a refresh cannot apply yet: it
+  // lands the instant the screen unmounts and yanks the visitor into the middle
+  // of the page. This is the moment that actually matters, so claim the top
+  // here rather than only at mount.
+  useEffect(() => {
+    if (isLoading) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [isLoading]);
+
   return (
     <>
       {isLoading && <Loading />}

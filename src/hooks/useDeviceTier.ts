@@ -55,15 +55,6 @@ export function sceneQuality(tier: DeviceTier) {
 }
 
 /**
- * Pacing multiplier for the intro animation. A fast machine keeps the full
- * cinematic timing; a slow one has already made the visitor wait to get here,
- * so it hands them the page almost immediately.
- */
-export function introPace(tier: DeviceTier): number {
-  return tier === "high" ? 1 : tier === "medium" ? 0.5 : 0.18;
-}
-
-/**
  * Reads the tier once and publishes it as a class on <html> so stylesheets can
  * respond too (see the tier-low blur reductions in index.css). Re-evaluates if
  * the visitor changes their reduced-motion preference.

@@ -90,6 +90,17 @@
     opacity 0.45s ease;
 }
 
+/* `top` is animated only across a freeze or release, when Landing.tsx has made
+   both ends of the move share a coordinate system. It stays untransitioned the
+   rest of the time, because while she is following the scroll her `top` changes
+   every frame and a transition would leave her lagging behind the page. */
+.landing-sticky-visual.settling,
+.character-rim.settling {
+  transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.45s ease;
+}
+
 .landing-sticky-visual.about-position {
   top: 60%;
   left: 25%;

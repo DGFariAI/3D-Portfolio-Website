@@ -126,9 +126,10 @@ const Work = () => {
                 <p>{project.tools}</p>
               </div>
               <WorkImage
-                image={project.poster}
+                image="/images/placeholder.webp"
                 alt={`${project.title} preview`}
                 video={project.video}
+                poster={project.poster}
                 videoLeft={project.videoLeft}
               />
             </div>

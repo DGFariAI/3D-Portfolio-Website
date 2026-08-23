@@ -5,6 +5,8 @@ interface Props {
   image: string;
   alt?: string;
   video?: string;
+  /** First frame of the clip, shown by the video element while it buffers. */
+  poster?: string;
   link?: string;
   videoLeft?: number;
 }
@@ -59,6 +61,7 @@ const WorkImage = (props: Props) => {
         {props.video && shouldLoad && (
           <video
             src={props.video}
+            poster={props.poster}
             autoPlay
             muted
             playsInline

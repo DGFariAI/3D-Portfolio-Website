@@ -35,10 +35,16 @@ const TechStackLazy = () => {
     return () => observer.disconnect();
   }, []);
 
-  // The sentinel holds the section's place in the scroll flow so the page
-  // height does not jump when the real component arrives.
+  // The placeholder reserves exactly the height .techstack will occupy. Without
+  // it the wrapper was zero-height until the chunk arrived, so mounting added a
+  // full viewport of height mid-scroll: GSAP re-measured the pinned Work
+  // section and the page lurched, which reads as a jump while scrolling
+  // through the Career section just above it.
   return (
-    <div ref={sentinelRef}>
+    <div
+      ref={sentinelRef}
+      className={shouldLoad ? undefined : "techstack-placeholder"}
+    >
       {shouldLoad && (
         <Suspense fallback={null}>
           <TechStack />

@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import "./styles/Loading.css";
 import { useLoading } from "../context/LoadingProvider";
-import { detectDeviceTier, introPace } from "../hooks/useDeviceTier";
-
-// The intro's timings are pacing, not work. A capable machine keeps the full
-// cinematic reveal; a slow one has already made the visitor wait to get here,
-// so it hands over the page almost immediately.
-const PACE = introPace(detectDeviceTier());
-const paced = (ms: number) => Math.round(ms * PACE);
+// These delays are not padding: they are choreographed against the intro's CSS,
+// which runs transitions of 0.6s, 0.8s and 1s plus a 1s animation-delay. Scaling
+// them by device tier cut those animations off mid-flight and made the reveal
+// stutter, so they stay fixed. The performance work that matters happens
+// elsewhere: payload size, main-thread blocking and render cost.
 
 const Loading = () => {
   const { setIsLoading, loading } = useLoading();
@@ -22,8 +20,8 @@ const Loading = () => {
         setLoaded(true);
         setTimeout(() => {
           setIsLoaded(true);
-        }, paced(1000));
-      }, paced(800));
+        }, 1000);
+      }, 800);
     }
   }, [loading]);
 
@@ -38,8 +36,8 @@ const Loading = () => {
           // Let the reveal transition finish before the screen is torn down.
           setTimeout(() => {
             setIsLoading(false);
-          }, paced(700));
-        }, paced(700));
+          }, 700);
+        }, 700);
       });
     }
   }, [isLoaded, loading, setIsLoading]);

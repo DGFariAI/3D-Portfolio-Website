@@ -1,69 +1,55 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
-import MainContainer from "./components/MainContainer";
-import Loading from "./components/Loading";
-import { LoadingProvider, useLoading } from "./context/LoadingProvider";
 import { useDeviceTier } from "./hooks/useDeviceTier";
 
-const AppContent = () => {
-  const { isLoading, setLoading } = useLoading();
-  // Publishes tier-high / tier-medium / tier-low on <html> so the stylesheets
-  // can scale their own expensive effects to the device.
-  useDeviceTier();
-  useEffect(() => {
-    setLoading(100);
-  }, [setLoading]);
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isLoading) {
-      root.classList.add("no-scrollbar");
-    } else {
-      root.classList.remove("no-scrollbar");
-    }
-    return () => {
-      root.classList.remove("no-scrollbar");
-    };
-  }, [isLoading]);
-
-  // The document is locked (body overflow hidden) while the loading screen is
-  // up, so a pending scroll restoration from a refresh cannot apply yet: it
-  // lands the instant the screen unmounts and yanks the visitor into the middle
-  // of the page. This is the moment that actually matters, so claim the top
-  // here rather than only at mount.
-  useEffect(() => {
-    if (isLoading) return;
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [isLoading]);
-
-  return (
-    <>
-      {isLoading && <Loading />}
-      <MainContainer></MainContainer>
-    </>
-  );
-};
+// Every route is its own chunk. The portfolio pulls in GSAP and, further down,
+// three.js and a physics engine; the hub is the page every link points at and
+// must not carry any of that. Splitting here is what keeps the front door
+// light, so these imports are deliberately lazy rather than static.
+const Hub = lazy(() => import("./routes/Hub"));
+const Portfolio = lazy(() => import("./routes/Portfolio"));
+const Blogs = lazy(() => import("./routes/Blogs"));
 
 const App = () => {
+  const { pathname } = useLocation();
+
+  // Publishes tier-high / tier-medium / tier-low on <html> so the stylesheets
+  // can scale their own expensive effects to the device. App-wide, so it stays
+  // here rather than moving into a route.
+  useDeviceTier();
+
   // Land at the top on every entry: reload, back/forward, and bfcache restore.
-  // This used to be four overlapping listeners plus a timeout, all racing each
-  // other and a duplicate copy in LoadingProvider. `scrollRestoration = manual`
-  // plus one handler covers the same cases.
   useEffect(() => {
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
     }
 
-    const scrollToTop = () => window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    const scrollToTop = () =>
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
 
     scrollToTop();
-    window.addEventListener('pageshow', scrollToTop);
-    return () => window.removeEventListener('pageshow', scrollToTop);
+    window.addEventListener("pageshow", scrollToTop);
+    return () => window.removeEventListener("pageshow", scrollToTop);
   }, []);
 
+  // ...and on every route change, since navigating keeps the document.
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname]);
+
   return (
-    <LoadingProvider>
-      <AppContent />
-    </LoadingProvider>
+    // No fallback UI: the chunks are small and a flash of a spinner reads worse
+    // than a beat of the background, which is already painted.
+    <Suspense fallback={null}>
+      <Routes>
+        <Route path="/" element={<Hub />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/blogs" element={<Blogs />} />
+        {/* Anything unknown lands on the hub rather than a dead end. */}
+        <Route path="*" element={<Hub />} />
+      </Routes>
+    </Suspense>
   );
 };
 

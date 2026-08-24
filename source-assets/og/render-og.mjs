@@ -12,9 +12,9 @@ const PORT = Number(process.env.CDP_PORT || 9290);
 // it lowers her and buys headroom above her head. `shiftX` slides her past the
 // right edge; the glow is derived from her position, so it travels with her.
 const CARD = {
-  hero: 840,
+  hero: 790,
   drop: 48,
-  shiftX: 40,
+  shiftX: 82,
   quality: 0.86,
 };
 

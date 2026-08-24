@@ -5,9 +5,13 @@ import {
   PiCaretRightBold,
   PiFlameFill,
   PiPaintBrushFill,
+  PiShareFat,
 } from "react-icons/pi";
 import SEO from "../components/SEO";
 import "./styles/Hub.css";
+
+const SITE_URL = "https://dgfari.com";
+const SHARE_TEXT = "Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place.";
 
 /**
  * The avatar clip.
@@ -57,6 +61,8 @@ const Hub = () => {
   // The poster paints immediately; the clip is nearly a megabyte and must not
   // sit in front of first render on the page every link points at.
   const [showVideo, setShowVideo] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const copyTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const w = window as Window & {
@@ -77,6 +83,38 @@ const Hub = () => {
 
   const openBlog = () => navigate("/blogs");
 
+  // Native share sheet where it exists (every mobile browser this page
+  // actually gets opened in, including in-app browsers), clipboard copy as
+  // the desktop fallback. Always the hub's own URL, never a per-row link.
+  const handleShare = async () => {
+    const nav = navigator as Navigator & {
+      share?: (data: ShareData) => Promise<void>;
+    };
+    if (nav.share) {
+      try {
+        await nav.share({ title: "DGFari", text: SHARE_TEXT, url: SITE_URL });
+      } catch {
+        // Cancelled or unsupported mid-call: no fallback needed, the sheet
+        // itself already gave the person a way out.
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(SITE_URL);
+      setCopied(true);
+      if (copyTimer.current) window.clearTimeout(copyTimer.current);
+      copyTimer.current = window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard permission denied: nothing more we can do silently.
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (copyTimer.current) window.clearTimeout(copyTimer.current);
+    };
+  }, []);
+
   return (
     <div className="hub">
       <SEO
@@ -84,6 +122,18 @@ const Hub = () => {
         description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
         path="/"
       />
+
+      <button
+        className="hub-share"
+        onClick={handleShare}
+        aria-label="Share this page"
+        type="button"
+      >
+        <PiShareFat aria-hidden />
+      </button>
+      <span className={`hub-toast${copied ? " is-visible" : ""}`} role="status">
+        Link copied
+      </span>
 
       <header className="hub-intro">
         <h1>

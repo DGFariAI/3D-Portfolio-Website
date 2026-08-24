@@ -17,6 +17,7 @@
 }
 
 .hub {
+  position: relative;
   min-height: var(--vh);
   width: min(560px, calc(100vw - 40px));
   margin: 0 auto;
@@ -27,6 +28,82 @@
   justify-content: center;
   text-align: center;
   gap: 14px;
+}
+
+/* --- share ---------------------------------------------------------------
+   Top-right of the card rather than beside the wordmark, so it never
+   competes with the header for attention and stays out of the way of the
+   link pills below it. Low contrast until hover/focus: this is a secondary
+   action, not a fourth thing fighting the avatar and the links for eyes. */
+.hub-share {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid rgba(194, 164, 255, 0.25);
+  border-radius: 50%;
+  background: rgba(11, 8, 12, 0.35);
+  color: rgba(194, 164, 255, 0.65);
+  font-size: 17px;
+  line-height: 0;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hub-share:hover,
+.hub-share:focus-visible {
+  color: var(--accentColor);
+  border-color: rgba(194, 164, 255, 0.7);
+  background: rgba(194, 164, 255, 0.1);
+}
+
+.hub-share:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 2px;
+}
+
+.hub-toast {
+  position: absolute;
+  top: 60px;
+  right: 14px;
+  z-index: 2;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(20, 14, 24, 0.95);
+  border: 1px solid rgba(194, 164, 255, 0.4);
+  color: #f2eef7;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.hub-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media screen and (max-width: 480px) {
+  .hub-share {
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+
+  .hub-toast {
+    top: 52px;
+    right: 10px;
+  }
 }
 
 /* Mark above wordmark, both centred on the column. */

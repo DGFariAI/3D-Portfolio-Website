@@ -587,6 +587,18 @@
   line-height: 0;
   color: var(--accentColor);
   filter: drop-shadow(0 0 8px rgba(194, 164, 255, 0.45));
+  transition: filter 0.25s ease, transform 0.25s ease;
+}
+
+/* On hover and while pressed the mark lights up in its own colour, set per row
+   as --mark-glow. Two shadows rather than one: the tight pass gives the halo an
+   edge that sits on the logo, the wide pass is the bloom around it. */
+.hub-link:hover .hub-link-mark,
+.hub-link:focus-visible .hub-link-mark,
+.hub-link:active .hub-link-mark {
+  filter: drop-shadow(0 0 5px var(--mark-glow, rgba(194, 164, 255, 0.85)))
+    drop-shadow(0 0 16px var(--mark-glow, rgba(194, 164, 255, 0.85)));
+  transform: scale(1.06);
 }
 
 .hub-link-mark img {
@@ -611,18 +623,6 @@
   color: rgba(194, 164, 255, 0.85);
 }
 
-.hub-link-soon {
-  font-size: 11px;
-  font-style: normal;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: rgba(194, 164, 255, 0.75);
-}
-
-/* The row is a live link now, so it is no longer dimmed: a control that looks
-   disabled but responds is worse than either. The badge alone carries the
-   status. */
-
 /* --- footer ------------------------------------------------------------- */
 
 /* The copyright follows the closing rule directly. It used to be pushed to the
@@ -642,6 +642,12 @@
     animation: none;
   }
   .hub-link:hover {
+    transform: none;
+  }
+  /* The glow still lands; only the movement goes. */
+  .hub-link:hover .hub-link-mark,
+  .hub-link:focus-visible .hub-link-mark,
+  .hub-link:active .hub-link-mark {
     transform: none;
   }
 }

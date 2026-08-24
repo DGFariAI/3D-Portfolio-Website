@@ -1,4 +1,4 @@
-import { ComponentType, useEffect, useRef, useState } from "react";
+import { ComponentType, CSSProperties, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   PiCameraFill,
@@ -29,31 +29,46 @@ interface HubLink {
   logo?: string;
   to?: string;
   href?: string;
-  comingSoon?: boolean;
+  /** Halo colour for the mark on hover. See the note above LINKS. */
+  glow: string;
 }
 
+/**
+ * Each row's glow is its own logo's colour, not one shared violet.
+ *
+ * Two of these marks are violet, one is gold and one is warm orange. A single
+ * brand halo behind all four would sit wrong under the two that are not violet,
+ * so each colour is sampled from the logo file itself: the mean of its pixels
+ * weighted by alpha and saturation, then lifted in value so the halo reads as
+ * light rather than as a smudge of the mark's own colour.
+ */
 const LINKS: HubLink[] = [
-  { label: "DGFari's Portfolio", logo: "/itsdgfari_icon.svg", to: "/portfolio" },
+  {
+    label: "DGFari's Portfolio",
+    logo: "/itsdgfari_icon.svg",
+    to: "/portfolio",
+    glow: "rgba(202, 122, 255, 0.85)",
+  },
   {
     label: "DGFari AI",
     logo: "/images/logos/DGFari-AI.png",
     icon: PiFlameFill,
     to: "/ai",
-    // Still badged, but it goes somewhere now: the badge sets the expectation
-    // before the tap rather than the row simply refusing to respond.
-    comingSoon: true,
+    glow: "rgba(202, 120, 255, 0.85)",
   },
   {
     label: "DGFari Art",
     logo: "/images/logos/DGFari-Art.png",
     icon: PiPaintBrushFill,
     href: "https://dgfariart.com",
+    glow: "rgba(255, 224, 155, 0.85)",
   },
   {
     label: "DGFari Studio",
     logo: "/images/logos/DGFari-Studio.png",
     icon: PiCameraFill,
     href: "https://dgfaristudio.com",
+    glow: "rgba(255, 152, 114, 0.85)",
   },
 ];
 
@@ -191,23 +206,24 @@ const Hub = () => {
 
       <nav className="hub-links" aria-label="Where to find me">
         {LINKS.map((link) => {
+          // Handed to CSS as a custom property so the hover rule lives in the
+          // stylesheet with the rest of the row's states, rather than needing a
+          // hover flag in React to know which colour to apply.
+          const style = { "--mark-glow": link.glow } as CSSProperties;
+
           const inner = (
             <>
               <LinkMark link={link} />
               <span className="hub-link-label">{link.label}</span>
               <span className="hub-link-end" aria-hidden="true">
-                {link.comingSoon ? (
-                  <em className="hub-link-soon">Soon</em>
-                ) : (
-                  <PiCaretRightBold />
-                )}
+                <PiCaretRightBold />
               </span>
             </>
           );
 
           if (link.to) {
             return (
-              <Link className="hub-link" to={link.to} key={link.label}>
+              <Link className="hub-link" to={link.to} style={style} key={link.label}>
                 {inner}
               </Link>
             );
@@ -219,6 +235,7 @@ const Hub = () => {
               href={link.href}
               target="_blank"
               rel="noopener noreferrer"
+              style={style}
               key={link.label}
             >
               {inner}

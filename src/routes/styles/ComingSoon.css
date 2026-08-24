@@ -50,12 +50,15 @@
   letter-spacing: 0.5px;
 }
 
+/* A tagline rather than a paragraph, so it is set slightly larger and lighter
+   in weight than body copy and given room to stay on one line. */
 .soon-blurb {
-  max-width: 420px;
+  max-width: 440px;
   margin: 0;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #a79db0;
+  font-size: 17px;
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+  color: #b6acbe;
 }
 
 .soon-rule {

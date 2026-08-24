@@ -53,9 +53,9 @@ const App = () => {
             <ComingSoon
               name="DGFari AI"
               logo="/images/logos/DGFari-AI.png"
-              blurb="Agentic AI that turns intent into working systems. Being built now."
+              blurb="Become the best version of yourself"
               path="/ai"
-              description="DGFari AI is on the way: agentic AI that turns intent into working systems."
+              description="DGFari AI is coming soon. Become the best version of yourself."
             />
           }
         />

@@ -20,8 +20,8 @@ import "./styles/Hub.css";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=8",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=8",
+  webm: "/videos/character/dgfari-learn.webm?v=9",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=9",
 };
 
 interface HubLink {

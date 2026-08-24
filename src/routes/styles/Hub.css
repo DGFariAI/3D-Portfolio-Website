@@ -304,7 +304,10 @@
   padding: 0;
   font-size: 14px;
   line-height: 0;
-  color: rgba(234, 229, 236, 0.55);
+  /* The same violet at the same 75% as the share icon in the header. Those two
+     are the only bare icons on the site and they should not be different
+     colours; grey was the one uncoloured thing on a violet page. */
+  color: rgba(194, 164, 255, 0.75);
   border: 0;
   border-radius: 8px;
   background: transparent;
@@ -313,11 +316,12 @@
 }
 
 /* Brighten, glow, lift: the same three things the share icon in the header
-   does, so the two bare icons on this site behave alike. Neutral rather than
-   violet, because this one should not outrank Copy. */
+   does, so the two bare icons on this site behave alike. A touch under the
+   header icon's 11px at 0.75, since this is the third way out of the sheet and
+   should stay quieter than Copy. */
 .share-close:hover {
-  color: #f4f0f7;
-  filter: drop-shadow(0 0 8px rgba(234, 229, 236, 0.38));
+  color: var(--accentColor);
+  filter: drop-shadow(0 0 9px rgba(140, 90, 255, 0.7));
   transform: scale(1.08);
 }
 

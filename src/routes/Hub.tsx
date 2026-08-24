@@ -79,6 +79,17 @@ const Hub = () => {
 
   return (
     <div className="hub">
+      {/* Corner glows, the same pink-into-violet recipe as .landing-circle1 in
+          the portfolio. Fixed and pointer-events: none, so they sit behind the
+          content and take no part in the layout that keeps everything on one
+          screen. */}
+      <div className="hub-glows" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+
       <SEO
         title="DGFari"
         description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."

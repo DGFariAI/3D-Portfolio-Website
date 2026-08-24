@@ -34,41 +34,45 @@ interface HubLink {
 }
 
 /**
- * Each row's glow is its own logo's colour, not one shared violet.
+ * The four marks are drawn to one construction spec, and each keeps its own
+ * hue rather than being unified to a single colour.
  *
- * Two of these marks are violet, one is gold and one is warm orange. A single
- * brand halo behind all four would sit wrong under the two that are not violet,
- * so each colour is sampled from the logo file itself: the mean of its pixels
- * weighted by alpha and saturation, then lifted in value so the halo reads as
- * light rather than as a smudge of the mark's own colour.
+ * The colours were never the problem: measured across the originals, saturation
+ * varied by 1.4x and value by 1.5x, which is a family. Limb weight varied by
+ * 4.6x, which is not. So they are normalised on weight and optical size and
+ * left alone on hue, because the gold and the warm orange are the only warmth
+ * on an otherwise violet page, and because Art and Studio have their own
+ * domains: the mark someone taps has to match the one they land on.
+ *
+ * The pipeline that produced them is kept in source-assets/logos/normalised.
  */
 const LINKS: HubLink[] = [
   {
     label: "DGFari's Portfolio",
-    logo: "/itsdgfari_icon.svg",
+    logo: "/images/logos/dgfari-portfolio.svg",
     to: "/portfolio",
-    glow: "rgba(202, 122, 255, 0.85)",
+    glow: "rgba(183, 102, 255, 0.85)",
   },
   {
     label: "DGFari AI",
-    logo: "/images/logos/DGFari-AI.png",
+    logo: "/images/logos/dgfari-ai.svg",
     icon: PiFlameFill,
     to: "/ai",
-    glow: "rgba(202, 120, 255, 0.85)",
+    glow: "rgba(238, 122, 255, 0.85)",
   },
   {
     label: "DGFari Art",
-    logo: "/images/logos/DGFari-Art.png",
+    logo: "/images/logos/dgfari-art.svg",
     icon: PiPaintBrushFill,
     href: "https://dgfariart.com",
-    glow: "rgba(255, 224, 155, 0.85)",
+    glow: "rgba(255, 217, 112, 0.85)",
   },
   {
     label: "DGFari Studio",
-    logo: "/images/logos/DGFari-Studio.png",
+    logo: "/images/logos/dgfari-studio.svg",
     icon: PiCameraFill,
     href: "https://dgfaristudio.com",
-    glow: "rgba(255, 152, 114, 0.85)",
+    glow: "rgba(255, 151, 107, 0.85)",
   },
 ];
 
@@ -76,10 +80,8 @@ const LINKS: HubLink[] = [
  * A row's mark: the real logo when its file is present, the placeholder icon
  * when it is not.
  *
- * The three brand logos are wired to their paths before the files exist, so
- * dropping them into public/images/logos makes them appear with no code change.
- * Until then a missing file would render as a broken image, so the fallback
- * catches the error and shows the placeholder instead.
+ * A missing or undecodable file would otherwise render as a broken image, so
+ * the fallback catches the error and shows the placeholder instead.
  */
 const LinkMark = ({ link }: { link: HubLink }) => {
   const [logoFailed, setLogoFailed] = useState(false);

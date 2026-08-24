@@ -52,7 +52,7 @@ const App = () => {
           element={
             <ComingSoon
               name="DGFari AI"
-              logo="/images/logos/DGFari-AI.png"
+              logo="/images/logos/dgfari-ai.svg"
               blurb="Become the best version of yourself"
               path="/ai"
               description="DGFari AI is coming soon. Become the best version of yourself."

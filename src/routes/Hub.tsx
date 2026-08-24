@@ -25,8 +25,6 @@ const AVATAR = {
 
 interface HubLink {
   label: string;
-  /** Placeholder mark. Swap for `logo: "/images/logos/x.svg"` when the real
-   *  logos arrive; the row renders whichever of the two is present. */
   icon?: ComponentType<{ "aria-hidden"?: boolean }>;
   logo?: string;
   to?: string;
@@ -40,6 +38,9 @@ const LINKS: HubLink[] = [
     label: "DGFari AI",
     logo: "/images/logos/DGFari-AI.png",
     icon: PiFlameFill,
+    to: "/ai",
+    // Still badged, but it goes somewhere now: the badge sets the expectation
+    // before the tap rather than the row simply refusing to respond.
     comingSoon: true,
   },
   {
@@ -200,14 +201,6 @@ const Hub = () => {
               </span>
             </>
           );
-
-          if (link.comingSoon) {
-            return (
-              <span className="hub-link is-soon" key={link.label} aria-disabled="true">
-                {inner}
-              </span>
-            );
-          }
 
           if (link.to) {
             return (

@@ -1,0 +1,141 @@
+/* Same palette and type as the hub, straight from :root, so arriving here does
+   not feel like leaving the site. */
+.soon,
+.soon *,
+.soon *::before,
+.soon *::after {
+  box-sizing: border-box;
+}
+
+.soon {
+  min-height: var(--vh);
+  width: min(560px, calc(100vw - 40px));
+  margin: 0 auto;
+  padding: 30px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.soon-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.soon-mark {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 24px rgba(194, 164, 255, 0.35));
+}
+
+.soon-tag {
+  padding: 6px 14px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accentColor);
+  border: 1px solid rgba(194, 164, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(194, 164, 255, 0.08);
+}
+
+.soon h1 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.soon-blurb {
+  max-width: 420px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #a79db0;
+}
+
+.soon-rule {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 70%;
+  margin: 6px 0 2px;
+}
+
+.soon-rule span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(194, 164, 255, 0.75));
+}
+
+.soon-rule span:last-child {
+  background: linear-gradient(90deg, rgba(194, 164, 255, 0.75), transparent);
+}
+
+.soon-rule svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: var(--accentColor);
+  filter: drop-shadow(0 0 6px rgba(194, 164, 255, 0.7));
+}
+
+.soon-back {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(194, 164, 255, 0.38);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(194, 164, 255, 0.12) 0%,
+    rgba(11, 8, 12, 0.4) 100%
+  );
+  transition: border-color 0.25s ease, background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.soon-back svg {
+  font-size: 15px;
+  color: var(--accentColor);
+}
+
+.soon-back:hover {
+  border-color: rgba(194, 164, 255, 0.85);
+  background: rgba(194, 164, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+.soon-back:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soon-back:hover {
+    transform: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .soon h1 {
+    font-size: 30px;
+  }
+
+  .soon-mark {
+    width: 60px;
+    height: 60px;
+  }
+
+  .soon-blurb {
+    font-size: 15px;
+  }
+}

@@ -571,17 +571,9 @@
   color: rgba(194, 164, 255, 0.75);
 }
 
-.hub-link.is-soon {
-  cursor: default;
-  opacity: 0.65;
-}
-
-.hub-link.is-soon:hover {
-  border-color: rgba(194, 164, 255, 0.38);
-  box-shadow: 0 0 18px rgba(140, 90, 255, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transform: none;
-}
+/* The row is a live link now, so it is no longer dimmed: a control that looks
+   disabled but responds is worse than either. The badge alone carries the
+   status. */
 
 /* --- footer ------------------------------------------------------------- */
 

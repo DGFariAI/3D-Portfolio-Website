@@ -10,6 +10,7 @@ import { useDeviceTier } from "./hooks/useDeviceTier";
 const Hub = lazy(() => import("./routes/Hub"));
 const Portfolio = lazy(() => import("./routes/Portfolio"));
 const Blogs = lazy(() => import("./routes/Blogs"));
+const ComingSoon = lazy(() => import("./routes/ComingSoon"));
 
 const App = () => {
   const { pathname } = useLocation();
@@ -46,6 +47,18 @@ const App = () => {
         <Route path="/" element={<Hub />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route
+          path="/ai"
+          element={
+            <ComingSoon
+              name="DGFari AI"
+              logo="/images/logos/DGFari-AI.png"
+              blurb="Agentic AI that turns intent into working systems. Being built now."
+              path="/ai"
+              description="DGFari AI is on the way: agentic AI that turns intent into working systems."
+            />
+          }
+        />
         {/* Anything unknown lands on the hub rather than a dead end. */}
         <Route path="*" element={<Hub />} />
       </Routes>

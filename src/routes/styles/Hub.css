@@ -546,10 +546,11 @@
   /* Above the clip, which sits at z-index 1 over the glow. Without this it
      lays out in the right place and paints underneath her. */
   z-index: 2;
-  /* The back cover spans 30% to 57% of the frame, so 43.5% is its centre. The
-     label is 52px wide on a 57px cover: at 42% it touched the left edge. */
-  left: 43.5%;
-  top: 66%;
+  /* The cover is a parallelogram, so its left edge moves right as you go down
+     it. Its centre measured at the top is 43.5%, but the label sits low on the
+     cover and overhung the edge there, so it is pushed further across. */
+  left: 44.5%;
+  top: 72%;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
@@ -560,8 +561,8 @@
 }
 
 .hub-avatar-ring {
-  width: 13cqw;
-  height: 13cqw;
+  width: 9.5cqw;
+  height: 9.5cqw;
   border-radius: 50%;
   border: 1px solid rgba(194, 164, 255, 0.75);
   background: rgba(194, 164, 255, 0.16);
@@ -570,8 +571,13 @@
   animation: hubTapPulse 2.6s ease-in-out infinite;
 }
 
+/* Rotated to lie along the cover rather than across it. 16deg is the measured
+   slope of the cover's top edge, found by walking down each column of the frame
+   until the white pages give way to the dark board, so the type sits on the
+   book instead of floating over it. */
 .hub-avatar-cta-label {
-  font-size: 3.3cqw;
+  transform: rotate(16deg);
+  font-size: 2.95cqw;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;

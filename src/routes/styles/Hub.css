@@ -529,10 +529,14 @@
   background-color: #f59bf8;
   box-shadow: inset 71px 38px 92px 0 rgba(85, 0, 255, 0.65);
   filter: blur(21px);
-  /* Held back from full strength. She has genuinely soft edges where her hair
-     and collar meet the background, and anything bright directly behind them
-     shows through as violet. */
-  opacity: 0.78;
+  /* Held well back from full strength. She has genuinely soft edges where her
+     hair and collar meet the background, and anything bright behind them shows
+     through as violet. Measured on the live page, violet on her hair sits at
+     11.1 with this at 0.78 against 12.3 in the portfolio hero, so it was
+     already under the reference; taken down further because at this size she
+     fills far more of the screen than she does there, and the same amount of
+     spill reads as much more. */
+  opacity: 0.6;
   pointer-events: none;
 }
 

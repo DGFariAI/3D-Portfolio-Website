@@ -86,9 +86,12 @@ const Hub = () => {
         path="/"
       />
 
-      <ShareButton />
-
+      {/* Inside the header, so it can be centred on the wordmark's row rather
+          than guessing at a fixed offset: the column is vertically centred, so
+          the badge's position moves with the viewport height and a fixed top
+          would drift out of line with it. */}
       <header className="hub-intro">
+        <ShareButton />
         <h1>
           itsdgfari
           {/* 11-point rosette, generated so the spikes are even and every

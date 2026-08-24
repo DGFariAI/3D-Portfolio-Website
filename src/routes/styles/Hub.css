@@ -29,8 +29,9 @@
   gap: 14px;
 }
 
-/* Mark above wordmark, both centred on the column. */
 .hub-intro {
+  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,51 +65,42 @@
 
 /* --- share -------------------------------------------------------------- */
 
-/* A labelled pill rather than a lone circle: on a wide screen an unlabelled dot
-   in an empty corner reads as an afterthought, and the word makes the action
-   unambiguous. Glass over the dark ground, matching the link pills below. */
+/* Centred on the wordmark's row, so it lines up with the verification badge
+   exactly. Absolute inside the header rather than fixed to the viewport: the
+   column is vertically centred, so the badge moves with the viewport height and
+   any fixed offset would only be correct at one screen size. */
 .hub-share {
-  position: fixed;
-  top: 22px;
-  right: 22px;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 8px;
-  /* Vertical padding is a touch tighter than horizontal so the pill reads as
-     optically balanced rather than mathematically equal. */
-  padding: 9px 16px 9px 14px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-  color: rgba(234, 229, 236, 0.9);
-  border: 1px solid rgba(194, 164, 255, 0.28);
-  border-radius: 999px;
-  background: linear-gradient(
-    180deg,
-    rgba(194, 164, 255, 0.14),
-    rgba(11, 8, 12, 0.55)
-  );
-  backdrop-filter: blur(10px);
+  justify-content: center;
+  /* 42px keeps a comfortable touch target around an 18px mark. */
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 18px;
+  /* Solid mark, matching every other icon here, but muted: this is secondary to
+     the links, and a solid shape at low contrast still reads cleanly where a
+     thin outline would look fragile. */
+  color: rgba(194, 164, 255, 0.72);
+  border: 1px solid rgba(194, 164, 255, 0.24);
+  border-radius: 50%;
+  background: rgba(194, 164, 255, 0.07);
   cursor: pointer;
-  transition: border-color 0.25s ease, background-color 0.25s ease,
-    transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.hub-share svg {
-  font-size: 16px;
-  color: var(--accentColor);
+  /* No transform in the transition: it carries the vertical centring. */
+  transition: color 0.25s ease, border-color 0.25s ease,
+    background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .hub-share:hover {
-  border-color: rgba(194, 164, 255, 0.7);
-  box-shadow: 0 0 22px rgba(140, 90, 255, 0.25);
-  transform: translateY(-1px);
-}
-
-.hub-share:active {
-  transform: translateY(0);
+  color: var(--accentColor);
+  border-color: rgba(194, 164, 255, 0.65);
+  background: rgba(194, 164, 255, 0.15);
+  box-shadow: 0 0 20px rgba(140, 90, 255, 0.25);
 }
 
 .hub-share:focus-visible {
@@ -360,10 +352,9 @@
 
 @media screen and (max-width: 480px) {
   .hub-share {
-    top: 14px;
-    right: 14px;
-    padding: 8px 14px 8px 12px;
-    font-size: 13px;
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
   }
 
   .share-sheet {

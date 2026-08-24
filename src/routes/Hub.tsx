@@ -11,16 +11,17 @@ import ShareButton from "../components/ShareButton";
 import "./styles/Hub.css";
 
 /**
- * The avatar clip.
+ * The avatar clip: her reading DGFari Learn, keyed off green into a VP9 WebM
+ * with a real alpha channel, plus a transparent WebP poster of the same size.
  *
- * Interim: the What I Do cutout, until the writing-and-reading clip exists.
- * Swapping it is this one object: a VP9 WebM with a real alpha channel plus a
- * transparent WebP poster of the same dimensions, produced the same way as the
- * other character clips.
+ * It is built to loop. The generation was constrained to end on the frame it
+ * started on, so the wrap point is invisible and the clip can run continuously
+ * without anyone seeing a cut. The green-screen master and the still it was
+ * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/what-i-do-v2.webm?v=11",
-  poster: "/videos/character/what-i-do-v2-poster.webp?v=11",
+  webm: "/videos/character/dgfari-learn.webm?v=1",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=1",
 };
 
 interface HubLink {
@@ -223,12 +224,16 @@ const Hub = () => {
         ) : (
           <img className="hub-avatar-media" src={AVATAR.poster} alt="" />
         )}
-      </button>
 
-      <p className="hub-hint">
-        <span className="hub-hint-dot" aria-hidden="true" />
-        Tap her to read <strong>DGFari Learn</strong>
-      </p>
+        {/* Sits on the book's back cover rather than under the picture, so the
+            invitation is on the thing you are being invited to tap. Hidden from
+            assistive tech: the button's own label already says where it goes,
+            and reading this out as well would just be the same sentence twice. */}
+        <span className="hub-avatar-cta" aria-hidden="true">
+          <span className="hub-avatar-ring" />
+          <span className="hub-avatar-cta-label">Tap to read</span>
+        </span>
+      </button>
 
       <Divider />
 

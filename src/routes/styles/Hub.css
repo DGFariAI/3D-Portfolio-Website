@@ -247,7 +247,7 @@
 
 /* Nothing moves under the blur, or it is recomputed per frame. The avatar is
    paused in Hub.tsx; this is the other thing on the page that animates. */
-.hub.is-sharing .hub-hint-dot {
+.hub.is-sharing .hub-avatar-ring {
   animation: none;
 }
 
@@ -481,10 +481,14 @@
 .hub-avatar {
   position: relative;
   display: block;
+  /* A container, so the tap affordance on the book can be sized in cqw and
+     scale with her instead of being three hardcoded sizes at three
+     breakpoints. */
+  container-type: inline-size;
   /* Also capped against viewport height: the whole point of this page is that
      every link is visible without scrolling, and the avatar is the only
      element big enough to push them off a short screen. The clip is roughly
-     1:1.16, so 27vh of width lands near 31vh of height. */
+     1:1.08, so 27vh of width lands near 29vh of height. */
   width: min(280px, 70vw, 27vh);
   margin: 0;
   padding: 0;
@@ -531,41 +535,68 @@
   filter: blur(26px);
 }
 
-/* --- hint --------------------------------------------------------------- */
+/* --- tap affordance ------------------------------------------------------ */
 
-.hub-hint {
+/* The tap affordance, sitting on the plain back cover of the book.
+   Positioned as a percentage of the avatar, so it stays on the cover at every
+   size, and measured in cqw so it scales with her rather than needing a size
+   per breakpoint. */
+.hub-avatar-cta {
+  position: absolute;
+  /* Above the clip, which sits at z-index 1 over the glow. Without this it
+     lays out in the right place and paints underneath her. */
+  z-index: 2;
+  /* The back cover spans 30% to 57% of the frame, so 43.5% is its centre. The
+     label is 52px wide on a 57px cover: at 42% it touched the left edge. */
+  left: 43.5%;
+  top: 66%;
+  transform: translate(-50%, -50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin: 0;
-  font-size: 14px;
-  letter-spacing: 1px;
-  color: #a79db0;
+  gap: 1.6cqw;
+  line-height: 1;
+  pointer-events: none;
 }
 
-.hub-hint strong {
-  color: var(--accentColor);
-  font-weight: 500;
-}
-
-.hub-hint-dot {
-  width: 7px;
-  height: 7px;
+.hub-avatar-ring {
+  width: 13cqw;
+  height: 13cqw;
   border-radius: 50%;
-  background: var(--accentColor);
-  animation: hubPulse 2s ease-in-out infinite;
+  border: 1px solid rgba(194, 164, 255, 0.75);
+  background: rgba(194, 164, 255, 0.16);
+  box-shadow: 0 0 10px rgba(140, 90, 255, 0.45),
+    inset 0 0 8px rgba(194, 164, 255, 0.25);
+  animation: hubTapPulse 2.6s ease-in-out infinite;
 }
 
-@keyframes hubPulse {
+.hub-avatar-cta-label {
+  font-size: 3.3cqw;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(233, 224, 245, 0.92);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+}
+
+/* A breath rather than a throb: it has to read as tappable without pulling the
+   eye off her. */
+@keyframes hubTapPulse {
   0%,
   100% {
-    opacity: 1;
+    opacity: 0.85;
     transform: scale(1);
   }
   50% {
-    opacity: 0.35;
-    transform: scale(0.7);
+    opacity: 1;
+    transform: scale(1.09);
   }
+}
+
+.hub-avatar:hover .hub-avatar-ring {
+  border-color: rgba(194, 164, 255, 1);
+  background: rgba(194, 164, 255, 0.26);
 }
 
 /* --- divider ------------------------------------------------------------ */
@@ -727,7 +758,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hub-hint-dot {
+  .hub-avatar-ring {
     animation: none;
   }
   .hub-link:hover {

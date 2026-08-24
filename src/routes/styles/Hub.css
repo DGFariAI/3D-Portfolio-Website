@@ -62,6 +62,81 @@
   filter: drop-shadow(0 0 7px rgba(139, 92, 246, 0.55));
 }
 
+/* --- share -------------------------------------------------------------- */
+
+/* Fixed to the viewport's corner rather than the column's: the column is only
+   560px on a wide screen, so anchoring to it would leave the control floating
+   near the middle. Outside the flex flow, so it cannot affect the layout that
+   keeps every link above the fold. */
+.hub-share {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hub-share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 44px is the smallest comfortable touch target; the icon inside is smaller
+     but the tappable area is not. */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 19px;
+  color: rgba(194, 164, 255, 0.75);
+  border: 1px solid rgba(194, 164, 255, 0.28);
+  border-radius: 50%;
+  background: rgba(194, 164, 255, 0.06);
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.hub-share-button:hover {
+  color: var(--accentColor);
+  border-color: rgba(194, 164, 255, 0.7);
+  background: rgba(194, 164, 255, 0.14);
+}
+
+.hub-share-button:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+}
+
+.hub-share-toast {
+  font-size: 13px;
+  letter-spacing: 0.6px;
+  color: var(--accentColor);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.hub-share-toast:not(:empty) {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* The toast would sit under the icon on a narrow screen, so it moves beneath
+   the button and right-aligns instead of pushing it off the edge. */
+@media screen and (max-width: 480px) {
+  .hub-share {
+    top: 12px;
+    right: 12px;
+  }
+
+  .hub-share-button {
+    width: 40px;
+    height: 40px;
+    font-size: 17px;
+  }
+}
+
 /* --- avatar ------------------------------------------------------------- */
 
 .hub-avatar {

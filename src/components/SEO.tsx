@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const SITE_URL = "https://dgfari.com";
-const DEFAULT_IMAGE = "/DGFari_Open_Graph.png?v=1";
+const DEFAULT_IMAGE = "/dgfari-og.jpg?v=2";
 
 interface Props {
   title: string;
@@ -36,16 +36,19 @@ function setMeta(selector: string, attr: "name" | "property", key: string, value
 const SEO = ({ title, description, path, image = DEFAULT_IMAGE }: Props) => {
   useEffect(() => {
     const url = `${SITE_URL}${path}`;
+    // Absolute, because a root-relative og:image is ignored by several
+    // unfurlers even though browsers resolve it fine.
+    const imageUrl = image.startsWith("http") ? image : `${SITE_URL}${image}`;
     document.title = title;
 
     setMeta('meta[name="description"]', "name", "description", description);
     setMeta('meta[property="og:title"]', "property", "og:title", title);
     setMeta('meta[property="og:description"]', "property", "og:description", description);
     setMeta('meta[property="og:url"]', "property", "og:url", url);
-    setMeta('meta[property="og:image"]', "property", "og:image", image);
+    setMeta('meta[property="og:image"]', "property", "og:image", imageUrl);
     setMeta('meta[name="twitter:title"]', "name", "twitter:title", title);
     setMeta('meta[name="twitter:description"]', "name", "twitter:description", description);
-    setMeta('meta[name="twitter:image"]', "name", "twitter:image", image);
+    setMeta('meta[name="twitter:image"]', "name", "twitter:image", imageUrl);
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {

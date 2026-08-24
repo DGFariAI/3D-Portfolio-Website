@@ -7,6 +7,7 @@ import {
   PiPaintBrushFill,
 } from "react-icons/pi";
 import SEO from "../components/SEO";
+import ShareButton from "../components/ShareButton";
 import "./styles/Hub.css";
 
 /**
@@ -84,6 +85,8 @@ const Hub = () => {
         description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
         path="/"
       />
+
+      <ShareButton />
 
       <header className="hub-intro">
         <h1>

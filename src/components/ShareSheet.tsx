@@ -1,4 +1,4 @@
-import { CSSProperties, PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
+import { PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PiCheckBold, PiCopyBold, PiShareFatBold, PiXBold } from "react-icons/pi";
 
@@ -32,8 +32,6 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [drag, setDrag] = useState(0);
-  const [dragging, setDragging] = useState(false);
   const gesture = useRef<{
     id: number;
     startY: number;
@@ -41,7 +39,10 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
     lastT: number;
     velocity: number;
     active: boolean;
+    height: number;
   } | null>(null);
+  const layerRef = useRef<HTMLDivElement | null>(null);
+  const backdropRef = useRef<HTMLButtonElement | null>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const copyRef = useRef<HTMLButtonElement | null>(null);
   const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -134,9 +135,18 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
       lastT: e.timeStamp,
       velocity: 0,
       active: false,
+      height: 0,
     };
   }, [closing]);
 
+  // The whole gesture runs on the DOM, not through React.
+  //
+  // Every pointermove used to set state, which re-rendered the sheet and wrote
+  // a custom property on the layer. A custom property invalidates the computed
+  // style of every element that could inherit it, so one finger movement made
+  // the browser recompute the whole sheet's subtree. Writing transform on the
+  // single element that moves touches one element, and with will-change set the
+  // browser can hand the move to the compositor instead of repainting.
   const onPointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     const g = gesture.current;
     if (!g || g.id !== e.pointerId) return;
@@ -147,7 +157,12 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
       // resistance below is unreachable and the sheet simply ignores the drag.
       if (Math.abs(dy) < SLOP_PX) return;
       g.active = true;
-      setDragging(true);
+      // Measured once. Reading offsetHeight per move would force a layout on
+      // every frame of the drag, which is the opposite of the point.
+      g.height = sheetRef.current?.offsetHeight ?? 0;
+      layerRef.current?.classList.add("is-dragging");
+      if (sheetRef.current) sheetRef.current.style.willChange = "transform";
+      if (backdropRef.current) backdropRef.current.style.willChange = "opacity";
       // Capture so the drag survives the pointer leaving the sheet, which it
       // will as soon as the sheet moves out from under the finger.
       e.currentTarget.setPointerCapture(e.pointerId);
@@ -160,7 +175,14 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
 
     // Upward is resisted rather than blocked: the sheet gives a little so the
     // gesture feels answered, instead of going dead in one direction.
-    setDrag(dy >= 0 ? dy : dy / 4);
+    const y = dy >= 0 ? dy : dy / 4;
+    if (sheetRef.current) {
+      sheetRef.current.style.transform = "translate3d(0, " + y.toFixed(1) + "px, 0)";
+    }
+    if (backdropRef.current && g.height) {
+      const progress = Math.min(1, Math.max(0, y / g.height));
+      backdropRef.current.style.opacity = (1 - progress * 0.85).toFixed(3);
+    }
   }, []);
 
   const endDrag = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
@@ -169,34 +191,44 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
     gesture.current = null;
     if (!g.active) return;
 
-    setDragging(false);
+    const sheet = sheetRef.current;
+    const backdrop = backdropRef.current;
+    // Dropping the class restores the transition, so whatever transform is set
+    // in this same tick is what the sheet animates to.
+    layerRef.current?.classList.remove("is-dragging");
+    if (sheet) sheet.style.willChange = "";
+    if (backdrop) {
+      backdrop.style.willChange = "";
+      backdrop.style.opacity = "";
+    }
+
     const travelled = e.clientY - g.startY;
     if (travelled > DISMISS_PX || g.velocity > DISMISS_VELOCITY) {
+      // Driven to the closed position rather than cleared, so it leaves on the
+      // same 0.26s curve the X and the backdrop use instead of snapping back to
+      // open for a frame while React catches up.
+      if (sheet) {
+        sheet.style.transform =
+          "translate3d(0, " + Math.round(g.height * 1.02) + "px, 0)";
+      }
       dismiss();
       return;
     }
-    setDrag(0);
+    if (sheet) sheet.style.transform = "";
   }, [dismiss]);
 
   const canNativeShare = typeof navigator !== "undefined" && !!navigator.share;
-  const state = [closing ? "is-closing" : entered ? "is-open" : "", dragging ? "is-dragging" : ""]
-    .filter(Boolean)
-    .join(" ");
-
-  const sheetHeight = sheetRef.current?.offsetHeight ?? 0;
-  const layerStyle = {
-    "--drag": `${drag.toFixed(1)}px`,
-    "--drag-progress": sheetHeight ? Math.min(1, Math.max(0, drag / sheetHeight)) : 0,
-  } as CSSProperties;
+  const state = closing ? "is-closing" : entered ? "is-open" : "";
 
   // Rendered at the end of <body> rather than inside the hub, because the hub
   // is blurred while this is open and a child of a blurred element is blurred
   // with it. See the note on .hub.is-sharing.
   return createPortal(
-    <div className={`share-layer ${state}`} style={layerStyle}>
+    <div className={`share-layer ${state}`} ref={layerRef}>
       <button
         type="button"
         className="share-backdrop"
+        ref={backdropRef}
         aria-label="Close"
         tabIndex={-1}
         onClick={dismiss}

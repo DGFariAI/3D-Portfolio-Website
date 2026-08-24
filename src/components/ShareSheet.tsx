@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { CSSProperties, PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
 import { PiCheckBold, PiCopyBold, PiShareFatBold, PiXBold } from "react-icons/pi";
 
 interface Props {
@@ -11,6 +11,13 @@ interface Props {
 }
 
 const CLOSE_MS = 260;
+/** How far the sheet has to travel before letting go dismisses it. */
+const DISMISS_PX = 90;
+/** A flick this fast dismisses from anywhere, which is how a short, fast
+ *  downward swipe closes a sheet without dragging it the full distance. */
+const DISMISS_VELOCITY = 0.55;
+/** Movement before a press becomes a drag, so a tap still reads as a tap. */
+const SLOP_PX = 4;
 
 /**
  * Bottom sheet for sharing the hub.
@@ -24,6 +31,16 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [drag, setDrag] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const gesture = useRef<{
+    id: number;
+    startY: number;
+    lastY: number;
+    lastT: number;
+    velocity: number;
+    active: boolean;
+  } | null>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const copyRef = useRef<HTMLButtonElement | null>(null);
   const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,11 +120,76 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
     }
   }, [url, dismiss]);
 
+  // The sheet is not scrollable, so a drag can start anywhere on it. Anywhere
+  // except a control or the URL: pulling the sheet shut instead of pressing
+  // Copy, or instead of selecting the link to read it, would both be wrong.
+  const onPointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
+    if (closing || e.button !== 0) return;
+    if ((e.target as HTMLElement).closest("button, a, input, .share-url-text")) return;
+    gesture.current = {
+      id: e.pointerId,
+      startY: e.clientY,
+      lastY: e.clientY,
+      lastT: e.timeStamp,
+      velocity: 0,
+      active: false,
+    };
+  }, [closing]);
+
+  const onPointerMove = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
+    const g = gesture.current;
+    if (!g || g.id !== e.pointerId) return;
+    const dy = e.clientY - g.startY;
+
+    if (!g.active) {
+      // Absolute, not signed: an upward pull has to arm the gesture too, or the
+      // resistance below is unreachable and the sheet simply ignores the drag.
+      if (Math.abs(dy) < SLOP_PX) return;
+      g.active = true;
+      setDragging(true);
+      // Capture so the drag survives the pointer leaving the sheet, which it
+      // will as soon as the sheet moves out from under the finger.
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+
+    const dt = e.timeStamp - g.lastT;
+    if (dt > 0) g.velocity = (e.clientY - g.lastY) / dt;
+    g.lastY = e.clientY;
+    g.lastT = e.timeStamp;
+
+    // Upward is resisted rather than blocked: the sheet gives a little so the
+    // gesture feels answered, instead of going dead in one direction.
+    setDrag(dy >= 0 ? dy : dy / 4);
+  }, []);
+
+  const endDrag = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
+    const g = gesture.current;
+    if (!g || g.id !== e.pointerId) return;
+    gesture.current = null;
+    if (!g.active) return;
+
+    setDragging(false);
+    const travelled = e.clientY - g.startY;
+    if (travelled > DISMISS_PX || g.velocity > DISMISS_VELOCITY) {
+      dismiss();
+      return;
+    }
+    setDrag(0);
+  }, [dismiss]);
+
   const canNativeShare = typeof navigator !== "undefined" && !!navigator.share;
-  const state = closing ? "is-closing" : entered ? "is-open" : "";
+  const state = [closing ? "is-closing" : entered ? "is-open" : "", dragging ? "is-dragging" : ""]
+    .filter(Boolean)
+    .join(" ");
+
+  const sheetHeight = sheetRef.current?.offsetHeight ?? 0;
+  const layerStyle = {
+    "--drag": `${drag.toFixed(1)}px`,
+    "--drag-progress": sheetHeight ? Math.min(1, Math.max(0, drag / sheetHeight)) : 0,
+  } as CSSProperties;
 
   return (
-    <div className={`share-layer ${state}`}>
+    <div className={`share-layer ${state}`} style={layerStyle}>
       <button
         type="button"
         className="share-backdrop"
@@ -122,6 +204,10 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
         aria-modal="true"
         aria-label="Share this page"
         ref={sheetRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
       >
         <span className="share-grabber" aria-hidden="true" />
 

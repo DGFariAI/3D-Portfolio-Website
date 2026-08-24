@@ -207,17 +207,35 @@
   text-align: left;
   box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.65),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  transform: translateY(102%);
+  /* --drag is how far the finger has pulled the sheet down. It composes into
+     the same transform the open and closed states use, so the gesture and the
+     animation never fight over the property. */
+  transform: translateY(calc(102% + var(--drag, 0px)));
   transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+  touch-action: none;
 }
 
 .share-layer.is-open .share-sheet {
-  transform: translateY(0);
+  transform: translateY(var(--drag, 0px));
+}
+
+/* While a finger is on it the sheet tracks the finger exactly. A transition
+   here would make it lag behind the touch, which is what makes a sheet feel
+   cheap. */
+.share-layer.is-dragging .share-sheet,
+.share-layer.is-dragging .share-backdrop {
+  transition: none;
 }
 
 .share-layer.is-closing .share-sheet {
   transform: translateY(102%);
   transition-duration: 0.26s;
+}
+
+/* The backdrop thins out as the sheet is pulled down, so the page behind it
+   comes back gradually and a half-finished drag shows its own progress. */
+.share-layer.is-open .share-backdrop {
+  opacity: calc(1 - var(--drag-progress, 0) * 0.85);
 }
 
 .share-grabber {
@@ -226,6 +244,13 @@
   margin: 0 auto 2px;
   border-radius: 999px;
   background: rgba(194, 164, 255, 0.3);
+  transition: background-color 0.2s ease, width 0.2s ease;
+}
+
+/* Confirms the grip the moment the drag starts. */
+.share-layer.is-dragging .share-grabber {
+  width: 54px;
+  background: rgba(194, 164, 255, 0.6);
 }
 
 .share-head {
@@ -396,6 +421,9 @@
   .share-sheet,
   .share-backdrop {
     transition-duration: 0.01ms;
+  }
+  .share-grabber {
+    transition: none;
   }
 }
 

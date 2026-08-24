@@ -50,11 +50,15 @@
 }
 
 .hub-verified {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
-  color: var(--accentColor);
-  filter: drop-shadow(0 0 6px rgba(194, 164, 255, 0.5));
+  /* A saturated violet rather than --accentColor: the accent is a pale lavender
+     and the reference's badge carries a white check, which needs a darker field
+     behind it to stay legible at this size. */
+  color: #8b5cf6;
+  overflow: visible;
+  filter: drop-shadow(0 0 7px rgba(139, 92, 246, 0.55));
 }
 
 /* --- avatar ------------------------------------------------------------- */
@@ -147,78 +151,6 @@
     opacity: 0.35;
     transform: scale(0.7);
   }
-}
-
-/* --- corner glows ------------------------------------------------------- */
-
-/* Fixed rather than absolute, so they hug the viewport's corners instead of the
-   column's, and outside the flex flow so they cannot disturb the spacing.
-   overflow: hidden keeps the off-screen halves from creating scrollbars. */
-.hub-glows {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.hub-glows span {
-  position: absolute;
-  width: 340px;
-  height: 340px;
-  border-radius: 50%;
-  background-color: #fb8dff;
-  filter: blur(80px);
-  opacity: 0.34;
-}
-
-.hub-glows span:nth-child(1) {
-  top: -150px;
-  left: -150px;
-  box-shadow: inset -50px 40px 50px rgba(84, 0, 255, 0.6);
-}
-
-.hub-glows span:nth-child(2) {
-  top: -150px;
-  right: -150px;
-  box-shadow: inset 50px 40px 50px rgba(84, 0, 255, 0.6);
-}
-
-.hub-glows span:nth-child(3) {
-  bottom: -150px;
-  left: -150px;
-  box-shadow: inset -50px -40px 50px rgba(84, 0, 255, 0.6);
-}
-
-.hub-glows span:nth-child(4) {
-  bottom: -150px;
-  right: -150px;
-  box-shadow: inset 50px -40px 50px rgba(84, 0, 255, 0.6);
-}
-
-/* Large blur radii are the most expensive decoration on weak hardware, same
-   reasoning as the tier rules in index.css. */
-.tier-medium .hub-glows span {
-  filter: blur(60px);
-}
-
-.tier-low .hub-glows span {
-  width: 260px;
-  height: 260px;
-  filter: blur(40px);
-  opacity: 0.26;
-}
-
-/* The content sits above them. Every direct child is raised rather than the
-   column itself, because the glows are children of that same column. */
-.hub-intro,
-.hub-avatar,
-.hub-hint,
-.hub-divider,
-.hub-links,
-.hub-footer {
-  position: relative;
-  z-index: 1;
 }
 
 /* --- divider ------------------------------------------------------------ */
@@ -367,7 +299,7 @@
    With the column centred instead, the leftover height falls evenly above and
    below rather than all of it landing here. */
 .hub-footer {
-  margin-top: 12px;
+  margin-top: 22px;
   padding-top: 0;
   font-size: 12px;
   letter-spacing: 1px;
@@ -394,8 +326,8 @@
   }
 
   .hub-verified {
-    width: 17px;
-    height: 17px;
+    width: 19px;
+    height: 19px;
   }
 
   .hub-avatar {
@@ -405,6 +337,12 @@
   .hub-link {
     grid-template-columns: 36px 1fr 36px;
     padding: 12px 16px;
+  }
+
+  /* Tighter than desktop: a phone has less height to spare, so the copyright
+     sits closer to the closing rule. */
+  .hub-footer {
+    margin-top: 8px;
   }
 
   .hub-link-label {

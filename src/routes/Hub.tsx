@@ -79,17 +79,6 @@ const Hub = () => {
 
   return (
     <div className="hub">
-      {/* Corner glows, the same pink-into-violet recipe as .landing-circle1 in
-          the portfolio. Fixed and pointer-events: none, so they sit behind the
-          content and take no part in the layout that keeps everything on one
-          screen. */}
-      <div className="hub-glows" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
-
       <SEO
         title="DGFari"
         description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
@@ -99,16 +88,19 @@ const Hub = () => {
       <header className="hub-intro">
         <h1>
           itsdgfari
-          <svg className="hub-verified" viewBox="0 0 24 24" aria-hidden="true">
+          {/* 11-point rosette, generated so the spikes are even and every
+              vertex sits inside the viewBox: the previous hand-drawn path ran
+              past its edges, which is what clipped it. */}
+          <svg className="hub-verified" viewBox="0 0 48 48" aria-hidden="true">
             <path
               fill="currentColor"
-              d="M12 1.3l2.4 2.2 3.2-.3 1 3.1 2.9 1.4-1 3.1 1 3.1-2.9 1.4-1 3.1-3.2-.3L12 20.3l-2.4 2.2-3.2-.3-1-3.1-2.9-1.4 1-3.1-1-3.1 2.9-1.4 1-3.1 3.2.3z"
+              d="M24.00 1.00 L29.24 6.15 L36.43 4.65 L38.06 11.82 L44.92 14.45 L42.41 21.35 L46.77 27.27 L40.92 31.73 L41.38 39.06 L34.06 39.65 L30.48 46.07 L24.00 42.60 L17.52 46.07 L13.94 39.65 L6.62 39.06 L7.08 31.73 L1.23 27.27 L5.59 21.35 L3.08 14.45 L9.94 11.82 L11.57 4.65 L18.76 6.15 Z"
             />
             <path
-              d="M8.4 12.1l2.4 2.4 4.8-4.9"
+              d="M15.5 24.5 L21.5 30.5 L32.5 18.5"
               fill="none"
-              stroke="var(--backgroundColor)"
-              strokeWidth="2.2"
+              stroke="#ffffff"
+              strokeWidth="5"
               strokeLinecap="round"
               strokeLinejoin="round"
             />

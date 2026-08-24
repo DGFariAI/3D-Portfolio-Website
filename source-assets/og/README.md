@@ -41,30 +41,30 @@ or another, and the crop is never the one you would have chosen.
 
 ## The backlight
 
-The glow behind her is not a gradient anyone invented. It is the
-`.character-rim` recipe from `src/components/styles/Landing.css`, the same
-backlight the portfolio hero sits in: a pink disc (`#f59bf8`) carrying a
-violet-blue inset shadow (`rgba(85, 0, 255, 0.65)`) pushed 66px right and 35px
-down, blurred hard. That off-centre offset is the whole trick, and it is why the
-glow reads as two colours, warm on the upper left and cool on the lower right,
-rather than as one flat wash.
+The glow is not designed, it is **ported from the portfolio's mobile hero**,
+which is the look this card is meant to match.
 
-It is sized to stay fully inside the card. A larger one looks more dramatic in
-isolation and gets sliced flat by the top edge, which reads as an accident, and
-it lifts the whole field so the wordmark and pills lose contrast at the ~350px
-width a card is actually seen at in a feed.
+`measure-hero-glow.mjs` loads `/portfolio` at 390px in a headless browser, waits
+out the intro, and reads the live `.character-rim`: its box after transform, its
+blur, its inset shadow, and where its centre sits inside the clip. Those numbers
+are the `PORTFOLIO_MOBILE` block in `render-og.mjs`, and every glow value on the
+card is derived from them by the ratio between the two hero widths. Change
+`CARD.hero` and the glow rescales with her; nothing has to be re-tuned by hand.
 
-Two earlier attempts are worth not repeating. A hand-written radial gradient
+Two things about it are easy to get wrong by eye. The glow is roughly **twice
+her head width**, not a tight halo. And its centre sits near her **chin**, not
+behind her head, which is what gives the bloom its lift up past her hair and
+down across her shoulders.
+
+Three earlier attempts are worth not repeating. A hand-written radial gradient
 came out visibly bluer and more saturated than the card it replaced. Recovering
-the old card's background by masking and diffusion matched it exactly but kept a
-wash that was never the portfolio's look in the first place. Neither is needed:
-the ground is plain `--backgroundColor` with this one glow on it, which is what
-the hero sits on in the portfolio.
+the old card's background by masking and diffusion matched that card exactly but
+kept a wash that was never the portfolio's look. A tight halo sized to sit
+inside the card was contained and tidy and still did not look like the phone.
+Measuring the real thing was the only approach that worked.
 
-The glow's position is derived from the artwork, not hardcoded. `render-og.mjs`
-finds her head by scanning the frame's alpha for the widest opaque span across
-the top, so changing `CARD.hero` moves the glow with her instead of leaving a
-second number to keep in sync.
+If the glow ever needs to change, re-run `measure-hero-glow.mjs` against
+whatever the portfolio does then, and paste the numbers back in.
 
 ## Tuning it
 

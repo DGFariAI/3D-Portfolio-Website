@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const SITE_URL = "https://dgfari.com";
-const DEFAULT_IMAGE = "/dgfari-og.jpg?v=5";
+const DEFAULT_IMAGE = "/dgfari-og.jpg?v=6";
 
 interface Props {
   title: string;

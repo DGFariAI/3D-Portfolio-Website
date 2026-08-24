@@ -9,20 +9,35 @@ const PORT = Number(process.env.CDP_PORT || 9290);
 // The card, in one place.
 //
 // `drop` is how far below the card's bottom edge her chest is cropped; raising
-// it lowers her and buys headroom above her head. The backlight is the
-// .character-rim recipe from Landing.css: a pink disc with a violet-blue inset
-// shadow pushed off centre, which is what makes it read as two colours rather
-// than one wash. Sized to stay fully inside the card, since a glow sliced flat
-// by the top edge reads as an accident.
+// it lowers her and buys headroom above her head. `shiftX` slides her past the
+// right edge; the glow is derived from her position, so it travels with her.
 const CARD = {
   hero: 840,
   drop: 48,
-  rimSize: 290,
-  rimBlur: 36,
-  rimScale: 1.15,
-  rimShadow: '48px 25px 62px 0 rgba(85,0,255,0.7)',
+  shiftX: 40,
   quality: 0.86,
 };
+
+// The backlight is not chosen, it is ported. These are the portfolio's mobile
+// hero measured live in a headless browser at 390px: the clip's rendered width,
+// the .character-rim box after its transform, its blur and inset shadow, and
+// where its centre sits inside the clip. Everything about the glow on this card
+// is derived from these by the ratio between the two hero widths, so the card
+// reproduces what the phone actually shows rather than an approximation of it.
+const PORTFOLIO_MOBILE = {
+  videoW: 437,
+  videoH: 344,
+  rimBase: 160,
+  rimScale: 1.35,
+  rimBlur: 31,
+  shadow: [66, 35, 85],
+  shadowColour: 'rgba(85,0,255,0.65)',
+  // Centre of the rim as a fraction of the clip: horizontally centred, and
+  // vertically down near her chin rather than behind her head.
+  fx: (195 - -23) / 437,
+  fy: (457 - 296) / 344,
+};
+
 const ASPECT = 700 / 552; // the hero frame's own aspect
 
 const chrome = spawn(CHROME, [`--remote-debugging-port=${PORT}`, '--headless=new',
@@ -89,25 +104,34 @@ const head = await evalJs(`(async () => {
 })()`);
 
 const heroH = CARD.hero / ASPECT;
-const heroLeft = 1200 - CARD.hero;
+const heroLeft = 1200 + CARD.shiftX - CARD.hero;
 const heroTop = 630 + CARD.drop - heroH;
-const rx = Math.round(heroLeft + head.fx * CARD.hero);
-const ry = Math.round(heroTop + head.fy * heroH);
+
+const P = PORTFOLIO_MOBILE;
+const k = CARD.hero / P.videoW; // how much bigger she is here than on a phone
+const rimSize = Math.round(P.rimBase * k);
+const rimBlur = Math.round(P.rimBlur * k);
+const rimShadow = P.shadow.map(v => Math.round(v * k) + 'px').join(' ') + ' 0 ' + P.shadowColour;
+const rx = Math.round(heroLeft + P.fx * CARD.hero);
+const ry = Math.round(heroTop + P.fy * heroH);
 
 await evalJs(`(() => { const r = document.documentElement.style;
   r.setProperty('--hero-w', '${CARD.hero}px');
-  r.setProperty('--rim-size', '${CARD.rimSize}px');
-  r.setProperty('--rim-blur', '${CARD.rimBlur}px');
-  r.setProperty('--rim-scale', '${CARD.rimScale}');
-  r.setProperty('--rim-shadow', '${CARD.rimShadow}');
+  r.setProperty('--rim-size', '${rimSize}px');
+  r.setProperty('--rim-blur', '${rimBlur}px');
+  r.setProperty('--rim-scale', '${P.rimScale}');
+  r.setProperty('--rim-shadow', '${rimShadow}');
   r.setProperty('--rim-x', '${rx}px');
   r.setProperty('--rim-y', '${ry}px');
   document.querySelector('.hero').style.bottom = '-${CARD.drop}px';
+  document.querySelector('.hero').style.right = '-${CARD.shiftX}px';
   return true; })()`);
 await wait(450);
 
 console.log('head centre in source frame:', JSON.stringify(head));
-console.log('glow centred at', rx + ',' + ry, ' effective diameter', Math.round(CARD.rimSize * CARD.rimScale) + 'px');
+console.log('scale vs the phone:', k.toFixed(3) + 'x');
+console.log('glow: base ' + rimSize + 'px, blur ' + rimBlur + 'px, shadow ' + rimShadow);
+console.log('glow centred at', rx + ',' + ry, ' effective diameter', Math.round(rimSize * P.rimScale) + 'px');
 console.log('layout:', await evalJs(`(() => {
   const r = s => { const b = document.querySelector(s).getBoundingClientRect();
     return [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]; };

@@ -40,14 +40,26 @@ const RESTING_TOP = 0.6;
 const SLIDE_START = 1.05;
 const SLIDE_END = 0.55;
 
-// How far above her centre the backlight sits, in px. A single constant on
-// purpose: the glow has to keep a fixed relationship to her head, and it is
-// only ever visible while the About clip is showing (the rim is hidden once the
-// What I Do clip takes over). An earlier version interpolated this value as the
-// section approached, which was fine while she teleported into place but now
-// fights the scroll-driven slide: two different curves moving at once made the
-// glow drift up off her head and then settle back down.
-const RIM_LIFT = 250;
+// While she is resting in the About section the glow is placed entirely by CSS:
+// .character-rim.about-position sits at 45% of the viewport with a -28% shift.
+// Once she freezes, Landing positions it inline instead, and the two rules have
+// to agree or the glow visibly jumps up off her head at the handover. Rather
+// than hardcode a second number that has to be kept in sync by hand, derive the
+// inline offset from the same CSS values.
+const RIM_RESTING_TOP = 0.45; // must track .character-rim.about-position
+/**
+ * How far above her anchor the glow's `top` is set, so the frozen placement
+ * reproduces the resting one exactly.
+ *
+ * Only the difference between the two `top` percentages matters. The rim keeps
+ * the same -28% translate in both states, so the gap between its `top` and where
+ * its centre actually lands is identical either way and cancels out. Subtracting
+ * it here (an earlier mistake) pushed the glow 88px too low, which measured as
+ * 41px below her centre instead of 47px above it.
+ */
+function rimLiftFor(viewportHeight: number): number {
+  return (RESTING_TOP - RIM_RESTING_TOP) * viewportHeight;
+}
 
 const Landing = ({ children }: PropsWithChildren) => {
   const [isSwitched, setIsSwitched] = useState(false);
@@ -57,6 +69,9 @@ const Landing = ({ children }: PropsWithChildren) => {
   const [isInWhatIDo, setIsInWhatIDo] = useState(false);
   const [isFrozen, setIsFrozen] = useState(false);
   const [frozenTop, setFrozenTop] = useState<number | null>(null);
+  const [viewportHeight, setViewportHeight] = useState(() =>
+    typeof window === 'undefined' ? 900 : window.innerHeight
+  );
   const [isPastWhatIDo, setIsPastWhatIDo] = useState(false);
   const [activeSection, setActiveSection] = useState<VisualKey>('hero');
   const [heroOffscreen, setHeroOffscreen] = useState(false);
@@ -131,6 +146,7 @@ const Landing = ({ children }: PropsWithChildren) => {
         container: containerEl,
       } = readEls();
       const vh = window.innerHeight;
+      setViewportHeight(vh);
 
       // Every branch below writes state unconditionally, through a plain or
       // functional setter. Reading component state here would capture it in
@@ -399,7 +415,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   // offset has to stay well inside it. Wins over
                   // .character-rim.about-position in the stylesheet, so it is
                   // the number that actually moves the About glow.
-                  top: `${Math.max(0, frozenTop - RIM_LIFT)}px`,
+                  top: `${Math.max(0, frozenTop - rimLiftFor(viewportHeight))}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
                   transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }

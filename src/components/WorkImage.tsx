@@ -75,7 +75,12 @@ const WorkImage = (props: Props) => {
             }}
             style={{
               position: "absolute",
-              width: "120%",
+              // 120% is desktop framing: it lets the clip bleed past the card
+              // so the per-card `left` nudge can choose which part shows. With
+              // those nudges off on mobile the overflow has nothing to absorb
+              // it, and each clip spills over the card to its right, so it fits
+              // the card exactly there instead.
+              width: isDesktop ? "120%" : "100%",
               height: "100%",
               top: 0,
               // These per-card nudges are framing for desktop card widths. On a

@@ -3,10 +3,20 @@
    brand without importing anything from the portfolio itself. Nothing here
    pulls in GSAP or three.js: this page has to stay light. */
 
-.hub {
-  /* Border-box so the padding counts inside the viewport height rather than
-     adding to it, which is what pushed the footer just past the fold. */
+/* Border-box for the whole subtree. Without it a `width: 100%` row adds its
+   padding and border on top of the container's width: the pills came out 42px
+   wider than the column on desktop and 34px on mobile, hanging off the right
+   edge and throwing the centring out with them. Scoped to this route rather
+   than applied globally, because the portfolio's layout was built against the
+   default box model. */
+.hub,
+.hub *,
+.hub *::before,
+.hub *::after {
   box-sizing: border-box;
+}
+
+.hub {
   min-height: var(--vh);
   width: min(560px, calc(100vw - 40px));
   margin: 0 auto;
@@ -18,24 +28,26 @@
   gap: 14px;
 }
 
+/* Mark above wordmark, both centred on the column. */
+.hub-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.hub-mark {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(194, 164, 255, 0.35));
+}
+
 .hub-intro h1 {
-  font-size: 44px;
-  font-weight: 600;
-  letter-spacing: 2px;
   margin: 0;
-  text-transform: uppercase;
-}
-
-.hub-intro h1 span {
-  color: var(--accentColor);
-}
-
-.hub-intro p {
-  margin: 6px 0 0;
-  font-size: 15px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #a79db0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
 /* --- avatar ------------------------------------------------------------- */
@@ -136,18 +148,20 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  width: min(300px, 70%);
+  /* Proportional rather than capped: at a fixed 300px it was lost inside the
+     wider desktop column, while the same 70% reads correctly at both sizes. */
+  width: 70%;
   margin: 2px 0 4px;
 }
 
 .hub-divider-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(194, 164, 255, 0.55));
+  background: linear-gradient(90deg, transparent, rgba(194, 164, 255, 0.75));
 }
 
 .hub-divider-line:last-child {
-  background: linear-gradient(90deg, rgba(194, 164, 255, 0.55), transparent);
+  background: linear-gradient(90deg, rgba(194, 164, 255, 0.75), transparent);
 }
 
 .hub-divider-star {
@@ -188,6 +202,25 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: border-color 0.25s ease, box-shadow 0.25s ease,
     transform 0.25s ease, background-color 0.25s ease;
+}
+
+/* Mobile browsers paint a translucent blue box over whatever was tapped. It is
+   a default from before designed press states existed and looks wrong against
+   this palette; the pills have their own hover and press treatment. Keyboard
+   focus is deliberately left alone, see :focus-visible below. */
+.hub-link,
+.hub-avatar {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hub-link:active {
+  transform: translateY(0);
+}
+
+.hub-link:focus-visible,
+.hub-avatar:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
 }
 
 .hub-link:hover {
@@ -274,8 +307,13 @@
     gap: 12px;
   }
 
+  .hub-mark {
+    width: 38px;
+    height: 38px;
+  }
+
   .hub-intro h1 {
-    font-size: 34px;
+    font-size: 22px;
   }
 
   .hub-avatar {

@@ -1,5 +1,12 @@
-.blogs {
+/* Same reasoning as the hub: border-box for this route's subtree only. */
+.blogs,
+.blogs *,
+.blogs *::before,
+.blogs *::after {
   box-sizing: border-box;
+}
+
+.blogs {
   min-height: var(--vh);
   width: min(720px, calc(100vw - 40px));
   margin: 0 auto;

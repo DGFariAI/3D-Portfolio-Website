@@ -75,11 +75,17 @@ const Hub = () => {
         path="/"
       />
 
+      {/* The same mark and wordmark the portfolio's navbar uses, so the hub
+          reads as the same brand the moment it loads. */}
       <header className="hub-intro">
-        <h1>
-          DG<span>Fari</span>
-        </h1>
-        <p>Kingdom Builder &amp; Marketer</p>
+        <img
+          className="hub-mark"
+          src="/itsdgfari_icon.svg"
+          alt="DGFari"
+          width={44}
+          height={44}
+        />
+        <h1>itsdgfari</h1>
       </header>
 
       {/* The avatar is a shortcut into the blog. It is deliberately not the only

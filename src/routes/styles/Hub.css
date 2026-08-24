@@ -553,7 +553,16 @@
   width: 100%;
   padding: 14px 20px;
   border: 1px solid rgba(194, 164, 255, 0.38);
-  border-radius: 999px;
+  /* Radius scales with the element, and a full pill is reserved for small
+     chips whose width is set by their own content.
+
+     These rows are 560x58, so a pill gives them a 29px corner while the mark
+     sits 21px in: the logo and the caret end up inside the curve, with no
+     straight edge to align against, which is what made them read as floating.
+     At 18px the border runs straight past both. The small chips on this page
+     and in the sheet stay full pills, so roundness carries a meaning here
+     rather than being applied everywhere by default. */
+  border-radius: 18px;
   background: linear-gradient(
     180deg,
     rgba(194, 164, 255, 0.12) 0%,
@@ -680,6 +689,10 @@
   .hub-link {
     grid-template-columns: 36px 1fr 36px;
     padding: 12px 16px;
+    /* The row is shorter here and its padding drops to 16px, so 18px of curve
+       would reach past the mark again. 16px keeps the border running straight
+       past it, which is the whole point of the smaller radius. */
+    border-radius: 16px;
   }
 
   /* Tighter than desktop: a phone has less height to spare, so the copyright

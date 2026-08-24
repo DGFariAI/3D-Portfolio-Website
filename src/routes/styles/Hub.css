@@ -601,7 +601,10 @@
   font-size: 26px;
   line-height: 0;
   color: var(--accentColor);
-  filter: drop-shadow(0 0 8px rgba(194, 164, 255, 0.45));
+  /* Lift first, halo second: the brightness applies to the glyph, and the
+     shadow is then cast from the lifted result rather than the original. */
+  filter: brightness(var(--mark-lift, 1)) saturate(var(--mark-sat, 1))
+    drop-shadow(0 0 8px rgba(194, 164, 255, 0.45));
   transition: filter 0.25s ease, transform 0.25s ease;
 }
 
@@ -611,7 +614,8 @@
 .hub-link:hover .hub-link-mark,
 .hub-link:focus-visible .hub-link-mark,
 .hub-link:active .hub-link-mark {
-  filter: drop-shadow(0 0 5px var(--mark-glow, rgba(194, 164, 255, 0.85)))
+  filter: brightness(var(--mark-lift, 1)) saturate(var(--mark-sat, 1))
+    drop-shadow(0 0 5px var(--mark-glow, rgba(194, 164, 255, 0.85)))
     drop-shadow(0 0 16px var(--mark-glow, rgba(194, 164, 255, 0.85)));
   transform: scale(1.06);
 }

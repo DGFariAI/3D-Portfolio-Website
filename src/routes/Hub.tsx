@@ -31,10 +31,19 @@ interface HubLink {
   href?: string;
   /** Halo colour for the mark on hover. See the note above LINKS. */
   glow: string;
+  /** Brightness and saturation lift for a mark that renders dark. See below. */
+  lift?: number;
+  sat?: number;
 }
 
 /**
- * Each row's glow is its own logo's colour, not one shared violet.
+ * Each row's glow is its own logo's colour, not one shared violet, and two of
+ * the marks are lifted so all four read at the same brightness.
+ *
+ * The AI and Art artwork renders far darker than the other two: measured on the
+ * live page, mean value across their ink was 0.59 and 0.53 against 0.90 for the
+ * flame and 0.70 for the star. Total light output per row was already even, so
+ * the difference was never the halo, it was the glyphs themselves.
  *
  * Two of these marks are violet, one is gold and one is warm orange. A single
  * brand halo behind all four would sit wrong under the two that are not violet,
@@ -55,6 +64,8 @@ const LINKS: HubLink[] = [
     icon: PiFlameFill,
     to: "/ai",
     glow: "rgba(202, 120, 255, 0.85)",
+    lift: 1.45,
+    sat: 1.2,
   },
   {
     label: "DGFari Art",
@@ -62,6 +73,11 @@ const LINKS: HubLink[] = [
     icon: PiPaintBrushFill,
     href: "https://dgfariart.com",
     glow: "rgba(255, 224, 155, 0.85)",
+    // Stops climbing past 1.6: its strokes are thin and already clipping, and
+    // more brightness only drains the gold, dropping saturation from 0.41 to
+    // 0.32 without adding any light.
+    lift: 1.6,
+    sat: 1.45,
   },
   {
     label: "DGFari Studio",
@@ -209,7 +225,11 @@ const Hub = () => {
           // Handed to CSS as a custom property so the hover rule lives in the
           // stylesheet with the rest of the row's states, rather than needing a
           // hover flag in React to know which colour to apply.
-          const style = { "--mark-glow": link.glow } as CSSProperties;
+          const style = {
+            "--mark-glow": link.glow,
+            "--mark-lift": link.lift ?? 1,
+            "--mark-sat": link.sat ?? 1,
+          } as CSSProperties;
 
           const inner = (
             <>

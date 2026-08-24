@@ -36,10 +36,53 @@ interface HubLink {
 
 const LINKS: HubLink[] = [
   { label: "DGFari's Portfolio", logo: "/itsdgfari_icon.svg", to: "/portfolio" },
-  { label: "DGFari AI", icon: PiFlameFill, comingSoon: true },
-  { label: "DGFari Art", icon: PiPaintBrushFill, href: "https://dgfariart.com" },
-  { label: "DGFari Studio", icon: PiCameraFill, href: "https://dgfaristudio.com" },
+  {
+    label: "DGFari AI",
+    logo: "/images/logos/omnigenesis.png",
+    icon: PiFlameFill,
+    comingSoon: true,
+  },
+  {
+    label: "DGFari Art",
+    logo: "/images/logos/dgfari-art.png",
+    icon: PiPaintBrushFill,
+    href: "https://dgfariart.com",
+  },
+  {
+    label: "DGFari Studio",
+    logo: "/images/logos/dgfari-studio.png",
+    icon: PiCameraFill,
+    href: "https://dgfaristudio.com",
+  },
 ];
+
+/**
+ * A row's mark: the real logo when its file is present, the placeholder icon
+ * when it is not.
+ *
+ * The three brand logos are wired to their paths before the files exist, so
+ * dropping them into public/images/logos makes them appear with no code change.
+ * Until then a missing file would render as a broken image, so the fallback
+ * catches the error and shows the placeholder instead.
+ */
+const LinkMark = ({ link }: { link: HubLink }) => {
+  const [logoFailed, setLogoFailed] = useState(false);
+  const Icon = link.icon;
+
+  if (link.logo && !logoFailed) {
+    return (
+      <span className="hub-link-mark" aria-hidden="true">
+        <img src={link.logo} alt="" onError={() => setLogoFailed(true)} />
+      </span>
+    );
+  }
+
+  return (
+    <span className="hub-link-mark" aria-hidden="true">
+      {Icon ? <Icon /> : null}
+    </span>
+  );
+};
 
 /** Sparkle rule. Used above and below the link list, so it lives in one place. */
 const Divider = () => (
@@ -144,12 +187,9 @@ const Hub = () => {
 
       <nav className="hub-links" aria-label="Where to find me">
         {LINKS.map((link) => {
-          const Icon = link.icon;
           const inner = (
             <>
-              <span className="hub-link-mark" aria-hidden="true">
-                {link.logo ? <img src={link.logo} alt="" /> : Icon ? <Icon /> : null}
-              </span>
+              <LinkMark link={link} />
               <span className="hub-link-label">{link.label}</span>
               <span className="hub-link-end" aria-hidden="true">
                 {link.comingSoon ? (

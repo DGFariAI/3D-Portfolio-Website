@@ -482,7 +482,7 @@
      page is that every link is visible without scrolling, and she is the only
      element big enough to push them off a short screen. The clip is roughly
      1:1.08, so 33vh of width lands near 36vh of height. */
-  width: min(340px, 80vw, 33vh);
+  width: min(390px, 88vw, 35vh);
   /* She is the centre of the page, so she gets air on both sides rather than
      sitting in the same 14px rhythm as everything else: the wordmark lifts
      away above her and the rule drops away below. Set here rather than in a
@@ -512,19 +512,23 @@
 
    It is placed on her, not on the middle of the box. She reads at an angle and
    her head silhouette centres at 40.6% across the frame, not 50%, so a centred
-   glow sat almost ten percent to the right of her. Top 40% puts it behind her
-   head and neck rather than across her face. */
+   glow sat almost ten percent to the right of her.
+
+   Sized and raised to sit behind the whole head. Her hair spans 276px of the
+   620px frame and the crown reaches y=9, so a glow smaller than her head left
+   the top of it unlit. At 58cqw centred 24% down it covers the crown and still
+   reaches her neck. */
 .hub-avatar-glow {
   position: absolute;
   z-index: 0;
   left: 40.6%;
-  top: 40%;
-  width: 49cqw;
+  top: 24%;
+  width: 58cqw;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-color: #f59bf8;
-  box-shadow: inset 20cqw 10.7cqw 26cqw 0 rgba(85, 0, 255, 0.65);
+  box-shadow: inset 23.8cqw 12.8cqw 30.7cqw 0 rgba(85, 0, 255, 0.65);
   filter: blur(7.1cqw);
   pointer-events: none;
 }
@@ -719,7 +723,7 @@
   }
 
   .hub-avatar {
-    width: min(300px, 76vw, 30vh);
+    width: min(345px, 86vw, 34vh);
     margin: 8px 0 14px;
   }
 
@@ -761,7 +765,7 @@
 
   .hub-avatar,
   .hub-avatar.hub-avatar {
-    width: min(300px, 76vw, 25vh);
+    width: min(345px, 86vw, 27vh);
     margin: 4px 0 8px;
   }
 

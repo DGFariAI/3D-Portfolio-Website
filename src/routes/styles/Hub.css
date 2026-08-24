@@ -282,6 +282,19 @@
   letter-spacing: 0.3px;
 }
 
+/* No ring around it.
+
+   The sheet is already a bordered, rounded, shadowed panel saying "this is a
+   container". A circle around the X puts a second boundary 20px inside the
+   first, and stacked boundaries are the quickest way a header reads as busy
+   rather than considered. The platform sheets that do ring their close button
+   are sitting over photos and album art, where a bare glyph would be lost;
+   this one sits on flat dark with a label beside it.
+
+   It is also the third way out of this sheet, after the backdrop and the drag,
+   so it should be the quietest of them rather than the loudest.
+
+   The box stays 32px: losing the chrome must not shrink the target. */
 .share-close {
   display: flex;
   align-items: center;
@@ -290,17 +303,26 @@
   height: 32px;
   padding: 0;
   font-size: 14px;
-  color: rgba(234, 229, 236, 0.65);
-  border: 1px solid rgba(234, 229, 236, 0.14);
-  border-radius: 50%;
+  line-height: 0;
+  color: rgba(234, 229, 236, 0.55);
+  border: 0;
+  border-radius: 8px;
   background: transparent;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, filter 0.2s ease, transform 0.2s ease;
 }
 
+/* Brighten, glow, lift: the same three things the share icon in the header
+   does, so the two bare icons on this site behave alike. Neutral rather than
+   violet, because this one should not outrank Copy. */
 .share-close:hover {
-  color: #eae5ec;
-  border-color: rgba(234, 229, 236, 0.34);
+  color: #f4f0f7;
+  filter: drop-shadow(0 0 8px rgba(234, 229, 236, 0.38));
+  transform: scale(1.08);
+}
+
+.share-close:active {
+  transform: scale(1);
 }
 
 /* The real card, so what they are about to paste is what they can see. */
@@ -438,8 +460,8 @@
   .share-backdrop {
     transition-duration: 0.01ms;
   }
-  .share-grabber {
-    transition: none;
+  .share-close:hover {
+    transform: none;
   }
 }
 

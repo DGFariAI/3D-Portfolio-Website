@@ -15,7 +15,7 @@ interface Props {
 
 const ShareButton = ({
   url,
-  image = "/dgfari-og.jpg?v=2",
+  image = "/dgfari-og.jpg?v=3",
   // The name on the preview card, sitting above the domain. The wordmark on
   // the page is lowercase; this is the brand.
   title = "DGFari",

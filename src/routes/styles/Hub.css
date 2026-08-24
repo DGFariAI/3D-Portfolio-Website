@@ -64,80 +64,315 @@
 
 /* --- share -------------------------------------------------------------- */
 
-/* Fixed to the viewport's corner rather than the column's: the column is only
-   560px on a wide screen, so anchoring to it would leave the control floating
-   near the middle. Outside the flex flow, so it cannot affect the layout that
-   keeps every link above the fold. */
+/* A labelled pill rather than a lone circle: on a wide screen an unlabelled dot
+   in an empty corner reads as an afterthought, and the word makes the action
+   unambiguous. Glass over the dark ground, matching the link pills below. */
 .hub-share {
   position: fixed;
-  top: 18px;
-  right: 18px;
-  z-index: 5;
+  top: 22px;
+  right: 22px;
+  z-index: 20;
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.hub-share-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* 44px is the smallest comfortable touch target; the icon inside is smaller
-     but the tappable area is not. */
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  font-size: 19px;
-  color: rgba(194, 164, 255, 0.75);
+  gap: 8px;
+  /* Vertical padding is a touch tighter than horizontal so the pill reads as
+     optically balanced rather than mathematically equal. */
+  padding: 9px 16px 9px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: rgba(234, 229, 236, 0.9);
   border: 1px solid rgba(194, 164, 255, 0.28);
-  border-radius: 50%;
-  background: rgba(194, 164, 255, 0.06);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(194, 164, 255, 0.14),
+    rgba(11, 8, 12, 0.55)
+  );
+  backdrop-filter: blur(10px);
   cursor: pointer;
-  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+  transition: border-color 0.25s ease, background-color 0.25s ease,
+    transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.hub-share-button:hover {
+.hub-share svg {
+  font-size: 16px;
   color: var(--accentColor);
-  border-color: rgba(194, 164, 255, 0.7);
-  background: rgba(194, 164, 255, 0.14);
 }
 
-.hub-share-button:focus-visible {
+.hub-share:hover {
+  border-color: rgba(194, 164, 255, 0.7);
+  box-shadow: 0 0 22px rgba(140, 90, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.hub-share:active {
+  transform: translateY(0);
+}
+
+.hub-share:focus-visible {
   outline: 2px solid var(--accentColor);
   outline-offset: 3px;
 }
 
-.hub-share-toast {
-  font-size: 13px;
-  letter-spacing: 0.6px;
-  color: var(--accentColor);
-  white-space: nowrap;
+/* --- share sheet -------------------------------------------------------- */
+
+.share-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.share-backdrop {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: rgba(4, 2, 6, 0.62);
+  backdrop-filter: blur(6px);
   opacity: 0;
-  transform: translateX(6px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition: opacity 0.3s ease;
 }
 
-.hub-share-toast:not(:empty) {
+.share-layer.is-open .share-backdrop {
   opacity: 1;
-  transform: translateX(0);
 }
 
-/* The toast would sit under the icon on a narrow screen, so it moves beneath
-   the button and right-aligns instead of pushing it off the edge. */
+.share-layer.is-closing .share-backdrop {
+  opacity: 0;
+}
+
+/* Rises from the bottom edge on every size. On a wide screen it stays a sheet
+   rather than becoming a centred modal, so the gesture is the same everywhere. */
+.share-sheet {
+  position: relative;
+  width: min(440px, 100%);
+  margin: 0 auto;
+  padding: 14px 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid rgba(194, 164, 255, 0.22);
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(180deg, #17111c 0%, #0d0910 100%);
+  /* The sheet renders inside the hub column, which centres its text. A card
+     reads as left-aligned, so reset it here rather than at each child. */
+  text-align: left;
+  box-shadow: 0 -18px 60px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(102%);
+  transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.share-layer.is-open .share-sheet {
+  transform: translateY(0);
+}
+
+.share-layer.is-closing .share-sheet {
+  transform: translateY(102%);
+  transition-duration: 0.26s;
+}
+
+.share-grabber {
+  width: 42px;
+  height: 4px;
+  margin: 0 auto 2px;
+  border-radius: 999px;
+  background: rgba(194, 164, 255, 0.3);
+}
+
+.share-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.share-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.share-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 14px;
+  color: rgba(234, 229, 236, 0.65);
+  border: 1px solid rgba(234, 229, 236, 0.14);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.share-close:hover {
+  color: #eae5ec;
+  border-color: rgba(234, 229, 236, 0.34);
+}
+
+/* The real card, so what they are about to paste is what they can see. */
+.share-preview {
+  overflow: hidden;
+  border: 1px solid rgba(194, 164, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.share-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+}
+
+.share-preview-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 14px 13px;
+}
+
+.share-preview-meta strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.share-preview-meta span {
+  font-size: 13px;
+  color: #8d8494;
+}
+
+.share-url {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 7px 7px 15px;
+  border: 1px solid rgba(234, 229, 236, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.share-url-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  color: #a79db0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* Selectable, unlike the rest of the page, so copying by hand stays possible
+     if the clipboard API is refused. */
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.share-copy {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 17px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #0b080c;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accentColor);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.share-copy:hover {
+  background: #d3bcff;
+}
+
+.share-copy:active {
+  transform: scale(0.97);
+}
+
+.share-copy.is-copied {
+  background: #7ee0a8;
+}
+
+.share-copy:focus-visible,
+.share-close:focus-visible,
+.share-native:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 3px;
+}
+
+.share-native {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(234, 229, 236, 0.9);
+  border: 1px solid rgba(194, 164, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(194, 164, 255, 0.07);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.share-native:hover {
+  border-color: rgba(194, 164, 255, 0.6);
+  background: rgba(194, 164, 255, 0.13);
+}
+
+.share-native svg {
+  font-size: 16px;
+  color: var(--accentColor);
+}
+
+/* Announced, not shown: the button itself already says Copied. */
+.share-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .share-sheet,
+  .share-backdrop {
+    transition-duration: 0.01ms;
+  }
+}
+
 @media screen and (max-width: 480px) {
   .hub-share {
-    top: 12px;
-    right: 12px;
+    top: 14px;
+    right: 14px;
+    padding: 8px 14px 8px 12px;
+    font-size: 13px;
   }
 
-  .hub-share-button {
-    width: 40px;
-    height: 40px;
-    font-size: 17px;
+  .share-sheet {
+    padding: 12px 16px 22px;
+    gap: 14px;
   }
 }
 
-/* --- avatar ------------------------------------------------------------- */
+/* --- avatar ------------------------------------------------------------- *//* --- avatar ------------------------------------------------------------- */
 
 .hub-avatar {
   position: relative;

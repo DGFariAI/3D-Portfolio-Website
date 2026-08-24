@@ -1,82 +1,50 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { PiCheckBold, PiShareNetworkBold } from "react-icons/pi";
+import { useCallback, useState } from "react";
+import { PiShareNetworkBold } from "react-icons/pi";
+import ShareSheet from "./ShareSheet";
 
 interface Props {
+  /** Defaults to the site root, which is the thing worth sharing. */
   url?: string;
+  image?: string;
   title?: string;
-  text?: string;
+  domain?: string;
 }
 
-/**
- * Share control for the hub.
- *
- * Most traffic to a link-in-bio page arrives through an in-app browser, where
- * the address bar is a non-editable strip and copying the URL takes several taps
- * through a menu most people never open. That is the friction this removes.
- *
- * Two paths, deliberately: the native share sheet where it exists, which is
- * mobile and a few desktop browsers, and a clipboard copy everywhere else.
- * The fallback is not optional, since desktop Chrome and Firefox do not offer
- * navigator.share at all.
- */
 const ShareButton = ({
   url,
-  title = "DGFari",
-  text = "Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place.",
+  image = "/dgfari-og.jpg?v=2",
+  title = "itsdgfari",
+  domain = "dgfari.com",
 }: Props) => {
-  const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
 
-  useEffect(() => () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-  }, []);
-
-  const flashCopied = useCallback(() => {
-    setCopied(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setCopied(false), 2200);
-  }, []);
-
-  const onShare = useCallback(async () => {
-    const shareUrl = url ?? `${window.location.origin}/`;
-
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ title, text, url: shareUrl });
-        return;
-      } catch (err) {
-        // Closing the sheet is a decision, not a failure: silently copying
-        // afterwards would be a surprise. Any other error falls through.
-        if ((err as DOMException)?.name === "AbortError") return;
-      }
-    }
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      flashCopied();
-    } catch {
-      // Clipboard access can be refused, typically on an insecure origin.
-      // Selecting the URL is then the only route left, so say nothing rather
-      // than claim a copy that did not happen.
-    }
-  }, [url, title, text, flashCopied]);
+  const shareUrl =
+    url ?? (typeof window === "undefined" ? "https://dgfari.com" : `${window.location.origin}/`);
 
   return (
-    <div className="hub-share">
+    <>
       <button
         type="button"
-        className="hub-share-button"
-        onClick={onShare}
-        aria-label="Share this page"
+        className="hub-share"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
       >
-        {copied ? <PiCheckBold aria-hidden="true" /> : <PiShareNetworkBold aria-hidden="true" />}
+        <PiShareNetworkBold aria-hidden="true" />
+        <span>Share</span>
       </button>
-      {/* Announced to screen readers as well as shown, so the confirmation is
-          not purely visual. */}
-      <span className="hub-share-toast" role="status" aria-live="polite">
-        {copied ? "Link copied" : ""}
-      </span>
-    </div>
+
+      {open && (
+        <ShareSheet
+          url={shareUrl}
+          image={image}
+          title={title}
+          domain={domain}
+          onClose={close}
+        />
+      )}
+    </>
   );
 };
 

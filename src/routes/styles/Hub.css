@@ -64,7 +64,7 @@
 /* --- share -------------------------------------------------------------- */
 
 /* Bare icon in the corner: no circle, no label. The padding is invisible but
-   still gives a 42px touch target around an 18px mark, which is the part that
+   still gives a 43px touch target around a 19px mark, which is the part that
    matters on a phone. */
 .hub-share {
   position: fixed;
@@ -75,8 +75,8 @@
   align-items: center;
   justify-content: center;
   padding: 12px;
-  font-size: 18px;
-  color: rgba(194, 164, 255, 0.72);
+  font-size: 19px;
+  color: rgba(194, 164, 255, 0.75);
   border: 0;
   background: none;
   cursor: pointer;
@@ -344,7 +344,6 @@
   .hub-share {
     top: 14px;
     right: 14px;
-    font-size: 17px;
   }
 
   .share-sheet {

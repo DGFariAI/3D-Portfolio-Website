@@ -1,16 +1,18 @@
 # Hub link logos
 
-Drop the three brand marks here with exactly these names. The hub already points
-at them, so no code change is needed once the files exist:
+The hub reads these three marks. The filenames are load-bearing and are matched
+exactly, capitals included: the site is served from Linux, where paths are
+case-sensitive, so `dgfari-ai.png` would 404 even though it resolves on Windows.
 
-| File                | Row            |
-| ------------------- | -------------- |
-| `omnigenesis.png`   | DGFari AI      |
-| `dgfari-art.png`    | DGFari Art     |
-| `dgfari-studio.png` | DGFari Studio  |
+| File                | Row           |
+| ------------------- | ------------- |
+| `DGFari-AI.png`     | DGFari AI     |
+| `DGFari-Art.png`    | DGFari Art    |
+| `DGFari-Studio.png` | DGFari Studio |
 
-PNG with transparency, square, 256px or larger. SVG also works: change the
-extension in the `LINKS` table in `src/routes/Hub.tsx` to match.
+These are 128px display copies. The full-resolution originals live in
+`source-assets/logos/`, outside the deployed folder. To change one, replace the
+original there and re-export at 128px wide rather than editing these directly.
 
-Until a file is present the row falls back to its placeholder icon rather than
-showing a broken image.
+A row falls back to a placeholder icon if its file is missing or fails to
+decode, so a bad filename degrades quietly instead of showing a broken image.

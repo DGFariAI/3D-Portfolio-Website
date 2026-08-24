@@ -38,19 +38,19 @@ const LINKS: HubLink[] = [
   { label: "DGFari's Portfolio", logo: "/itsdgfari_icon.svg", to: "/portfolio" },
   {
     label: "DGFari AI",
-    logo: "/images/logos/omnigenesis.png",
+    logo: "/images/logos/DGFari-AI.png",
     icon: PiFlameFill,
     comingSoon: true,
   },
   {
     label: "DGFari Art",
-    logo: "/images/logos/dgfari-art.png",
+    logo: "/images/logos/DGFari-Art.png",
     icon: PiPaintBrushFill,
     href: "https://dgfariart.com",
   },
   {
     label: "DGFari Studio",
-    logo: "/images/logos/dgfari-studio.png",
+    logo: "/images/logos/DGFari-Studio.png",
     icon: PiCameraFill,
     href: "https://dgfaristudio.com",
   },

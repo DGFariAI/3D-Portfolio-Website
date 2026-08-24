@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { PiShareNetworkFill } from "react-icons/pi";
+import { PiShareNetworkBold } from "react-icons/pi";
 import ShareSheet from "./ShareSheet";
 
 interface Props {
@@ -32,7 +32,7 @@ const ShareButton = ({
         aria-expanded={open}
         aria-label="Share this page"
       >
-        <PiShareNetworkFill aria-hidden="true" />
+        <PiShareNetworkBold aria-hidden="true" />
       </button>
 
       {open && (

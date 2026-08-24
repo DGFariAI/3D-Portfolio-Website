@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const SITE_URL = "https://dgfari.com";
-const DEFAULT_IMAGE = "/DGFari_Open_Graph.png?v=2";
+const DEFAULT_IMAGE = "/DGFari_Open_Graph.png?v=1";
 
 interface Props {
   title: string;

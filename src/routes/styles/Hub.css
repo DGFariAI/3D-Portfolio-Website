@@ -53,12 +53,13 @@
   width: 22px;
   height: 22px;
   flex-shrink: 0;
-  /* Back to the page accent. Paired with a check in the background colour
-     rather than white: on a lavender this pale, a white check all but
-     disappears at this size, so the check reads as cut out of the badge. */
-  color: var(--accentColor);
+  /* A saturated violet rather than --accentColor, paired with a white check.
+     The accent is a pale lavender, which leaves a white check almost invisible
+     at this size; the deeper field is what gives the check the contrast the
+     reference badge has. */
+  color: #8b5cf6;
   overflow: visible;
-  filter: drop-shadow(0 0 7px rgba(194, 164, 255, 0.5));
+  filter: drop-shadow(0 0 7px rgba(139, 92, 246, 0.55));
 }
 
 /* --- avatar ------------------------------------------------------------- */

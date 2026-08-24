@@ -14,7 +14,7 @@ const PORT = Number(process.env.CDP_PORT || 9290);
 const CARD = {
   hero: 790,
   drop: 48,
-  shiftX: 82,
+  shiftX: 66,
   quality: 0.86,
 };
 

@@ -1,6 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { ComponentType, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MdArrowOutward } from "react-icons/md";
+import {
+  PiBriefcaseFill,
+  PiCameraFill,
+  PiCaretRightBold,
+  PiFlameFill,
+  PiPaintBrushFill,
+} from "react-icons/pi";
 import SEO from "../components/SEO";
 import "./styles/Hub.css";
 
@@ -19,33 +25,20 @@ const AVATAR = {
 
 interface HubLink {
   label: string;
-  caption: string;
+  /** Placeholder mark. Swap for `logo: "/images/logos/x.svg"` when the real
+   *  logos arrive; the row renders whichever of the two is present. */
+  icon?: ComponentType<{ "aria-hidden"?: boolean }>;
+  logo?: string;
   to?: string;
   href?: string;
   comingSoon?: boolean;
 }
 
 const LINKS: HubLink[] = [
-  {
-    label: "My Portfolio",
-    caption: "Product, brand and the work behind them",
-    to: "/portfolio",
-  },
-  {
-    label: "DGFari AI",
-    caption: "Coming soon",
-    comingSoon: true,
-  },
-  {
-    label: "DGFari Art",
-    caption: "dgfariart.com",
-    href: "https://dgfariart.com",
-  },
-  {
-    label: "DGFari Studio",
-    caption: "dgfaristudio.com",
-    href: "https://dgfaristudio.com",
-  },
+  { label: "My Portfolio", icon: PiBriefcaseFill, to: "/portfolio" },
+  { label: "DGFari AI", icon: PiFlameFill, comingSoon: true },
+  { label: "DGFari Art", icon: PiPaintBrushFill, href: "https://dgfariart.com" },
+  { label: "DGFari Studio", icon: PiCameraFill, href: "https://dgfaristudio.com" },
 ];
 
 const Hub = () => {
@@ -118,15 +111,30 @@ const Hub = () => {
         Tap her to read <strong>DGFari Learn</strong>
       </p>
 
+      <div className="hub-divider" aria-hidden="true">
+        <span className="hub-divider-line" />
+        <svg viewBox="0 0 24 24" className="hub-divider-star">
+          <path d="M12 0c.8 6.2 5 10.4 11.2 11.2v1.6C17 13.6 12.8 17.8 12 24c-.8-6.2-5-10.4-11.2-11.2v-1.6C7 10.4 11.2 6.2 12 0z" />
+        </svg>
+        <span className="hub-divider-line" />
+      </div>
+
       <nav className="hub-links" aria-label="Where to find me">
         {LINKS.map((link) => {
+          const Icon = link.icon;
           const inner = (
             <>
-              <span className="hub-link-text">
-                <span className="hub-link-label">{link.label}</span>
-                <span className="hub-link-caption">{link.caption}</span>
+              <span className="hub-link-mark" aria-hidden="true">
+                {link.logo ? <img src={link.logo} alt="" /> : Icon ? <Icon /> : null}
               </span>
-              {!link.comingSoon && <MdArrowOutward aria-hidden="true" />}
+              <span className="hub-link-label">{link.label}</span>
+              <span className="hub-link-end" aria-hidden="true">
+                {link.comingSoon ? (
+                  <em className="hub-link-soon">Soon</em>
+                ) : (
+                  <PiCaretRightBold />
+                )}
+              </span>
             </>
           );
 

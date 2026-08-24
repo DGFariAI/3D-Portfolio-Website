@@ -139,12 +139,12 @@ const WhatIDo = () => {
               </p>
               <h5>Skillset & tools</h5>
               <div className="what-content-flex">
+                <div className="what-tags">Positioning</div>
                 <div className="what-tags">Brand Storytelling</div>
                 <div className="what-tags">Copywriting</div>
                 <div className="what-tags">Content & Video</div>
-                <div className="what-tags">Positioning</div>
+                <div className="what-tags">SEO</div>
                 <div className="what-tags">Data Analysis</div>
-                <div className="what-tags">Community Building</div>
               </div>
               <div className="what-arrow"></div>
             </div>

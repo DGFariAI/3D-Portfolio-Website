@@ -95,8 +95,14 @@
   cursor: pointer;
   /* Same violet halo the pills carry, at a blur proportional to a 16px mark
      rather than their 18px: on something this small the pills' radius reads as
-     a smudge instead of a glow. */
-  filter: drop-shadow(0 0 7px rgba(140, 90, 255, 0.45));
+     a smudge instead of a glow.
+
+     Deliberately faint at rest. The verified badge glows on this same line at
+     0.55, and a share control matching it would put a utility at the same
+     weight as the identity mark. Held at 0.22 the badge stays the brightest
+     thing in the header, and the jump to 0.75 on hover is a bigger step than a
+     brighter resting state could ever leave room for. */
+  filter: drop-shadow(0 0 5px rgba(140, 90, 255, 0.22));
   /* translateY carries the centring, so every other transform state has to
      restate it rather than replace it. */
   transform: translateY(calc(-50% - var(--share-lift)));

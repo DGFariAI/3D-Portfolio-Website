@@ -475,6 +475,9 @@
 .hub-avatar {
   position: relative;
   display: block;
+  /* A container, so the backlight can be sized in cqw and hold the portfolio's
+     proportions at every avatar size instead of drifting with px values. */
+  container-type: inline-size;
   /* Capped against viewport height as well as width: the whole point of this
      page is that every link is visible without scrolling, and she is the only
      element big enough to push them off a short screen. The clip is roughly
@@ -500,33 +503,36 @@
   height: auto;
 }
 
-/* Same recipe as .character-rim in the portfolio: a large, heavily blurred
-   disc behind her rather than a glow drawn on the clip itself. */
+/* The portfolio's .character-rim, ported rather than approximated.
+   
+   Measured off the live portfolio hero, the rim is 49% of the clip's width, its
+   blur is 14% of the rim, and its inset shadow offsets are 41%, 22% and 53% of
+   the rim. Those ratios are reproduced here in cqw so they hold at every avatar
+   size, instead of px values that drift as she scales.
+
+   It is placed on her, not on the middle of the box. She reads at an angle and
+   her head silhouette centres at 40.6% across the frame, not 50%, so a centred
+   glow sat almost ten percent to the right of her. Top 40% puts it behind her
+   head and neck rather than across her face. */
 .hub-avatar-glow {
   position: absolute;
   z-index: 0;
-  left: 50%;
-  top: 34%;
-  width: 62%;
+  left: 40.6%;
+  top: 40%;
+  width: 49cqw;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-color: #f59bf8;
-  box-shadow: inset 40px 22px 60px 0 rgba(85, 0, 255, 0.65);
-  filter: blur(42px);
-  opacity: 0.85;
+  box-shadow: inset 20cqw 10.7cqw 26cqw 0 rgba(85, 0, 255, 0.65);
+  filter: blur(7.1cqw);
   pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-.hub-avatar:hover .hub-avatar-glow {
-  opacity: 1;
 }
 
 /* Weak hardware pays for large blur radii every frame they change. Same
    reasoning as the tier rules in index.css. */
 .tier-low .hub-avatar-glow {
-  filter: blur(26px);
+  filter: blur(4.6cqw);
 }
 
 .hub-divider {

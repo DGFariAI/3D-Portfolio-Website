@@ -75,11 +75,14 @@ const WorkImage = (props: Props) => {
             }}
             style={{
               position: "absolute",
-              // 120% is desktop framing: it lets the clip bleed past the card
-              // so the per-card `left` nudge can choose which part shows. With
-              // those nudges off on mobile the overflow has nothing to absorb
-              // it, and each clip spills over the card to its right, so it fits
-              // the card exactly there instead.
+              // 120% is desktop framing: the card is 3:2 but the clips are
+              // 16:9, and overflowing the card makes the visible box the right
+              // shape so `cover` crops nothing. The per-card `left` nudge then
+              // chooses which part shows. On mobile that overflow has nothing
+              // to absorb it and spills onto the next card, so the clip fits
+              // the card instead and is contained rather than cropped: the
+              // whole frame shows, with a little dark space above and below it
+              // that is invisible against the page.
               width: isDesktop ? "120%" : "100%",
               height: "100%",
               top: 0,
@@ -89,7 +92,7 @@ const WorkImage = (props: Props) => {
               // them here rather than fighting specificity.
               left: isDesktop ? props.videoLeft || 0 : 0,
               backgroundColor: "#000",
-              objectFit: "cover",
+              objectFit: isDesktop ? "cover" : "contain",
               zIndex: 1,
             }}
           />

@@ -249,3 +249,20 @@
     left: 0;
   }
 }
+
+/* Phones. The card is a fixed 350px and .work-flex is pulled 30px left, which
+   suits wider screens where a card is only part of the row. On a 390px phone
+   that combination starts the first card at -15px, so it is already clipped
+   before the carousel has moved, and the clip inside it loses its left edge.
+   Size the card to the viewport instead and drop the negative pull. */
+@media only screen and (max-width: 600px) {
+  .work-box {
+    width: calc(100vw - 40px);
+    padding: 20px;
+  }
+
+  .work-flex {
+    margin-left: 0;
+    padding-right: 20px;
+  }
+}

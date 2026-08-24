@@ -18,22 +18,31 @@
     color: #fff;
   }
 
-  /* The previous card's own background, recovered from it rather than
-     re-invented: masked where the character and the text sat, averaged to a
-     coarse grid from the pixels that were genuinely background, and the gaps
-     diffused in. Matches the original within two levels per channel. */
-  .bg {
+  /* The portfolio's own backlight: the .character-rim recipe from Landing.css
+     verbatim. A pink disc with a violet-blue inset shadow pushed off centre,
+     blurred hard. That offset is what makes it read as two colours, warm on
+     one side and cool on the other, rather than as one flat wash.
+
+     The ground under it is plain --backgroundColor, which is what the hero
+     sits on in the portfolio too. */
+  .rim {
     position: absolute;
-    inset: 0;
-    background-size: 1200px 630px;
-    background-repeat: no-repeat;
+    left: var(--rim-x);
+    top: var(--rim-y);
+    width: var(--rim-size);
+    height: var(--rim-size);
+    border-radius: 50%;
+    background-color: #f59bf8;
+    box-shadow: inset var(--rim-shadow);
+    filter: blur(var(--rim-blur));
+    transform: translate(-50%, -50%) scale(var(--rim-scale));
   }
 
   .hero {
     position: absolute;
     right: 0;
     bottom: -14px;
-    width: 744px;
+    width: var(--hero-w);
     height: auto;
   }
 
@@ -120,7 +129,7 @@
 </head>
 <body>
 <div class="card">
-  <div class="bg" id="bg"></div>
+  <div class="rim" id="rim"></div>
   <img class="hero" id="hero" src="">
 
   <div class="left">

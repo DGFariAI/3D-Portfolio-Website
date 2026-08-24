@@ -39,16 +39,35 @@ Keep it at 1200x630. Anything else gets letterboxed or cropped by one platform
 or another, and the crop is never the one you would have chosen.
 
 
-## The background
+## The backlight
 
-`og-bg.png` is not a gradient anyone wrote. It is the previous card's own
-background, recovered from the image with `rebuild-bg.mjs`: the card is masked
-where the character and the text sat, the remaining pixels are averaged down to
-a coarse grid, the emptied cells are filled by diffusing their neighbours
-inward, and the result is scaled back up and blurred. It reproduces the
-original within two levels per channel at every point that was measurable.
+The glow behind her is not a gradient anyone invented. It is the
+`.character-rim` recipe from `src/components/styles/Landing.css`, the same
+backlight the portfolio hero sits in: a pink disc (`#f59bf8`) carrying a
+violet-blue inset shadow (`rgba(85, 0, 255, 0.65)`) pushed 66px right and 35px
+down, blurred hard. That off-centre offset is the whole trick, and it is why the
+glow reads as two colours, warm on the upper left and cool on the lower right,
+rather than as one flat wash.
 
-That indirection exists because a hand-written radial gradient was tried first
-and came out visibly bluer and more saturated than the card it replaced. If the
-background ever needs to change again, edit `og-bg.png` or re-run the rebuild
-against whichever card is the reference, rather than approximating it in CSS.
+It is sized to stay fully inside the card. A larger one looks more dramatic in
+isolation and gets sliced flat by the top edge, which reads as an accident, and
+it lifts the whole field so the wordmark and pills lose contrast at the ~350px
+width a card is actually seen at in a feed.
+
+Two earlier attempts are worth not repeating. A hand-written radial gradient
+came out visibly bluer and more saturated than the card it replaced. Recovering
+the old card's background by masking and diffusion matched it exactly but kept a
+wash that was never the portfolio's look in the first place. Neither is needed:
+the ground is plain `--backgroundColor` with this one glow on it, which is what
+the hero sits on in the portfolio.
+
+The glow's position is derived from the artwork, not hardcoded. `render-og.mjs`
+finds her head by scanning the frame's alpha for the widest opaque span across
+the top, so changing `CARD.hero` moves the glow with her instead of leaving a
+second number to keep in sync.
+
+## Tuning it
+
+Everything adjustable lives in the `CARD` object at the top of `render-og.mjs`:
+hero width, how far below the bottom edge she is cropped (raise `drop` to buy
+headroom above her head), and the four glow values.

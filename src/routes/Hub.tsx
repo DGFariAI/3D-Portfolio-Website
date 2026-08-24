@@ -224,15 +224,6 @@ const Hub = () => {
         ) : (
           <img className="hub-avatar-media" src={AVATAR.poster} alt="" />
         )}
-
-        {/* Sits on the book's back cover rather than under the picture, so the
-            invitation is on the thing you are being invited to tap. Hidden from
-            assistive tech: the button's own label already says where it goes,
-            and reading this out as well would just be the same sentence twice. */}
-        <span className="hub-avatar-cta" aria-hidden="true">
-          <span className="hub-avatar-ring" />
-          <span className="hub-avatar-cta-label">Tap to read</span>
-        </span>
       </button>
 
       <Divider />

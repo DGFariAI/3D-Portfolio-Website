@@ -245,12 +245,6 @@
   filter: blur(6px);
 }
 
-/* Nothing moves under the blur, or it is recomputed per frame. The avatar is
-   paused in Hub.tsx; this is the other thing on the page that animates. */
-.hub.is-sharing .hub-avatar-ring {
-  animation: none;
-}
-
 .share-layer.is-closing .share-sheet {
   transform: translateY(102%);
   transition-duration: 0.26s;
@@ -481,16 +475,16 @@
 .hub-avatar {
   position: relative;
   display: block;
-  /* A container, so the tap affordance on the book can be sized in cqw and
-     scale with her instead of being three hardcoded sizes at three
-     breakpoints. */
-  container-type: inline-size;
-  /* Also capped against viewport height: the whole point of this page is that
-     every link is visible without scrolling, and the avatar is the only
+  /* Capped against viewport height as well as width: the whole point of this
+     page is that every link is visible without scrolling, and she is the only
      element big enough to push them off a short screen. The clip is roughly
-     1:1.08, so 27vh of width lands near 29vh of height. */
-  width: min(280px, 70vw, 27vh);
-  margin: 0;
+     1:1.08, so 33vh of width lands near 36vh of height. */
+  width: min(340px, 80vw, 33vh);
+  /* She is the centre of the page, so she gets air on both sides rather than
+     sitting in the same 14px rhythm as everything else: the wordmark lifts
+     away above her and the rule drops away below. Set here rather than in a
+     rule of its own, because this block also sets margin and would win. */
+  margin: 12px 0 18px;
   padding: 0;
   border: 0;
   background: none;
@@ -534,78 +528,6 @@
 .tier-low .hub-avatar-glow {
   filter: blur(26px);
 }
-
-/* --- tap affordance ------------------------------------------------------ */
-
-/* The tap affordance, sitting on the plain back cover of the book.
-   Positioned as a percentage of the avatar, so it stays on the cover at every
-   size, and measured in cqw so it scales with her rather than needing a size
-   per breakpoint. */
-.hub-avatar-cta {
-  position: absolute;
-  /* Above the clip, which sits at z-index 1 over the glow. Without this it
-     lays out in the right place and paints underneath her. */
-  z-index: 2;
-  /* The cover is a parallelogram, so its left edge moves right as you go down
-     it. Its centre measured at the top is 43.5%, but the label sits low on the
-     cover and overhung the edge there, so it is pushed further across. */
-  left: 44.5%;
-  top: 72%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.6cqw;
-  line-height: 1;
-  pointer-events: none;
-}
-
-.hub-avatar-ring {
-  width: 9.5cqw;
-  height: 9.5cqw;
-  border-radius: 50%;
-  border: 1px solid rgba(194, 164, 255, 0.75);
-  background: rgba(194, 164, 255, 0.16);
-  box-shadow: 0 0 10px rgba(140, 90, 255, 0.45),
-    inset 0 0 8px rgba(194, 164, 255, 0.25);
-  animation: hubTapPulse 2.6s ease-in-out infinite;
-}
-
-/* Rotated to lie along the cover rather than across it. 16deg is the measured
-   slope of the cover's top edge, found by walking down each column of the frame
-   until the white pages give way to the dark board, so the type sits on the
-   book instead of floating over it. */
-.hub-avatar-cta-label {
-  transform: rotate(16deg);
-  font-size: 2.95cqw;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(233, 224, 245, 0.92);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
-  white-space: nowrap;
-}
-
-/* A breath rather than a throb: it has to read as tappable without pulling the
-   eye off her. */
-@keyframes hubTapPulse {
-  0%,
-  100% {
-    opacity: 0.85;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.09);
-  }
-}
-
-.hub-avatar:hover .hub-avatar-ring {
-  border-color: rgba(194, 164, 255, 1);
-  background: rgba(194, 164, 255, 0.26);
-}
-
-/* --- divider ------------------------------------------------------------ */
 
 .hub-divider {
   display: flex;
@@ -764,9 +686,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hub-avatar-ring {
-    animation: none;
-  }
   .hub-link:hover {
     transform: none;
   }
@@ -794,7 +713,8 @@
   }
 
   .hub-avatar {
-    width: min(240px, 64vw, 25vh);
+    width: min(300px, 76vw, 30vh);
+    margin: 8px 0 14px;
   }
 
   .hub-link {
@@ -818,5 +738,28 @@
 
   .hub-link-mark {
     font-size: 22px;
+  }
+}
+
+/* Short screens, phone or laptop.
+   Every link being reachable without scrolling is the point of this page, and
+   she is the only element big enough to push them off. On anything shorter than
+   740px she gives back height: a tighter cap, tighter air around her, and a
+   tighter column rhythm. Measured rather than guessed, at 375x667 and
+   1280x720. */
+@media screen and (max-height: 740px) {
+  .hub {
+    padding: 18px 0 16px;
+    gap: 10px;
+  }
+
+  .hub-avatar,
+  .hub-avatar.hub-avatar {
+    width: min(300px, 76vw, 25vh);
+    margin: 4px 0 8px;
+  }
+
+  .hub-divider {
+    margin: 0 0 2px;
   }
 }

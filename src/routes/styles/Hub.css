@@ -30,6 +30,10 @@
 }
 
 .hub-intro {
+  /* Full column width and a positioning context: the share button anchors to
+     this box's right edge, which is the same edge the pills end on. */
+  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -63,33 +67,43 @@
 
 /* --- share -------------------------------------------------------------- */
 
-/* Bare icon in the corner: no circle, no label. The padding is invisible but
-   still gives a 43px touch target around a 19px mark, which is the part that
-   matters on a phone. */
+/* Bare icon: no circle, no label.
+
+   Placed against two edges rather than the window's corner. Vertically it is
+   centred on the wordmark and its badge; horizontally its own box ends where
+   the pills end, since .hub-links is 100% of this same column. The 12px of
+   padding is what carries a 40px touch target around a 16px mark, so it hangs
+   outside the column via the negative offset instead of pushing the mark in. */
 .hub-share {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+  position: absolute;
+  top: 50%;
+  right: -12px;
   z-index: 20;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px;
-  font-size: 19px;
+  font-size: 16px;
+  line-height: 0;
   color: rgba(194, 164, 255, 0.75);
   border: 0;
   background: none;
   cursor: pointer;
+  /* translateY carries the centring, so every other transform state has to
+     restate it rather than replace it. */
+  transform: translateY(-50%);
   transition: color 0.25s ease, transform 0.25s ease;
 }
 
 .hub-share:hover {
   color: var(--accentColor);
-  transform: translateY(-1px);
+  transform: translateY(-50%) scale(1.08);
 }
 
-.hub-share:active {
-  transform: translateY(0);
+.hub-share:active,
+.hub-share.is-open {
+  color: var(--accentColor);
+  transform: translateY(-50%);
 }
 
 .hub-share:focus-visible {
@@ -341,11 +355,6 @@
 }
 
 @media screen and (max-width: 480px) {
-  .hub-share {
-    top: 14px;
-    right: 14px;
-  }
-
   .share-sheet {
     padding: 12px 16px 22px;
     gap: 14px;

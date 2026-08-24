@@ -130,9 +130,12 @@ const Hub = () => {
         path="/"
       />
 
-      <ShareButton />
-
       <header className="hub-intro">
+        {/* Inside the header rather than pinned to the viewport, so it can be
+            positioned against the wordmark and the link column instead of
+            against whatever the window happens to be. */}
+        <ShareButton />
+
         <h1>
           itsdgfari
           {/* 11-point rosette, generated so the spikes are even and every

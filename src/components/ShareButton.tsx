@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { PiShareNetworkBold } from "react-icons/pi";
+import { PiShareNetworkBold, PiShareNetworkFill } from "react-icons/pi";
 import ShareSheet from "./ShareSheet";
 
 interface Props {
@@ -26,13 +26,19 @@ const ShareButton = ({
     <>
       <button
         type="button"
-        className="hub-share"
+        className={`hub-share ${open ? "is-open" : ""}`}
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Share this page"
       >
-        <PiShareNetworkBold aria-hidden="true" />
+        {/* Outline at rest, solid once the sheet is up: the icon reads as
+            pressed for as long as the thing it opened is on screen. */}
+        {open ? (
+          <PiShareNetworkFill aria-hidden="true" />
+        ) : (
+          <PiShareNetworkBold aria-hidden="true" />
+        )}
       </button>
 
       {open && (

@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const PORT = Number(process.env.CDP_PORT || 9270);
 const OUT = process.env.OUT || 'og-new.png';
+const ROOT = 'c:/Users/User/Desktop/Personal Projects/Resume & Portfolio/DGFari 3D Portfolio Website';
 const chrome = spawn(CHROME, [`--remote-debugging-port=${PORT}`, '--headless=new',
   '--no-first-run', '--user-data-dir=' + process.cwd() + '/cdp-og', 'about:blank'], { stdio: 'ignore' });
 const get = p => new Promise((res, rej) => { http.get({ host:'127.0.0.1', port:PORT, path:p }, r => { let d=''; r.on('data',c=>d+=c); r.on('end',()=>res(JSON.parse(d))); }).on('error', rej); });
@@ -25,14 +26,23 @@ await wait(1200);
 // Fonts come from Google; wait for them rather than screenshotting the fallback.
 await evalJs(`document.fonts.ready.then(() => true)`);
 const hero = fs.readFileSync('hero-f0.png').toString('base64');
-await evalJs(`(async () => { const i = document.getElementById('hero');
-  i.src = 'data:image/png;base64,${hero}'; await i.decode(); return true; })()`);
+const bg = fs.readFileSync('og-bg.png').toString('base64');
+const icon = fs.readFileSync(ROOT + '/public/itsdgfari_icon.svg').toString('base64');
+await evalJs(`(async () => {
+  document.getElementById('bg').style.backgroundImage = 'url(data:image/png;base64,${bg})';
+  const h = document.getElementById('hero'); h.src = 'data:image/png;base64,${hero}';
+  const k = document.getElementById('icon'); k.src = 'data:image/svg+xml;base64,${icon}';
+  await Promise.all([h.decode(), k.decode()]);
+  return true; })()`);
 await wait(500);
 console.log('font loaded:', await evalJs(`document.fonts.check('700 62px Geist')`));
 console.log('layout:', await evalJs(`(() => {
   const r = el => { const b = document.querySelector(el).getBoundingClientRect();
     return [Math.round(b.left), Math.round(b.top), Math.round(b.right), Math.round(b.bottom)]; };
-  return { h1: r('h1'), tag: r('.tag'), pills: r('.pills'), domain: r('.domain'), hero: r('.hero') }; })()`));
+  return { mark: r('.mark'), icon: r('.mark img'), tag: r('.tag'), pills: r('.pills'),
+    domain: r('.domain'), hero: r('.hero'),
+    pillLabels: [...document.querySelectorAll('.pills span')].map(s => s.textContent).join(', '),
+    pillsFit: document.querySelector('.pills').scrollWidth <= document.querySelector('.left').clientWidth }; })()`));
 const shot = (await send('Page.captureScreenshot', { format:'png', captureBeyondViewport:false })).result.data;
 fs.writeFileSync(OUT, Buffer.from(shot,'base64'));
 console.log('written', OUT);

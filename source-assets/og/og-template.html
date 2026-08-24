@@ -18,57 +18,55 @@
     color: #fff;
   }
 
-  /* The same violet bloom the character sits inside on the site, centred on
-     her head rather than on the middle of the card. */
-  .glow {
+  /* The previous card's own background, recovered from it rather than
+     re-invented: masked where the character and the text sat, averaged to a
+     coarse grid from the pixels that were genuinely background, and the gaps
+     diffused in. Matches the original within two levels per channel. */
+  .bg {
     position: absolute;
-    top: -160px;
-    left: 424px;
-    width: 900px;
-    height: 900px;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle at center,
-      rgba(139, 92, 246, 0.55) 0%,
-      rgba(120, 70, 220, 0.3) 34%,
-      rgba(60, 30, 110, 0.12) 56%,
-      rgba(11, 8, 12, 0) 72%
-    );
+    inset: 0;
+    background-size: 1200px 630px;
+    background-repeat: no-repeat;
   }
 
   .hero {
     position: absolute;
-    right: 6px;
-    bottom: -16px;
-    width: 668px;
+    right: 0;
+    bottom: -14px;
+    width: 744px;
     height: auto;
   }
 
   .left {
     position: absolute;
     left: 78px;
-    top: 148px;
-    width: 560px;
+    top: 126px;
+    width: 570px;
   }
 
-  h1 {
+  /* Icon then wordmark, at the portfolio navbar's own proportions: the icon is
+     1.75x the type size there and the gap is half of it. */
+  .mark {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 26px;
     margin: 0;
-    font-size: 62px;
+    font-size: 60px;
     font-weight: 700;
     letter-spacing: -0.5px;
     line-height: 1;
   }
-
-  .badge { width: 40px; height: 40px; flex-shrink: 0; overflow: visible; }
+  .mark img {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+  }
 
   .tag {
-    margin: 22px 0 0;
-    font-size: 26px;
+    margin: 26px 0 0;
+    font-size: 25px;
     font-weight: 500;
-    letter-spacing: 3.4px;
+    letter-spacing: 3.2px;
     background: linear-gradient(90deg, #cbb6ff 0%, #efe9f6 55%, #cbb6ff 100%);
     -webkit-background-clip: text;
     background-clip: text;
@@ -80,7 +78,7 @@
     align-items: center;
     gap: 14px;
     width: 420px;
-    margin: 34px 0 0;
+    margin: 30px 0 0;
   }
   .rule span {
     flex: 1;
@@ -98,18 +96,21 @@
     filter: drop-shadow(0 0 8px rgba(194, 164, 255, 0.75));
   }
 
-  .pills { display: flex; gap: 14px; margin-top: 32px; }
+  /* Five now rather than four, so they are set a little tighter to hold the
+     column without wrapping. */
+  .pills { display: flex; gap: 11px; margin-top: 28px; }
   .pills span {
-    padding: 12px 24px;
-    font-size: 21px;
+    padding: 10px 19px;
+    font-size: 19px;
     font-weight: 500;
+    white-space: nowrap;
     border: 1px solid rgba(194, 164, 255, 0.38);
     border-radius: 999px;
     background: linear-gradient(180deg, rgba(194, 164, 255, 0.12), rgba(11, 8, 12, 0.4));
   }
 
   .domain {
-    margin: 36px 0 0;
+    margin: 32px 0 0;
     font-size: 23px;
     font-weight: 500;
     letter-spacing: 1.4px;
@@ -119,17 +120,14 @@
 </head>
 <body>
 <div class="card">
-  <div class="glow"></div>
+  <div class="bg" id="bg"></div>
   <img class="hero" id="hero" src="">
 
   <div class="left">
-    <h1>
+    <p class="mark">
+      <img id="icon" src="" alt="">
       itsdgfari
-      <svg class="badge" viewBox="0 0 48 48">
-        <path fill="#8b5cf6" d="M24.00 1.00 L29.24 6.15 L36.43 4.65 L38.06 11.82 L44.92 14.45 L42.41 21.35 L46.77 27.27 L40.92 31.73 L41.38 39.06 L34.06 39.65 L30.48 46.07 L24.00 42.60 L17.52 46.07 L13.94 39.65 L6.62 39.06 L7.08 31.73 L1.23 27.27 L5.59 21.35 L3.08 14.45 L9.94 11.82 L11.57 4.65 L18.76 6.15 Z"/>
-        <path d="M15.5 24.5 L21.5 30.5 L32.5 18.5" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </h1>
+    </p>
 
     <p class="tag">KINGDOM BUILDER &amp; MARKETER</p>
 
@@ -140,7 +138,7 @@
     </div>
 
     <div class="pills">
-      <span>Portfolio</span><span>Learn</span><span>Art</span><span>Studio</span>
+      <span>AI</span><span>Art</span><span>Learn</span><span>Portfolio</span><span>Studio</span>
     </div>
 
     <p class="domain">dgfari.com</p>

@@ -23,8 +23,9 @@ URL, so without the bump the old card keeps appearing for weeks.
 
 ## What is in it
 
-The left column is the wordmark, the tagline, the sparkle rule, the four
-destinations and the domain. The right is `hero-f0.png`, the first frame of
+The left column is the itsdgfari icon and wordmark set the way the portfolio
+navbar sets them, the tagline, the sparkle rule, the five destinations and the
+domain. The right is `hero-f0.png`, the first frame of
 `public/videos/character/hero.webm` extracted with its alpha intact:
 
 ```
@@ -36,3 +37,18 @@ decoder that drops the alpha channel and the cutout comes out on black.
 
 Keep it at 1200x630. Anything else gets letterboxed or cropped by one platform
 or another, and the crop is never the one you would have chosen.
+
+
+## The background
+
+`og-bg.png` is not a gradient anyone wrote. It is the previous card's own
+background, recovered from the image with `rebuild-bg.mjs`: the card is masked
+where the character and the text sat, the remaining pixels are averaged down to
+a coarse grid, the emptied cells are filled by diffusing their neighbours
+inward, and the result is scaled back up and blurred. It reproduces the
+original within two levels per channel at every point that was measurable.
+
+That indirection exists because a hand-written radial gradient was tried first
+and came out visibly bluer and more saturated than the card it replaced. If the
+background ever needs to change again, edit `og-bg.png` or re-run the rebuild
+against whichever card is the reference, rather than approximating it in CSS.

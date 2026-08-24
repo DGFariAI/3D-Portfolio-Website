@@ -1,4 +1,5 @@
 import { CSSProperties, PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { PiCheckBold, PiCopyBold, PiShareFatBold, PiXBold } from "react-icons/pi";
 
 interface Props {
@@ -188,7 +189,10 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
     "--drag-progress": sheetHeight ? Math.min(1, Math.max(0, drag / sheetHeight)) : 0,
   } as CSSProperties;
 
-  return (
+  // Rendered at the end of <body> rather than inside the hub, because the hub
+  // is blurred while this is open and a child of a blurred element is blurred
+  // with it. See the note on .hub.is-sharing.
+  return createPortal(
     <div className={`share-layer ${state}`} style={layerStyle}>
       <button
         type="button"
@@ -250,7 +254,8 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
           {copied ? "Link copied" : ""}
         </span>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

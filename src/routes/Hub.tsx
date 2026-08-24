@@ -153,8 +153,20 @@ const Hub = () => {
 
   const openBlog = () => navigate("/blogs");
 
+  // The blur behind the sheet is applied to this page once, not recomputed per
+  // frame by the sheet's own backdrop-filter, so the avatar has to hold still
+  // while it is up: a playing video under a filter re-runs that filter on every
+  // frame it paints, which is the whole cost the static blur exists to avoid.
+  const [sharing, setSharing] = useState(false);
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (sharing) v.pause();
+    else void v.play().catch(() => {});
+  }, [sharing, showVideo]);
+
   return (
-    <div className="hub">
+    <div className={`hub ${sharing ? "is-sharing" : ""}`}>
       <SEO
         title="DGFari"
         description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
@@ -165,7 +177,7 @@ const Hub = () => {
         {/* Inside the header rather than pinned to the viewport, so it can be
             positioned against the wordmark and the link column instead of
             against whatever the window happens to be. */}
-        <ShareButton />
+        <ShareButton onOpenChange={setSharing} />
 
         <h1>
           itsdgfari

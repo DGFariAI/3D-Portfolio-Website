@@ -174,8 +174,9 @@
   padding: 0;
   border: 0;
   cursor: pointer;
+  /* A plain tint. The frosting is done once by .hub.is-sharing rather than by
+     backdrop-filter here: see the note there. */
   background: rgba(4, 2, 6, 0.62);
-  backdrop-filter: blur(6px);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -225,6 +226,32 @@
 .share-layer.is-dragging .share-sheet,
 .share-layer.is-dragging .share-backdrop {
   transition: none;
+}
+
+/* The frosting, applied to the page rather than by the sheet.
+
+   backdrop-filter was the single most expensive thing here. It re-samples and
+   re-blurs everything behind it on every frame the sheet moves, and profiled
+   under a 4x CPU throttle a drag lost 54 to 75% of its frames to it. Freezing
+   it during the gesture fixed the pacing and looked wrong: no amount of tint
+   hides an unblurred page, so the frost visibly dropped out the instant you
+   touched the sheet.
+
+   Blurring this page instead costs one pass. Nothing behind the sheet moves
+   while it is open, so the browser paints the blurred result once and reuses
+   it for the whole gesture. The look is identical and it holds throughout.
+
+   Applied without a transition on purpose: animating a blur radius means
+   re-running the blur on every frame of the animation, which is the cost this
+   is here to avoid. The backdrop tint fades in over it instead. */
+.hub.is-sharing {
+  filter: blur(6px);
+}
+
+/* Nothing moves under the blur, or it is recomputed per frame. The avatar is
+   paused in Hub.tsx; this is the other thing on the page that animates. */
+.hub.is-sharing .hub-hint-dot {
+  animation: none;
 }
 
 .share-layer.is-closing .share-sheet {

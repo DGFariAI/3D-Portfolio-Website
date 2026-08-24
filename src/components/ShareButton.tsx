@@ -8,6 +8,9 @@ interface Props {
   image?: string;
   title?: string;
   domain?: string;
+  /** Fires when the sheet opens or closes. The page behind has to know: it
+   *  blurs itself and stops anything moving while the sheet is up. */
+  onOpenChange?: (open: boolean) => void;
 }
 
 const ShareButton = ({
@@ -15,9 +18,19 @@ const ShareButton = ({
   image = "/dgfari-og.jpg?v=2",
   title = "itsdgfari",
   domain = "dgfari.com",
+  onOpenChange,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  const close = useCallback(() => setOpen(false), []);
+
+  const setAndReport = useCallback(
+    (next: boolean) => {
+      setOpen(next);
+      onOpenChange?.(next);
+    },
+    [onOpenChange]
+  );
+
+  const close = useCallback(() => setAndReport(false), [setAndReport]);
 
   const shareUrl =
     url ?? (typeof window === "undefined" ? "https://dgfari.com" : `${window.location.origin}/`);
@@ -27,7 +40,7 @@ const ShareButton = ({
       <button
         type="button"
         className={`hub-share ${open ? "is-open" : ""}`}
-        onClick={() => setOpen(true)}
+        onClick={() => setAndReport(true)}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Share this page"

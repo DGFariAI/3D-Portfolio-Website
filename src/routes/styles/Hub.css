@@ -79,9 +79,9 @@
   top: 50%;
   right: -12px;
   /* The wordmark's box includes descender room the letters do not use, so its
-     geometric centre sits a touch below where the eye puts it. The 3px lifts
-     the mark onto the optical centre instead. */
-  --share-lift: 3px;
+     geometric centre sits a touch below where the eye puts it. This lifts the
+     mark onto the optical centre instead. */
+  --share-lift: 2px;
   z-index: 20;
   display: flex;
   align-items: center;

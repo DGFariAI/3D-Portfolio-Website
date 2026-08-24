@@ -12,6 +12,27 @@ const TechStackLazy = () => {
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const [shouldLoad, setShouldLoad] = useState(false);
 
+  // Fetch the chunk during idle time, well before it is needed. Waiting for the
+  // observer meant a 3MB download only started as the section came into view,
+  // so a visitor scrolling quickly reached empty space, saw the Contact section
+  // below it, and only then had the scene appear behind them.
+  useEffect(() => {
+    let cancelled = false;
+    const prefetch = () => {
+      if (!cancelled) import("./TechStack");
+    };
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    };
+    const handle = w.requestIdleCallback
+      ? w.requestIdleCallback(prefetch, { timeout: 4000 })
+      : window.setTimeout(prefetch, 2500);
+    return () => {
+      cancelled = true;
+      if (!w.requestIdleCallback) window.clearTimeout(handle);
+    };
+  }, []);
+
   useEffect(() => {
     const el = sentinelRef.current;
     if (!el) return;
@@ -27,9 +48,10 @@ const TechStackLazy = () => {
           observer.disconnect();
         }
       },
-      // A generous margin: the chunk still has to download and the physics
-      // world has to settle, so start well before the section is on screen.
-      { rootMargin: "1200px" }
+      // Mount well ahead of the section: the physics world still needs a moment
+      // to settle once the chunk is in, and this is what guarantees the scene is
+      // there before the visitor arrives rather than after.
+      { rootMargin: "2500px" }
     );
     observer.observe(el);
     return () => observer.disconnect();

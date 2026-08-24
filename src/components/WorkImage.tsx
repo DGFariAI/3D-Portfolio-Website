@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
+import { useIsDesktop } from "../hooks/useIsDesktop";
 
 interface Props {
   image: string;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const WorkImage = (props: Props) => {
+  const isDesktop = useIsDesktop();
   const wrapRef = useRef<HTMLDivElement | null>(null);
   // Whether this card's video may start loading at all. Every card used to
   // mount its <video> with preload="auto" on first render, so a single page
@@ -76,7 +78,11 @@ const WorkImage = (props: Props) => {
               width: "120%",
               height: "100%",
               top: 0,
-              left: props.videoLeft || 0,
+              // These per-card nudges are framing for desktop card widths. On a
+              // phone the same absolute pixels crop the clip, and an inline
+              // style would override the stylesheet's mobile reset, so drop
+              // them here rather than fighting specificity.
+              left: isDesktop ? props.videoLeft || 0 : 0,
               backgroundColor: "#000",
               objectFit: "cover",
               zIndex: 1,

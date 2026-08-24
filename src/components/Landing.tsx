@@ -40,8 +40,14 @@ const RESTING_TOP = 0.6;
 const SLIDE_START = 1.05;
 const SLIDE_END = 0.55;
 
-const RIM_LIFT_FAR = 250;
-const RIM_LIFT_NEAR = -20;
+// How far above her centre the backlight sits, in px. A single constant on
+// purpose: the glow has to keep a fixed relationship to her head, and it is
+// only ever visible while the About clip is showing (the rim is hidden once the
+// What I Do clip takes over). An earlier version interpolated this value as the
+// section approached, which was fine while she teleported into place but now
+// fights the scroll-driven slide: two different curves moving at once made the
+// glow drift up off her head and then settle back down.
+const RIM_LIFT = 250;
 
 const Landing = ({ children }: PropsWithChildren) => {
   const [isSwitched, setIsSwitched] = useState(false);
@@ -58,7 +64,6 @@ const Landing = ({ children }: PropsWithChildren) => {
   // What I Do approaches, so a single value cannot stay behind her head: high
   // while About still owns the screen, then easing down onto her head as she
   // comes up. Measured in the browser, not guessed.
-  const [rimLift, setRimLift] = useState(RIM_LIFT_FAR);
   // Mobile only ever gets the hero clip — the About and What I Do videos are
   // never mounted there, so phones don't pay their download/decode cost.
   const isDesktop = useIsDesktop();
@@ -154,13 +159,6 @@ const Landing = ({ children }: PropsWithChildren) => {
       if (whatIDoSection) {
         const rect = whatIDoSection.getBoundingClientRect();
         const aboveViewport = rect.bottom <= 0; // scrolled past What I Do
-
-        // Ease the backlight down onto her head as she rises into view. Its own
-        // threshold: the section ones below fire after the clip has already
-        // switched, far too late to matter for the About glow.
-        const t = Math.min(1, Math.max(0, (vh - rect.top) / (vh * 0.45)));
-        const lift = Math.round(RIM_LIFT_FAR + (RIM_LIFT_NEAR - RIM_LIFT_FAR) * t);
-        setRimLift((prev) => (Math.abs(prev - lift) > 2 ? lift : prev));
 
         // Switch slightly after the middle so About holds a little longer.
         setIsInWhatIDo(rect.top < vh * 0.4 && rect.bottom > 0);
@@ -401,7 +399,7 @@ const Landing = ({ children }: PropsWithChildren) => {
                   // offset has to stay well inside it. Wins over
                   // .character-rim.about-position in the stylesheet, so it is
                   // the number that actually moves the About glow.
-                  top: `${Math.max(0, frozenTop - rimLift)}px`,
+                  top: `${Math.max(0, frozenTop - RIM_LIFT)}px`,
                   zIndex: isPastWhatIDo ? -1 : 1,
                   transform: 'translate(calc(-50% - 50px), -50%) scale(1.4)',
                 }

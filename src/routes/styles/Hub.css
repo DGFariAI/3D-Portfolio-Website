@@ -204,15 +204,8 @@
     transform 0.25s ease, background-color 0.25s ease;
 }
 
-/* Mobile browsers paint a translucent blue box over whatever was tapped. It is
-   a default from before designed press states existed and looks wrong against
-   this palette; the pills have their own hover and press treatment. Keyboard
-   focus is deliberately left alone, see :focus-visible below. */
-.hub-link,
-.hub-avatar {
-  -webkit-tap-highlight-color: transparent;
-}
-
+/* The tap highlight itself is removed globally in index.css. These two keep
+   their own press and focus treatment. */
 .hub-link:active {
   transform: translateY(0);
 }

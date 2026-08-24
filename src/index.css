@@ -17,11 +17,32 @@
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
+  /* Mobile browsers paint a translucent blue box over whatever was tapped. It
+     is a default from before designed press states existed and looks wrong
+     against this palette. Set here rather than per component so every link and
+     button on every page inherits it. Keyboard focus is unaffected: browsers
+     draw that from :focus-visible, which this does not touch. */
+  -webkit-tap-highlight-color: transparent;
   --accentColor: #c2a4ff;
   --backgroundColor: #0b080c;
   --vh: 100vh;
   --vh: 100svh;
 }
+/* The other two places a browser paints its own blue.
+   1. The focus ring drawn on click or tap. Suppressed only when the focus did
+      not come from the keyboard, so people navigating by tab still see where
+      they are: that is what :focus-visible distinguishes.
+   2. The selection highlight. Most text here is already unselectable, but
+      inputs and anything that opts back in would otherwise show system blue. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: rgba(194, 164, 255, 0.35);
+  color: inherit;
+}
+
 h1,
 h2,
 h3,

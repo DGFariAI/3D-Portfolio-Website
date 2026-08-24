@@ -475,9 +475,6 @@
 .hub-avatar {
   position: relative;
   display: block;
-  /* A container, so the backlight can be sized in cqw and hold the portfolio's
-     proportions at every avatar size instead of drifting with px values. */
-  container-type: inline-size;
   /* Capped against viewport height as well as width: the whole point of this
      page is that every link is visible without scrolling, and she is the only
      element big enough to push them off a short screen. The clip is roughly
@@ -507,8 +504,10 @@
    
    Measured off the live portfolio hero, the rim is 49% of the clip's width, its
    blur is 14% of the rim, and its inset shadow offsets are 41%, 22% and 53% of
-   the rim. Those ratios are reproduced here in cqw so they hold at every avatar
-   size, instead of px values that drift as she scales.
+   the rim. Those ratios are reproduced here, in percent for the size and in px
+   for the blur and inset, with a second set for short screens where she is much
+   smaller. Container query units would express this more directly, but this is
+   the front door and it should not depend on a recent CSS feature to lay out.
 
    It is placed on her, not on the middle of the box. She reads at an angle and
    her head silhouette centres at 40.6% across the frame, not 50%, so a centred
@@ -516,27 +515,31 @@
 
    Sized and raised to sit behind the whole head. Her hair spans 276px of the
    620px frame and the crown reaches y=9, so a glow smaller than her head left
-   the top of it unlit. At 58cqw centred 24% down it covers the crown and still
-   reaches her neck. */
+   the top of it unlit. At 58% of her width, centred 24% down, it covers the
+   crown and still reaches her neck. */
 .hub-avatar-glow {
   position: absolute;
   z-index: 0;
   left: 40.6%;
   top: 24%;
-  width: 58cqw;
+  width: 58%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background-color: #f59bf8;
-  box-shadow: inset 23.8cqw 12.8cqw 30.7cqw 0 rgba(85, 0, 255, 0.65);
-  filter: blur(7.1cqw);
+  box-shadow: inset 71px 38px 92px 0 rgba(85, 0, 255, 0.65);
+  filter: blur(21px);
+  /* Held back from full strength. She has genuinely soft edges where her hair
+     and collar meet the background, and anything bright directly behind them
+     shows through as violet. */
+  opacity: 0.78;
   pointer-events: none;
 }
 
 /* Weak hardware pays for large blur radii every frame they change. Same
    reasoning as the tier rules in index.css. */
 .tier-low .hub-avatar-glow {
-  filter: blur(4.6cqw);
+  filter: blur(14px);
 }
 
 .hub-divider {
@@ -771,5 +774,12 @@
 
   .hub-divider {
     margin: 0 0 2px;
+  }
+
+  /* She is roughly two thirds the size here, so the backlight's blur and inset
+     come down with her. */
+  .hub-avatar-glow {
+    box-shadow: inset 46px 25px 60px 0 rgba(85, 0, 255, 0.65);
+    filter: blur(14px);
   }
 }

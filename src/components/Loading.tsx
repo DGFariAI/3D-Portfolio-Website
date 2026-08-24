@@ -55,7 +55,7 @@ const Loading = () => {
     <>
       <div className="loading-screen">
         <div className={`loading-logo ${clicked && "loading-logo-hidden"}`}>
-          <img src="/itsdgfari_icon.svg" alt="itsdgfari logo" />
+          <img src="/images/logos/dgfari-portfolio.png" alt="itsdgfari logo" />
         </div>
         <div
           className={`loading-wrap ${clicked && "loading-clicked"}`}

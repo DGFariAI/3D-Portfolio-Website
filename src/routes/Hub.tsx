@@ -20,8 +20,8 @@ import "./styles/Hub.css";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=5",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=5",
+  webm: "/videos/character/dgfari-learn.webm?v=7",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=7",
 };
 
 interface HubLink {
@@ -55,7 +55,7 @@ interface HubLink {
 const LINKS: HubLink[] = [
   {
     label: "DGFari's Portfolio",
-    logo: "/itsdgfari_icon.svg",
+    logo: "/images/logos/dgfari-portfolio.png",
     to: "/portfolio",
     glow: "rgba(202, 122, 255, 0.85)",
   },

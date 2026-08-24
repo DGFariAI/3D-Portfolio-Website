@@ -265,4 +265,29 @@
     margin-left: 0;
     padding-right: 20px;
   }
+
+  /* The clip is positioned at 120% of this image's width, which is what gives
+     it a 16:9 box inside a 3:2 card so nothing is cropped. On desktop that 20%
+     bleeds past the card and the per-card `left` nudge frames it; on a phone
+     there is no room beside the card, so it spilled onto the next one.
+
+     Sizing the image to the card's content width divided by 1.2 makes the clip
+     come out at exactly the card's width: same framing, nothing cropped,
+     nothing overlapping. It has to be worked out from the viewport rather than
+     written as a percentage, because .work-image-in shrink-wraps this image, so
+     a percentage here would have nothing resolved to measure against. The 80px
+     is the card's own 20px padding on each side, doubled for the 40px the card
+     is inset from the viewport. */
+  .work-image img {
+    max-width: calc((100vw - 80px) / 1.2);
+  }
+
+  /* The image box is centred by default, so the clip's 20% overflow starts from
+     a centred position and still runs past the card's right edge. Anchoring the
+     box to the left means the overflow ends exactly where the card does, and
+     the clip gets the card's full width rather than a centred subset. */
+  .work-image,
+  .work-box:first-child .work-image {
+    justify-content: flex-start;
+  }
 }

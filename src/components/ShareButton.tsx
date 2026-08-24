@@ -32,13 +32,14 @@ const ShareButton = ({
         aria-expanded={open}
         aria-label="Share this page"
       >
-        {/* Outline at rest, solid once the sheet is up: the icon reads as
-            pressed for as long as the thing it opened is on screen. */}
-        {open ? (
-          <PiShareNetworkFill aria-hidden="true" />
-        ) : (
-          <PiShareNetworkBold aria-hidden="true" />
-        )}
+        {/* Both marks are rendered and stacked, with CSS fading between
+            them. Swapping the element on a hover flag instead would mean a
+            re-render per pointer entry and a hard cut where the fill appears,
+            and :hover cannot reach across to a different element. */}
+        <span className="hub-share-mark" aria-hidden="true">
+          <PiShareNetworkBold className="hub-share-line" />
+          <PiShareNetworkFill className="hub-share-solid" />
+        </span>
       </button>
 
       {open && (

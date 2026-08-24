@@ -78,6 +78,10 @@
   position: absolute;
   top: 50%;
   right: -12px;
+  /* The wordmark's box includes descender room the letters do not use, so its
+     geometric centre sits a touch below where the eye puts it. The 3px lifts
+     the mark onto the optical centre instead. */
+  --share-lift: 3px;
   z-index: 20;
   display: flex;
   align-items: center;
@@ -89,21 +93,56 @@
   border: 0;
   background: none;
   cursor: pointer;
+  /* Same violet halo the pills carry, at a blur proportional to a 16px mark
+     rather than their 18px: on something this small the pills' radius reads as
+     a smudge instead of a glow. */
+  filter: drop-shadow(0 0 7px rgba(140, 90, 255, 0.45));
   /* translateY carries the centring, so every other transform state has to
      restate it rather than replace it. */
-  transform: translateY(-50%);
-  transition: color 0.25s ease, transform 0.25s ease;
+  transform: translateY(calc(-50% - var(--share-lift)));
+  transition: color 0.25s ease, transform 0.25s ease, filter 0.25s ease;
 }
 
 .hub-share:hover {
   color: var(--accentColor);
-  transform: translateY(-50%) scale(1.08);
+  filter: drop-shadow(0 0 11px rgba(140, 90, 255, 0.75));
+  transform: translateY(calc(-50% - var(--share-lift))) scale(1.08);
 }
 
 .hub-share:active,
 .hub-share.is-open {
   color: var(--accentColor);
-  transform: translateY(-50%);
+  filter: drop-shadow(0 0 11px rgba(140, 90, 255, 0.75));
+  transform: translateY(calc(-50% - var(--share-lift)));
+}
+
+/* One grid cell holding both marks, so they occupy the same 16px box and the
+   button's width never changes as one fades into the other. */
+.hub-share-mark {
+  display: grid;
+  place-items: center;
+}
+
+.hub-share-line,
+.hub-share-solid {
+  grid-area: 1 / 1;
+  transition: opacity 0.22s ease;
+}
+
+.hub-share-solid {
+  opacity: 0;
+}
+
+.hub-share:hover .hub-share-line,
+.hub-share:focus-visible .hub-share-line,
+.hub-share.is-open .hub-share-line {
+  opacity: 0;
+}
+
+.hub-share:hover .hub-share-solid,
+.hub-share:focus-visible .hub-share-solid,
+.hub-share.is-open .hub-share-solid {
+  opacity: 1;
 }
 
 .hub-share:focus-visible {

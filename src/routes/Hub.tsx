@@ -1,7 +1,6 @@
 import { ComponentType, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  PiBriefcaseFill,
   PiCameraFill,
   PiCaretRightBold,
   PiFlameFill,
@@ -35,11 +34,22 @@ interface HubLink {
 }
 
 const LINKS: HubLink[] = [
-  { label: "My Portfolio", icon: PiBriefcaseFill, to: "/portfolio" },
+  { label: "DGFari's Portfolio", logo: "/itsdgfari_icon.svg", to: "/portfolio" },
   { label: "DGFari AI", icon: PiFlameFill, comingSoon: true },
   { label: "DGFari Art", icon: PiPaintBrushFill, href: "https://dgfariart.com" },
   { label: "DGFari Studio", icon: PiCameraFill, href: "https://dgfaristudio.com" },
 ];
+
+/** Sparkle rule. Used above and below the link list, so it lives in one place. */
+const Divider = () => (
+  <div className="hub-divider" aria-hidden="true">
+    <span className="hub-divider-line" />
+    <svg viewBox="0 0 24 24" className="hub-divider-star">
+      <path d="M12 0c.8 6.2 5 10.4 11.2 11.2v1.6C17 13.6 12.8 17.8 12 24c-.8-6.2-5-10.4-11.2-11.2v-1.6C7 10.4 11.2 6.2 12 0z" />
+    </svg>
+    <span className="hub-divider-line" />
+  </div>
+);
 
 const Hub = () => {
   const navigate = useNavigate();
@@ -85,7 +95,23 @@ const Hub = () => {
           width={44}
           height={44}
         />
-        <h1>itsdgfari</h1>
+        <h1>
+          itsdgfari
+          <svg className="hub-verified" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M12 1.3l2.4 2.2 3.2-.3 1 3.1 2.9 1.4-1 3.1 1 3.1-2.9 1.4-1 3.1-3.2-.3L12 20.3l-2.4 2.2-3.2-.3-1-3.1-2.9-1.4 1-3.1-1-3.1 2.9-1.4 1-3.1 3.2.3z"
+            />
+            <path
+              d="M8.4 12.1l2.4 2.4 4.8-4.9"
+              fill="none"
+              stroke="var(--backgroundColor)"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </h1>
       </header>
 
       {/* The avatar is a shortcut into the blog. It is deliberately not the only
@@ -117,13 +143,7 @@ const Hub = () => {
         Tap her to read <strong>DGFari Learn</strong>
       </p>
 
-      <div className="hub-divider" aria-hidden="true">
-        <span className="hub-divider-line" />
-        <svg viewBox="0 0 24 24" className="hub-divider-star">
-          <path d="M12 0c.8 6.2 5 10.4 11.2 11.2v1.6C17 13.6 12.8 17.8 12 24c-.8-6.2-5-10.4-11.2-11.2v-1.6C7 10.4 11.2 6.2 12 0z" />
-        </svg>
-        <span className="hub-divider-line" />
-      </div>
+      <Divider />
 
       <nav className="hub-links" aria-label="Where to find me">
         {LINKS.map((link) => {
@@ -173,6 +193,8 @@ const Hub = () => {
           );
         })}
       </nav>
+
+      <Divider />
 
       <footer className="hub-footer">
         <span>&copy; {new Date().getFullYear()} DGFari</span>

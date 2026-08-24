@@ -44,10 +44,23 @@
 }
 
 .hub-intro h1 {
+  /* Inline-flex so the badge sits on the wordmark's baseline as part of it,
+     which keeps the pair centred on the column as one unit. */
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin: 0;
   font-size: 26px;
   font-weight: 700;
   letter-spacing: 0.4px;
+}
+
+.hub-verified {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--accentColor);
+  filter: drop-shadow(0 0 6px rgba(194, 164, 255, 0.5));
 }
 
 /* --- avatar ------------------------------------------------------------- */
@@ -152,6 +165,12 @@
      wider desktop column, while the same 70% reads correctly at both sizes. */
   width: 70%;
   margin: 2px 0 4px;
+}
+
+/* The one under the list sits between the pills and the footer, which the
+   footer's margin-top: auto would otherwise push apart. */
+.hub-links + .hub-divider {
+  margin: 6px 0 0;
 }
 
 .hub-divider-line {
@@ -307,6 +326,11 @@
 
   .hub-intro h1 {
     font-size: 22px;
+  }
+
+  .hub-verified {
+    width: 17px;
+    height: 17px;
   }
 
   .hub-avatar {

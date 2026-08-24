@@ -24,6 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   gap: 14px;
 }
@@ -34,13 +35,6 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-}
-
-.hub-mark {
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 14px rgba(194, 164, 255, 0.35));
 }
 
 .hub-intro h1 {
@@ -167,10 +161,10 @@
   margin: 2px 0 4px;
 }
 
-/* The one under the list sits between the pills and the footer, which the
-   footer's margin-top: auto would otherwise push apart. */
+/* Matched to the rule above the list: 2px here plus the column's 14px gap is
+   the same 16px that sits between the hint and the upper rule. */
 .hub-links + .hub-divider {
-  margin: 6px 0 0;
+  margin: 6px 0 2px;
 }
 
 .hub-divider-line {
@@ -296,9 +290,13 @@
 
 /* --- footer ------------------------------------------------------------- */
 
+/* The copyright follows the closing rule directly. It used to be pushed to the
+   bottom edge with margin-top: auto, which is what opened the gap above it.
+   With the column centred instead, the leftover height falls evenly above and
+   below rather than all of it landing here. */
 .hub-footer {
-  margin-top: auto;
-  padding-top: 14px;
+  margin-top: 0;
+  padding-top: 0;
   font-size: 12px;
   letter-spacing: 1px;
   color: #6f6777;
@@ -317,11 +315,6 @@
   .hub {
     padding-top: 22px;
     gap: 12px;
-  }
-
-  .hub-mark {
-    width: 38px;
-    height: 38px;
   }
 
   .hub-intro h1 {

@@ -85,16 +85,7 @@ const Hub = () => {
         path="/"
       />
 
-      {/* The same mark and wordmark the portfolio's navbar uses, so the hub
-          reads as the same brand the moment it loads. */}
       <header className="hub-intro">
-        <img
-          className="hub-mark"
-          src="/itsdgfari_icon.svg"
-          alt="DGFari"
-          width={44}
-          height={44}
-        />
         <h1>
           itsdgfari
           <svg className="hub-verified" viewBox="0 0 24 24" aria-hidden="true">

@@ -53,12 +53,12 @@
   width: 22px;
   height: 22px;
   flex-shrink: 0;
-  /* A saturated violet rather than --accentColor: the accent is a pale lavender
-     and the reference's badge carries a white check, which needs a darker field
-     behind it to stay legible at this size. */
-  color: #8b5cf6;
+  /* Back to the page accent. Paired with a check in the background colour
+     rather than white: on a lavender this pale, a white check all but
+     disappears at this size, so the check reads as cut out of the badge. */
+  color: var(--accentColor);
   overflow: visible;
-  filter: drop-shadow(0 0 7px rgba(139, 92, 246, 0.55));
+  filter: drop-shadow(0 0 7px rgba(194, 164, 255, 0.5));
 }
 
 /* --- avatar ------------------------------------------------------------- */

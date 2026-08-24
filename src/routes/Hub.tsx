@@ -99,7 +99,7 @@ const Hub = () => {
             <path
               d="M15.5 24.5 L21.5 30.5 L32.5 18.5"
               fill="none"
-              stroke="#ffffff"
+              stroke="var(--backgroundColor)"
               strokeWidth="5"
               strokeLinecap="round"
               strokeLinejoin="round"

@@ -127,6 +127,10 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
   // Copy, or instead of selecting the link to read it, would both be wrong.
   const onPointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     if (closing || e.button !== 0) return;
+    // Touch only. Pulling a sheet down off the bottom edge is a phone idiom,
+    // and on a desktop this is a centred dialog, where dragging it downwards
+    // means nothing. A mouse has the close button and the backdrop.
+    if (e.pointerType === "mouse") return;
     if ((e.target as HTMLElement).closest("button, a, input, .share-url-text")) return;
     gesture.current = {
       id: e.pointerId,

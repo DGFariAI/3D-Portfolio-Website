@@ -17,6 +17,9 @@
 }
 
 .hub {
+  /* Positioned so it stacks above the ambient lamps behind it. */
+  position: relative;
+  z-index: 1;
   min-height: var(--vh);
   width: min(560px, calc(100vw - 40px));
   margin: 0 auto;
@@ -52,7 +55,11 @@
      which keeps the pair centred on the column as one unit. */
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  /* Proportional, not fixed. At 7px it held at every size, so by the time the
+     desktop wordmark reached 43px the badge had drifted to half the relative
+     spacing it has on a phone: 0.16em against 0.32em. In em it keeps the same
+     gap at every size it is set at. */
+  gap: 0.3em;
   margin: 0;
   font-size: 26px;
   font-weight: 700;
@@ -70,6 +77,86 @@
   color: #8b5cf6;
   overflow: visible;
   filter: drop-shadow(0 0 7px rgba(139, 92, 246, 0.55));
+}
+
+/* --- ambient corner light ------------------------------------------------ */
+
+/* The two lamps the portfolio runs behind its navbar, ported here.
+
+   A 300px disc pulled most of the way off the top-left corner, and a second
+   pushed off the right edge at mid height, both blurred until only a wash
+   reaches the page. Values are the portfolio's own, copied rather than
+   referenced: Landing.css belongs to the portfolio route's chunk and importing
+   it here would pull that weight onto the front door.
+
+   They matter more here than they do there. The portfolio fills its width with
+   a centred character; this page puts a column of links on the right half, and
+   without these that half is flat black.
+
+   Layered under the page rather than over it, unlike the portfolio's, which
+   paint across their navbar at 15 and 9. Here the right-hand lamp would
+   otherwise wash over the pills.
+
+   z-index 0 and not -1: body carries its own background-color, and a negative
+   layer inside body paints underneath that background rather than the page,
+   which makes these invisible. .hub sits at 1 to stay above them. */
+.hub-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hub-circle1,
+.hub-circle2 {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background-color: #fb8dff;
+  box-shadow: inset -50px 40px 50px rgba(84, 0, 255, 0.6);
+}
+
+.hub-circle1 {
+  top: 0;
+  left: 0;
+  filter: blur(60px);
+  animation: hubCircle1 5s linear infinite;
+}
+
+/* Held back until there is width to hold it. On a phone the right edge is
+   where the links already are. */
+.hub-circle2 {
+  top: 50%;
+  right: 0;
+  display: none;
+  filter: blur(50px);
+  animation: hubCircle2 5s linear infinite;
+}
+
+@media screen and (min-width: 500px) {
+  .hub-circle2 {
+    display: block;
+  }
+}
+
+@keyframes hubCircle1 {
+  0% {
+    transform: translate(-95%, -75%) rotateZ(0deg);
+  }
+  100% {
+    transform: translate(-95%, -75%) rotateZ(360deg);
+  }
+}
+
+@keyframes hubCircle2 {
+  0% {
+    transform: translate(calc(100% - 2px), -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(calc(100% - 2px), -50%) rotate(360deg);
+  }
 }
 
 /* --- share -------------------------------------------------------------- */
@@ -904,8 +991,8 @@
     align-self: end;
     justify-self: start;
     width: 100%;
-    max-width: 880px;
-    max-width: min(880px, calc(100svh / 1.078));
+    max-width: 800px;
+    max-width: min(800px, calc(100svh / 1.078));
     margin: 0;
   }
 
@@ -1015,5 +1102,47 @@
      present and still subordinate. */
   .hub-share {
     font-size: 20px;
+  }
+}
+
+
+/* --- share sheet on a desktop -------------------------------------------- */
+
+/* It was a phone sheet on a monitor: anchored flush to the bottom edge, with a
+   drag grabber that means nothing to a mouse. Same content, the shape a
+   pointer expects. The drag itself is gated to touch in ShareSheet.tsx. */
+@media screen and (min-width: 880px) {
+  .share-layer {
+    align-items: center;
+  }
+
+  .share-sheet {
+    width: min(520px, 100%);
+    padding: 22px 28px 28px;
+    border: 1px solid rgba(194, 164, 255, 0.22);
+    border-radius: 24px;
+    box-shadow: 0 32px 90px rgba(0, 0, 0, 0.72),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    /* Rises a little and settles, rather than sliding up from an edge it is no
+       longer attached to. */
+    transform: translateY(14px) scale(0.985);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.22s ease;
+  }
+
+  .share-layer.is-open .share-sheet {
+    transform: none;
+    opacity: 1;
+  }
+
+  .share-layer.is-closing .share-sheet {
+    transform: translateY(10px) scale(0.99);
+    opacity: 0;
+    transition-duration: 0.2s;
+  }
+
+  .share-grabber {
+    display: none;
   }
 }

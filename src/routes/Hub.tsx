@@ -27,8 +27,8 @@ import "./styles/Hub.css";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=19",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=14",
+  webm: "/videos/character/dgfari-learn.webm?v=20",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=15",
 };
 
 interface HubLink {
@@ -144,7 +144,10 @@ const Hub = () => {
 
   useEffect(() => {
     const w = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      requestIdleCallback?: (
+        cb: () => void,
+        opts?: { timeout: number },
+      ) => number;
     };
     let cancelled = false;
     const start = () => {
@@ -196,124 +199,149 @@ const Hub = () => {
   }, [sharing, showVideo]);
 
   return (
-    <div className={`hub ${sharing ? "is-sharing" : ""}`}>
-      <SEO
-        title="DGFari"
-        description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
-        path="/"
-      />
+    <>
+      {/* Ambient corner light, the same pair the portfolio runs. It sits
+          outside .hub on purpose: the share sheet blurs .hub, and a filter on
+          an ancestor makes it the containing block for fixed descendants,
+          which would pull these out of the corners the moment the sheet
+          opened. */}
+      <div className="hub-ambient" aria-hidden="true">
+        <span className="hub-circle1" />
+        <span className="hub-circle2" />
+      </div>
 
-      <header className="hub-intro">
-        {/* Inside the header rather than pinned to the viewport, so it can be
+      <div className={`hub ${sharing ? "is-sharing" : ""}`}>
+        <SEO
+          title="DGFari"
+          description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
+          path="/"
+        />
+
+        <header className="hub-intro">
+          {/* Inside the header rather than pinned to the viewport, so it can be
             positioned against the wordmark and the link column instead of
             against whatever the window happens to be. */}
-        <ShareButton onOpenChange={setSharing} />
+          <ShareButton onOpenChange={setSharing} />
 
-        <h1>
-          itsdgfari
-          {/* 11-point rosette, generated so the spikes are even and every
+          <h1>
+            itsdgfari
+            {/* 11-point rosette, generated so the spikes are even and every
               vertex sits inside the viewBox: the previous hand-drawn path ran
               past its edges, which is what clipped it. */}
-          <svg className="hub-verified" viewBox="0 0 48 48" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M24.00 1.00 L29.24 6.15 L36.43 4.65 L38.06 11.82 L44.92 14.45 L42.41 21.35 L46.77 27.27 L40.92 31.73 L41.38 39.06 L34.06 39.65 L30.48 46.07 L24.00 42.60 L17.52 46.07 L13.94 39.65 L6.62 39.06 L7.08 31.73 L1.23 27.27 L5.59 21.35 L3.08 14.45 L9.94 11.82 L11.57 4.65 L18.76 6.15 Z"
-            />
-            <path
-              d="M15.5 24.5 L21.5 30.5 L32.5 18.5"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </h1>
-      </header>
+            <svg
+              className="hub-verified"
+              viewBox="0 0 48 48"
+              aria-hidden="true"
+            >
+              <path
+                fill="currentColor"
+                d="M24.00 1.00 L29.24 6.15 L36.43 4.65 L38.06 11.82 L44.92 14.45 L42.41 21.35 L46.77 27.27 L40.92 31.73 L41.38 39.06 L34.06 39.65 L30.48 46.07 L24.00 42.60 L17.52 46.07 L13.94 39.65 L6.62 39.06 L7.08 31.73 L1.23 27.27 L5.59 21.35 L3.08 14.45 L9.94 11.82 L11.57 4.65 L18.76 6.15 Z"
+              />
+              <path
+                d="M15.5 24.5 L21.5 30.5 L32.5 18.5"
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </h1>
+        </header>
 
-      {/* Only the book she is holding opens the blog. The whole clip is the
+        {/* Only the book she is holding opens the blog. The whole clip is the
           button, but the handler ignores anything outside the book, so
           clicking her hair or the space beside her does nothing. */}
-      <button className="hub-avatar" onClick={openBlog} aria-label="Read DGFari Learn, my blog">
-        <span className="hub-avatar-glow" aria-hidden="true" />
-        {showVideo ? (
-          <video
-            ref={videoRef}
-            className="hub-avatar-media"
-            src={AVATAR.webm}
-            poster={AVATAR.poster}
-            muted
-            loop
-            playsInline
-            autoPlay
-            preload="metadata"
-            disablePictureInPicture
-          />
-        ) : (
-          <img className="hub-avatar-media" src={AVATAR.poster} alt="" />
-        )}
-      </button>
+        <button
+          className="hub-avatar"
+          onClick={openBlog}
+          aria-label="Read DGFari Learn, my blog"
+        >
+          <span className="hub-avatar-glow" aria-hidden="true" />
+          {showVideo ? (
+            <video
+              ref={videoRef}
+              className="hub-avatar-media"
+              src={AVATAR.webm}
+              poster={AVATAR.poster}
+              muted
+              loop
+              playsInline
+              autoPlay
+              preload="metadata"
+              disablePictureInPicture
+            />
+          ) : (
+            <img className="hub-avatar-media" src={AVATAR.poster} alt="" />
+          )}
+        </button>
 
-      {/* Everything below her, as one block.
+        {/* Everything below her, as one block.
           On a phone this box does not exist: it is display: contents, so these
           children lay out in the page column exactly as they did before. On a
           desktop it becomes the second column. Wrapping them is what lets the
           two-column layout happen with no change to the order of the document,
           so the reading order and the tab order stay as they are. */}
-      <div className="hub-panel">
-        <Divider />
+        <div className="hub-panel">
+          <Divider />
 
-        <nav className="hub-links" aria-label="Where to find me">
-          {LINKS.map((link) => {
-          // Handed to CSS as a custom property so the hover rule lives in the
-          // stylesheet with the rest of the row's states, rather than needing a
-          // hover flag in React to know which colour to apply.
-          const style = {
-            "--mark-glow": link.glow,
-            "--mark-lift": link.lift ?? 1,
-            "--mark-sat": link.sat ?? 1,
-          } as CSSProperties;
+          <nav className="hub-links" aria-label="Where to find me">
+            {LINKS.map((link) => {
+              // Handed to CSS as a custom property so the hover rule lives in the
+              // stylesheet with the rest of the row's states, rather than needing a
+              // hover flag in React to know which colour to apply.
+              const style = {
+                "--mark-glow": link.glow,
+                "--mark-lift": link.lift ?? 1,
+                "--mark-sat": link.sat ?? 1,
+              } as CSSProperties;
 
-          const inner = (
-            <>
-              <LinkMark link={link} />
-              <span className="hub-link-label">{link.label}</span>
-              <span className="hub-link-end" aria-hidden="true">
-                <PiCaretRightBold />
-              </span>
-            </>
-          );
+              const inner = (
+                <>
+                  <LinkMark link={link} />
+                  <span className="hub-link-label">{link.label}</span>
+                  <span className="hub-link-end" aria-hidden="true">
+                    <PiCaretRightBold />
+                  </span>
+                </>
+              );
 
-          if (link.to) {
-            return (
-              <Link className="hub-link" to={link.to} style={style} key={link.label}>
-                {inner}
-              </Link>
-            );
-          }
+              if (link.to) {
+                return (
+                  <Link
+                    className="hub-link"
+                    to={link.to}
+                    style={style}
+                    key={link.label}
+                  >
+                    {inner}
+                  </Link>
+                );
+              }
 
-          return (
-            <a
-              className="hub-link"
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={style}
-              key={link.label}
-            >
-              {inner}
-            </a>
-          );
-          })}
-        </nav>
+              return (
+                <a
+                  className="hub-link"
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={style}
+                  key={link.label}
+                >
+                  {inner}
+                </a>
+              );
+            })}
+          </nav>
 
-        <Divider />
+          <Divider />
 
-        <footer className="hub-footer">
-          <span>&copy; {new Date().getFullYear()} DGFari</span>
-        </footer>
+          <footer className="hub-footer">
+            <span>&copy; {new Date().getFullYear()} DGFari</span>
+          </footer>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

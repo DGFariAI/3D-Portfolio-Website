@@ -202,3 +202,23 @@ bought only 2.7 more points for another 396KB, so crf 50 ships: 965KB against
 
 The blink work survives the re-encode. Title wobble is 0.0061 and the worst
 single jump 0.0473, against 0.0060 and 0.0527 at crf 46.
+
+## The glitter, and picking a quality by the wrong metric
+
+crf 50 shipped first because the book *title* measured only 2.7 points worse
+than crf 46. That was the wrong thing to measure. The title is thick lettering;
+the glitter on the cover is fine high-frequency noise, and it is far more
+expensive to keep. At crf 50 the sparkles merge into blotchy clumps.
+
+Counting distinct local maxima in the glitter, rather than mean edge energy,
+matches what the eye sees. Against the uncompressed master:
+
+    880 @ crf 50   69% of the sparkles    965KB
+    880 @ crf 46   76%                   1361KB
+    800 @ crf 44   76%                   1327KB   <- ships
+    880 @ crf 44   80%                   1607KB
+    740 @ crf 42   75%                   1311KB
+    800 @ crf 44 + aq-mode 2   71%       1232KB
+
+She never displays wider than 708px, so 880 was oversized; dropping to 800 buys
+back bits to spend on quality. aq-mode 2 was tried and is worse, not better.

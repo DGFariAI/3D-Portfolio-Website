@@ -26,9 +26,10 @@
     height 0.3s ease-out;
 }
 
-/* Same threshold the portfolio uses: below this it is a touch screen and there
-   is no pointer to follow. */
-@media only screen and (min-width: 600px) {
+/* Same threshold the portfolio uses, plus a hover test that matters as much as it does. A phone asked for
+   the desktop site reports 980px wide while still having no pointer to follow,
+   and the mark sat in the top left corner of the page where it was left. */
+@media only screen and (min-width: 600px) and (hover: hover) {
   .brand-cursor {
     --size: 50px;
   }

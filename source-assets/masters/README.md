@@ -77,3 +77,26 @@ element was tried and made the picture stutter: a positioned box on top of a
 video with an alpha channel pulls it out of its own compositing layer, so the
 browser recomposites her every frame.
 
+## Stutter on the book cover during the page turn
+
+The cover's text is not temporally stable in the generation: across six
+consecutive frames of the master the word Learn changes shape and the divider
+shifts, because the model redraws the text each frame rather than tracking it.
+Nothing downstream can restore detail that was never consistent.
+
+It only became visible once she was made larger, and the numbers say the clip
+itself was not the cause: measured on the title region during the page turn,
+the version before it was jerkier, at 1.55 against 1.32.
+
+What helps is `tmix=frames=3` on the finished RGBA, which averages each frame
+with its neighbours and cuts the jerkiness to 0.80. Two alternatives were tried
+and rejected. `tmix=frames=5` scores better still, 0.74, and visibly doubles her
+hand during the turn. Motion compensated interpolation, `mi_mode=mci`, was worse
+than doing nothing, at 1.54, because it tries to track text that moves
+incoherently and smears it.
+
+The cost of `tmix=3` is a slightly soft edge on her hand at the fastest frames,
+which at the size she actually renders is close to invisible. If the cover ever
+needs to be genuinely sharp, that is a regeneration with the book held still,
+not an encoding setting.
+

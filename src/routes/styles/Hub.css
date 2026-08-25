@@ -23,6 +23,11 @@
   /* Tight, because every pixel here is height the clip could be using and the
      page must never scroll. */
   padding: 14px 0 12px;
+  /* The column sits a little above centre. Done as a transform rather than
+     lopsided padding: padding would have to come out of the page's height, and
+     the clip is sized from whatever height is left, so it would have made her
+     smaller just to move her up. A transform costs nothing. */
+  transform: translateY(-14px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -804,6 +809,8 @@
   .hub {
     padding: 18px 0 16px;
     gap: 10px;
+    /* Less of a lift here: there is far less room above the wordmark to give. */
+    transform: translateY(-8px);
   }
 
   .hub-avatar,

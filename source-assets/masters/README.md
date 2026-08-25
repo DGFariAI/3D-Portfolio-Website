@@ -101,25 +101,37 @@ needs to be genuinely sharp, that is a regeneration with the book held still,
 not an encoding setting.
 
 
-## The title stutter during the page flip
+## The title blinking during the page flip
 
-The "DGFari Learn" lettering on the cover is fine metallic type on near-black.
-While she flips a page the whole book shifts a little, and VP9 spends its bits
-on the moving page rather than on holding that lettering steady, so the title
-appears to shimmer.
+The "DGFari Learn" lettering on the cover appeared to shimmer, worst while the
+book was moving. It was not the encode and it was not the lettering. It was the
+retiming.
 
-Frame averaging fixes it (`tmix=frames=3` cut the jerkiness on the title from
-1.58 to 0.80) but it averages her flipping hand too, which ghosts. So the
-averaging is applied through a mask instead: a feathered rectangle over the
-title only, x 341..527 and y 347..561 of the 620x668 frame, 22px feather. The
-right edge stops at 85% because her right hand starts at 88%.
+Slowing the clip to 0.85x was done with `minterpolate=fps=30:mi_mode=blend`,
+which holds the output at 30fps by inventing the frames the slowdown leaves
+gaps for. A 9 second window is 270 real frames; the retimed clip had 307. Those
+37 extra frames are weighted averages of their neighbours, so each one shows the
+cover text twice at half strength. That is the blink, and it only shows while
+there is motion to average, which is why the book moving made it worse.
 
-    [base][tmix=3][feathered mask] maskedmerge
+The fix is to invent nothing. The same 270 frames are played at 25.5fps
+(30 x 0.85), which is the identical duration and the identical speed with every
+frame a real one:
 
-The mask's alpha plane is 0 everywhere, so the matte is always taken from the
-base and never from the averaged copy, which would have softened the cutout
-edges globally.
+    setpts=PTS/0.85   then   -r 51/2 -fps_mode cfr
 
-Measured: title jerkiness 1.58 -> 0.97, both hands unchanged to within the
-re-encode noise floor, and the feather band shows less frame-to-frame change
-than untouched areas do, so there is no seam.
+Measured on the title: sharpness wobble between frames fell from 0.0131 to
+0.0058, and the worst single jump, which is the blink you actually see, from
+0.186 to 0.032. Overall edge sharpness went up as well, 3.84 to 4.02, because
+the bits no longer go into 37 blurred frames.
+
+crf 42 was tried and measured no better than crf 45, which confirms the cause
+was never the bitrate.
+
+### What was tried and is wrong
+
+Frame averaging (`tmix=frames=3`) steadies the text but also averages her
+flipping hand, which ghosts. Restricting it with a mask over the title does not
+save it: her hand travels into the title region when she reaches across to turn
+the page, so a fixed rectangle averages the hand too. A mask cannot be placed
+from one frame when the thing it must avoid moves.

@@ -848,8 +848,18 @@
    take one row each of the second. The extra height a spanning item forces is
    split evenly between the two rows it spans, which lands the row boundary
    exactly where the wordmark-and-panel pair is centred. So the right column
-   centres against her with no measured offset to keep in sync. */
-@media screen and (min-width: 1000px) {
+   centres against her with no measured offset to keep in sync.
+
+   880 rather than a round 1000 for a specific reason. When a phone is asked to
+   "request desktop site" it ignores the viewport meta tag and lays the page out
+   at 980px, then scales that whole canvas down to the screen. At a 1000px
+   breakpoint the request landed 20px short and served the phone layout, which
+   is why desktop mode looked like the mobile view shrunk rather than the
+   desktop one. Measured: 980px rendered the stacked column with 43% of the
+   canvas empty. Anything under 980 fixes it, and 880 also picks up genuine
+   half-screen desktop windows without catching portrait tablets, which are
+   768 to 834 wide and are better off stacked. */
+@media screen and (min-width: 880px) {
   .hub {
     width: min(1240px, calc(100vw - 120px));
     display: grid;
@@ -895,7 +905,7 @@
      wordmark beside that reads as a caption, and the column above the rules
      floats instead of anchoring. */
   .hub-intro h1 {
-    font-size: clamp(30px, 2.6vw, 40px);
+    font-size: clamp(32px, 3vw, 44px);
   }
 
   /* In em from here, so the badge tracks the wordmark instead of staying at
@@ -932,6 +942,46 @@
 
   .hub-footer {
     margin-top: 4px;
+    font-size: 13px;
     text-align: left;
+  }
+
+  /* Pills built for this width rather than stretched to it.
+
+     The proportion was the giveaway. At 1440 the desktop pill measured 584x58,
+     a 10:1 sliver; the same control on a phone is 350x58, which is 6:1. It was
+     the phone's pill at desktop width, and no amount of spacing around it fixes
+     a control whose own shape is wrong. At 7.3:1 it reads as built for the
+     column it sits in.
+
+     Height in vh so short laptops give it back instead of overflowing: this
+     block is 94px taller than the one it replaces, which is real height on a
+     768px screen. */
+  .hub-link {
+    grid-template-columns: 52px 1fr 52px;
+    padding: clamp(14px, 2.6vh, 22px) 28px;
+    border-radius: 22px;
+  }
+
+  .hub-link-label {
+    font-size: clamp(18px, 1.4vw, 20px);
+    letter-spacing: 0.5px;
+  }
+
+  .hub-link-mark {
+    font-size: 30px;
+  }
+
+  .hub-link-mark img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .hub-link-end {
+    font-size: 22px;
+  }
+
+  .hub-links {
+    gap: clamp(12px, 2vh, 18px);
   }
 }

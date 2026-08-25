@@ -254,10 +254,17 @@ const Hub = () => {
         )}
       </button>
 
-      <Divider />
+      {/* Everything below her, as one block.
+          On a phone this box does not exist: it is display: contents, so these
+          children lay out in the page column exactly as they did before. On a
+          desktop it becomes the second column. Wrapping them is what lets the
+          two-column layout happen with no change to the order of the document,
+          so the reading order and the tab order stay as they are. */}
+      <div className="hub-panel">
+        <Divider />
 
-      <nav className="hub-links" aria-label="Where to find me">
-        {LINKS.map((link) => {
+        <nav className="hub-links" aria-label="Where to find me">
+          {LINKS.map((link) => {
           // Handed to CSS as a custom property so the hover rule lives in the
           // stylesheet with the rest of the row's states, rather than needing a
           // hover flag in React to know which colour to apply.
@@ -297,14 +304,15 @@ const Hub = () => {
               {inner}
             </a>
           );
-        })}
-      </nav>
+          })}
+        </nav>
 
-      <Divider />
+        <Divider />
 
-      <footer className="hub-footer">
-        <span>&copy; {new Date().getFullYear()} DGFari</span>
-      </footer>
+        <footer className="hub-footer">
+          <span>&copy; {new Date().getFullYear()} DGFari</span>
+        </footer>
+      </div>
     </div>
   );
 };

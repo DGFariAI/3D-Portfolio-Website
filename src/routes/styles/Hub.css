@@ -477,7 +477,7 @@
   }
 }
 
-/* --- avatar ------------------------------------------------------------- *//* --- avatar ------------------------------------------------------------- */
+/* --- avatar ------------------------------------------------------------- */
 
 .hub-avatar {
   position: relative;
@@ -601,6 +601,13 @@
 }
 
 /* --- links -------------------------------------------------------------- */
+
+/* No box of its own until the desktop layout needs one. See the note in
+   Hub.tsx: this exists so the page can become two columns without the document
+   changing order. */
+.hub-panel {
+  display: contents;
+}
 
 .hub-links {
   width: 100%;
@@ -820,5 +827,111 @@
   .hub-avatar.hub-avatar {
     width: min(380px, 92vw, 26vh);
     width: min(380px, 92vw, calc((100svh - 505px) / 1.08));
+  }
+}
+
+
+/* --- desktop: two columns ----------------------------------------------- */
+
+/* Under 1000px this page is one centred column, which is the right shape for a
+   phone and the wrong one for a monitor. Measured on the old layout at
+   1440x900: the column used 39% of the width and left 61% of the screen black,
+   and she was squeezed to 343px because she was competing with the wordmark,
+   both rules, four links and the footer for the same vertical space.
+
+   Side by side she stops competing. Her column is the full height of the page,
+   so she runs at 560px instead of 343, and the empty space becomes the layout
+   rather than a margin around it.
+
+   Grid rather than a flex wrapper, because it needs nothing from the document:
+   she spans both rows of the first column while the wordmark and the panel
+   take one row each of the second. The extra height a spanning item forces is
+   split evenly between the two rows it spans, which lands the row boundary
+   exactly where the wordmark-and-panel pair is centred. So the right column
+   centres against her with no measured offset to keep in sync. */
+@media screen and (min-width: 1000px) {
+  .hub {
+    width: min(1240px, calc(100vw - 120px));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    justify-content: center;
+    column-gap: clamp(48px, 5vw, 84px);
+    row-gap: 20px;
+    padding: 24px 0;
+    /* Nothing to lift against: with two columns the page is genuinely centred
+       rather than a tall stack that needed nudging off centre. */
+    transform: none;
+  }
+
+  /* Doubled to outrank the short-screen rules above, which use the same trick.
+     A 1440x700 laptop matches both, and two columns is the better answer there
+     too: it needs less height than the stack it replaces. */
+  .hub-avatar,
+  .hub-avatar.hub-avatar {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+    justify-self: center;
+    /* Sized by her own column now, not by the height four links and a footer
+       left behind. Capped under the clip's native 620px so she is never
+       upscaled, and under the viewport so the page still never scrolls. */
+    width: 100%;
+    max-width: 560px;
+    max-width: min(560px, calc((100svh - 96px) / 1.08));
+    margin: 0;
+  }
+
+  .hub-intro {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  /* Scaled against her rather than set once. She is 560px of artwork; a 26px
+     wordmark beside that reads as a caption, and the column above the rules
+     floats instead of anchoring. */
+  .hub-intro h1 {
+    font-size: clamp(30px, 2.6vw, 40px);
+  }
+
+  /* In em from here, so the badge tracks the wordmark instead of staying at
+     the phone's 22px while the type grows around it. */
+  .hub-verified {
+    width: 0.66em;
+    height: 0.66em;
+  }
+
+  .hub-panel {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+  }
+
+  /* Full width here, so both rules end on the same edges as the pills. Three
+     centred things of three different widths is what made this read as a phone
+     screenshot on a monitor; one block with one set of edges is what does not.
+     The margins go with them: the panel's gap is the rhythm now. */
+  .hub-divider,
+  .hub-links + .hub-divider {
+    width: 100%;
+    margin: 0;
+  }
+
+  .hub-links {
+    gap: 16px;
+    margin-top: 0;
+  }
+
+  .hub-footer {
+    margin-top: 4px;
+    text-align: left;
   }
 }

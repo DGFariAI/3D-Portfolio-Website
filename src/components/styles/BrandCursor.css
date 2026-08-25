@@ -1,0 +1,53 @@
+/* Matched to .cursor-main in Cursor.css: the same violet, the same halo, the
+   same difference blend. The values are copied rather than shared because that
+   file belongs to the portfolio route's chunk. */
+
+.brand-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  pointer-events: none;
+  /* Its own layer, so moving it never asks the page under it to repaint. */
+  will-change: transform;
+}
+
+/* The mark is a child rather than the positioned box itself, so its scale and
+   the pointer tracking do not have to share one transform. */
+.brand-cursor > span {
+  display: block;
+  width: 50px;
+  height: 50px;
+  margin: -25px 0 0 -25px;
+  border-radius: 50%;
+  background-color: #e6c3ff;
+  box-shadow: 0 0 30px 0 rgb(175, 131, 255);
+  mix-blend-mode: difference;
+  transform: scale(0);
+  transition: transform 0.3s ease-out;
+}
+
+.brand-cursor.is-live > span {
+  transform: scale(1);
+}
+
+/* Over anything clickable. The portfolio grows its cursor on hover too, so the
+   behaviour carries across as well as the look. */
+.brand-cursor.is-hot > span {
+  transform: scale(1.5);
+}
+
+/* Below this the portfolio hides its cursor as well: a window this narrow is
+   usually a touch device, and the pointer query alone does not catch a small
+   desktop window being used with a trackpad on a phone-sized viewport. */
+@media screen and (max-width: 599px) {
+  .brand-cursor {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-cursor > span {
+    transition: none;
+  }
+}

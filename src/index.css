@@ -191,16 +191,12 @@ html {
    dropping them, and park the purely decorative infinite rotations, which are
    invisible on a radially symmetric blur but cost a repaint forever.
    --------------------------------------------------------------------------- */
-.tier-low .hub-circle1,
-.tier-low .hub-circle2,
 .tier-low .landing-circle1,
 .tier-low .landing-circle2 {
   filter: blur(34px);
   animation: none;
 }
 
-.tier-medium .hub-circle1,
-.tier-medium .hub-circle2,
 .tier-medium .landing-circle1,
 .tier-medium .landing-circle2 {
   filter: blur(44px);
@@ -220,8 +216,6 @@ html {
 
 /* Honour the platform preference everywhere, not just in the tier logic. */
 @media (prefers-reduced-motion: reduce) {
-  .hub-circle1,
-  .hub-circle2,
   .landing-circle1,
   .landing-circle2 {
     animation: none;

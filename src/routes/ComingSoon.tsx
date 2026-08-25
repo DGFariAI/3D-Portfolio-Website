@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { PiArrowLeftBold } from "react-icons/pi";
 import SEO from "../components/SEO";
 import "./styles/ComingSoon.css";
+import BrandCursor from "../components/BrandCursor";
 
 interface Props {
   name: string;
@@ -20,6 +21,7 @@ interface Props {
  */
 const ComingSoon = ({ name, logo, blurb, path, description }: Props) => (
   <div className="soon">
+    <BrandCursor />
     <SEO title={`${name} | Coming soon`} description={description} path={path} />
 
     <div className="soon-inner">

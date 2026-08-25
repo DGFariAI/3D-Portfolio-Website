@@ -222,3 +222,27 @@ matches what the eye sees. Against the uncompressed master:
 
 She never displays wider than 708px, so 880 was oversized; dropping to 800 buys
 back bits to spend on quality. aq-mode 2 was tried and is worse, not better.
+
+## The bottom fade, and the lapel pin
+
+The alpha ramp faded the bottom 16% of the frame, which was invisible while she
+floated with air beneath her. Standing her on the floor of the page turned that
+into a wall of black where her jacket should be: the master is opaque all the
+way to y=861 of 862, and the ramp was erasing from y=724. It is 7% now, the
+same as the portfolio's mask on its hero.
+
+There is an amber roundel pinned to her lapel, visible only when the book drops
+far enough during a page flip. Removing it needs three tests, not one:
+
+- the strip above it must be dark, or the coat is not there at all
+- a warm blob must be present, and be compact enough to be a pin
+- the disc that covers it is masked off the page edge, which runs right beneath
+  it and is bright and neutral where the pin is warm
+
+A colour threshold alone leaves the pin's darker rim behind as a ghost ring, so
+the threshold only locates it; what gets covered is a feathered disc around that
+centre. 42 of 271 frames are patched.
+
+crf 40 rather than 44: the small cover text and the rule above it were still
+breaking up. Compared against the master downscaled to 800px with no compression
+at all, which is clean, so the resolution was never the problem. 1892KB.

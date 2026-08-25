@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import SEO from "../components/SEO";
 import "./styles/Blogs.css";
+import BrandCursor from "../components/BrandCursor";
 
 /**
  * DGFari Learn.
@@ -11,6 +12,7 @@ import "./styles/Blogs.css";
  */
 const Blogs = () => (
   <div className="blogs">
+    <BrandCursor />
     <SEO
       title="DGFari Learn"
       description="Writing on building with purpose: brand, product, AI, and the craft behind them."

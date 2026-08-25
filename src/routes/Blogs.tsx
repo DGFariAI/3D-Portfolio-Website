@@ -28,7 +28,7 @@ const Blogs = () => (
 
     <div className="blogs-empty">
       <p>The first posts are being written.</p>
-      <Link className="blogs-back" to="/">
+      <Link className="blogs-back" to="/" data-cursor="disable">
         Back to the hub
       </Link>
     </div>

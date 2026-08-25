@@ -283,7 +283,7 @@
     width: 380px;
   }
 }
-@media only screen and (max-width: 899px) {
+@media only screen and (max-width: 899px), only screen and (hover: none) {
   .whatIDO {
     height: auto;
     padding: 50px 0px;

@@ -46,6 +46,7 @@ const ShareButton = ({
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label="Share this page"
+        data-cursor="disable"
       >
         {/* Both marks are rendered and stacked, with CSS fading between
             them. Swapping the element on a hover flag instead would mean a

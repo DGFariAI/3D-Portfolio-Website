@@ -28,8 +28,8 @@ import BrandCursor from "../components/BrandCursor";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=22",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=17",
+  webm: "/videos/character/dgfari-learn.webm?v=23",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=18",
 };
 
 interface HubLink {
@@ -195,16 +195,11 @@ const Hub = () => {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (sharing) {
-      v.pause();
-      return;
-    }
-    // Held back until the page has finished coming out of the blur. Restarting
-    // the clip on the same frame the blur starts animating means decoding video
-    // underneath a filter that is being re-run every frame, which is what made
-    // the return feel like it stuttered instead of settled.
-    const t = window.setTimeout(() => void v.play().catch(() => {}), 340);
-    return () => window.clearTimeout(t);
+    // She keeps playing behind the sheet. Pausing her was a performance
+    // decision and it was the wrong trade: the freeze and the restart are both
+    // visible through a 6px blur, so what it saved in paint it spent twice over
+    // on making the sheet feel like it stopped the page dead.
+    void v.play().catch(() => {});
   }, [sharing, showVideo]);
 
   return (
@@ -308,6 +303,7 @@ const Hub = () => {
                   to={link.to}
                   style={style}
                   key={link.label}
+                  data-cursor="disable"
                 >
                   {inner}
                 </Link>
@@ -322,6 +318,7 @@ const Hub = () => {
                 rel="noopener noreferrer"
                 style={style}
                 key={link.label}
+                data-cursor="disable"
               >
                 {inner}
               </a>

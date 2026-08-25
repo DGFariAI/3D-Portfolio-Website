@@ -17,7 +17,13 @@ import { useEffect, useState } from "react";
  * the desktop block, which is built for a canvas this size.
  */
 export const DESKTOP_MIN_WIDTH = 900;
-const DESKTOP_QUERY = `(min-width: ${DESKTOP_MIN_WIDTH}px)`;
+/* Width alone is not enough. When a phone is asked for the desktop site the
+   browser changes the viewport width and nothing else: the device still cannot
+   hover, and the layout it would be handed was built for a mouse. Asking
+   whether the primary input can hover asks about the device rather than about
+   the number it currently reports, so a phone stays on the phone layout however
+   wide it claims to be. */
+const DESKTOP_QUERY = `(min-width: ${DESKTOP_MIN_WIDTH}px) and (hover: hover)`;
 
 /** Synchronous check, for code outside React. */
 export function isDesktopViewport(): boolean {

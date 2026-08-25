@@ -461,7 +461,7 @@ h2.landing-info-h2 {
    absolutely inside .landing-container (instead of fixed to the viewport)
    means she scrolls away with the hero instead of tracking the page down over
    About and What I Do. Desktop keeps the fixed, section-tracking behaviour. */
-@media screen and (max-width: 899px) {
+@media screen and (max-width: 899px), screen and (hover: none) {
   .landing-sticky-visual,
   .landing-sticky-visual.frozen {
     position: absolute;

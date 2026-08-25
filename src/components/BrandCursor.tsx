@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import "./styles/BrandCursor.css";
 
 /**
@@ -102,7 +103,14 @@ const BrandCursor = () => {
     };
   }, []);
 
-  return <div className="brand-cursor" aria-hidden="true" ref={ref} />;
+  // Portalled to the body. Mounted inside .hub it was a child of the element
+  // the share sheet blurs, so opening the sheet blurred the cursor and put it
+  // behind the sheet: a filter on an ancestor also makes it the containing
+  // block for fixed children, which drops it out of the top layer entirely.
+  return createPortal(
+    <div className="brand-cursor" aria-hidden="true" ref={ref} />,
+    document.body
+  );
 };
 
 export default BrandCursor;

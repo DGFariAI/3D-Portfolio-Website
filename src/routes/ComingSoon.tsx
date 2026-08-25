@@ -39,7 +39,7 @@ const ComingSoon = ({ name, logo, blurb, path, description }: Props) => (
         <span />
       </div>
 
-      <Link className="soon-back" to="/">
+      <Link className="soon-back" to="/" data-cursor="disable">
         <PiArrowLeftBold aria-hidden="true" />
         Back to the hub
       </Link>

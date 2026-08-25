@@ -544,8 +544,8 @@
      In CSS it can differ by where she sits, which is the whole point. Floating,
      she needs a real fade so she does not end on a cut line. Grounded, her
      bottom edge is the bottom of the window, so she needs almost none. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 96%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 96%, transparent 100%);
 }
 
 /* The portfolio's .character-rim, ported rather than approximated.
@@ -887,7 +887,7 @@
    canvas empty. Anything under 980 fixes it, and 880 also picks up genuine
    half-screen desktop windows without catching portrait tablets, which are
    768 to 834 wide and are better off stacked. */
-@media screen and (min-width: 880px) {
+@media screen and (min-width: 880px) and (hover: hover) {
   .hub {
     width: min(1400px, calc(100vw - 80px));
     display: grid;
@@ -939,9 +939,13 @@
 
   /* She meets the bottom of the window here, so the fade only has to take the
      hard edge off rather than hide it. */
+  /* None at all. She meets the bottom of the window here, so there is no edge
+     to soften: the frame simply runs off the screen. Any fade at all takes her
+     coat with it, and the green is already gone, measured at 0.001% of that
+     strip, so there is nothing left down there to hide. */
   .hub-avatar-media {
-    -webkit-mask-image: linear-gradient(to bottom, #000 97%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 97%, transparent 100%);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .hub-intro {
@@ -1059,7 +1063,7 @@
 /* It was a phone sheet on a monitor: anchored flush to the bottom edge, with a
    drag grabber that means nothing to a mouse. Same content, the shape a
    pointer expects. The drag itself is gated to touch in ShareSheet.tsx. */
-@media screen and (min-width: 880px) {
+@media screen and (min-width: 880px) and (hover: hover) {
   .share-layer {
     align-items: center;
   }
@@ -1107,7 +1111,7 @@
    stranded at the bottom with the links floating a third of a screen above
    her. On a canvas like this she centres, which puts the two columns back
    beside each other. */
-@media screen and (min-width: 880px) and (max-aspect-ratio: 1/1) {
+@media screen and (min-width: 880px) and (hover: hover) and (max-aspect-ratio: 1/1) {
   .hub-avatar,
   .hub-avatar.hub-avatar {
     align-self: center;

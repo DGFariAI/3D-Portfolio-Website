@@ -1,6 +1,17 @@
-import { PointerEvent as ReactPointerEvent, useCallback, useEffect, useRef, useState } from "react";
+import {
+  PointerEvent as ReactPointerEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
-import { PiCheckBold, PiCopyBold, PiShareFatBold, PiXBold } from "react-icons/pi";
+import {
+  PiCheckBold,
+  PiCopyBold,
+  PiShareFatBold,
+  PiXBold,
+} from "react-icons/pi";
 
 interface Props {
   url: string;
@@ -8,6 +19,8 @@ interface Props {
   image: string;
   title: string;
   domain: string;
+  /** Fires the moment dismissal begins, before the exit animation has run. */
+  onClosing?: () => void;
   onClose: () => void;
 }
 
@@ -28,7 +41,14 @@ const SLOP_PX = 4;
  * the native sheet: the tagline belongs in the page's metadata, not in the
  * visitor's clipboard.
  */
-const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
+const ShareSheet = ({
+  url,
+  image,
+  title,
+  domain,
+  onClosing,
+  onClose,
+}: Props) => {
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -50,8 +70,14 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
 
   const dismiss = useCallback(() => {
     setClosing(true);
+    // Announced now, not when the exit finishes. The page behind is blurred
+    // while this is open, and waiting the full CLOSE_MS to say so meant the
+    // sheet slid away against a page still fully blurred, which then cleared
+    // afterwards: two movements in sequence, which is what read as a jump. Said
+    // here they overlap, and the page comes back into focus as the sheet goes.
+    onClosing?.();
     closeTimer.current = setTimeout(onClose, CLOSE_MS);
-  }, [onClose]);
+  }, [onClose, onClosing]);
 
   // Play the entrance on the frame after mount, so the browser has a starting
   // position to animate from rather than snapping straight to the end state.
@@ -72,7 +98,7 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
       // otherwise wander onto links the visitor cannot see.
       if (e.key !== "Tab" || !sheetRef.current) return;
       const focusable = sheetRef.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, [tabindex]:not([tabindex="-1"])'
+        'button, [href], input, [tabindex]:not([tabindex="-1"])',
       );
       if (!focusable.length) return;
       const first = focusable[0];
@@ -125,23 +151,29 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
   // The sheet is not scrollable, so a drag can start anywhere on it. Anywhere
   // except a control or the URL: pulling the sheet shut instead of pressing
   // Copy, or instead of selecting the link to read it, would both be wrong.
-  const onPointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    if (closing || e.button !== 0) return;
-    // Touch only. Pulling a sheet down off the bottom edge is a phone idiom,
-    // and on a desktop this is a centred dialog, where dragging it downwards
-    // means nothing. A mouse has the close button and the backdrop.
-    if (e.pointerType === "mouse") return;
-    if ((e.target as HTMLElement).closest("button, a, input, .share-url-text")) return;
-    gesture.current = {
-      id: e.pointerId,
-      startY: e.clientY,
-      lastY: e.clientY,
-      lastT: e.timeStamp,
-      velocity: 0,
-      active: false,
-      height: 0,
-    };
-  }, [closing]);
+  const onPointerDown = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      if (closing || e.button !== 0) return;
+      // Touch only. Pulling a sheet down off the bottom edge is a phone idiom,
+      // and on a desktop this is a centred dialog, where dragging it downwards
+      // means nothing. A mouse has the close button and the backdrop.
+      if (e.pointerType === "mouse") return;
+      if (
+        (e.target as HTMLElement).closest("button, a, input, .share-url-text")
+      )
+        return;
+      gesture.current = {
+        id: e.pointerId,
+        startY: e.clientY,
+        lastY: e.clientY,
+        lastT: e.timeStamp,
+        velocity: 0,
+        active: false,
+        height: 0,
+      };
+    },
+    [closing],
+  );
 
   // The whole gesture runs on the DOM, not through React.
   //
@@ -181,7 +213,8 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
     // gesture feels answered, instead of going dead in one direction.
     const y = dy >= 0 ? dy : dy / 4;
     if (sheetRef.current) {
-      sheetRef.current.style.transform = "translate3d(0, " + y.toFixed(1) + "px, 0)";
+      sheetRef.current.style.transform =
+        "translate3d(0, " + y.toFixed(1) + "px, 0)";
     }
     if (backdropRef.current && g.height) {
       const progress = Math.min(1, Math.max(0, y / g.height));
@@ -189,37 +222,40 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
     }
   }, []);
 
-  const endDrag = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
-    const g = gesture.current;
-    if (!g || g.id !== e.pointerId) return;
-    gesture.current = null;
-    if (!g.active) return;
+  const endDrag = useCallback(
+    (e: ReactPointerEvent<HTMLDivElement>) => {
+      const g = gesture.current;
+      if (!g || g.id !== e.pointerId) return;
+      gesture.current = null;
+      if (!g.active) return;
 
-    const sheet = sheetRef.current;
-    const backdrop = backdropRef.current;
-    // Dropping the class restores the transition, so whatever transform is set
-    // in this same tick is what the sheet animates to.
-    layerRef.current?.classList.remove("is-dragging");
-    if (sheet) sheet.style.willChange = "";
-    if (backdrop) {
-      backdrop.style.willChange = "";
-      backdrop.style.opacity = "";
-    }
-
-    const travelled = e.clientY - g.startY;
-    if (travelled > DISMISS_PX || g.velocity > DISMISS_VELOCITY) {
-      // Driven to the closed position rather than cleared, so it leaves on the
-      // same 0.26s curve the X and the backdrop use instead of snapping back to
-      // open for a frame while React catches up.
-      if (sheet) {
-        sheet.style.transform =
-          "translate3d(0, " + Math.round(g.height * 1.02) + "px, 0)";
+      const sheet = sheetRef.current;
+      const backdrop = backdropRef.current;
+      // Dropping the class restores the transition, so whatever transform is set
+      // in this same tick is what the sheet animates to.
+      layerRef.current?.classList.remove("is-dragging");
+      if (sheet) sheet.style.willChange = "";
+      if (backdrop) {
+        backdrop.style.willChange = "";
+        backdrop.style.opacity = "";
       }
-      dismiss();
-      return;
-    }
-    if (sheet) sheet.style.transform = "";
-  }, [dismiss]);
+
+      const travelled = e.clientY - g.startY;
+      if (travelled > DISMISS_PX || g.velocity > DISMISS_VELOCITY) {
+        // Driven to the closed position rather than cleared, so it leaves on the
+        // same 0.26s curve the X and the backdrop use instead of snapping back to
+        // open for a frame while React catches up.
+        if (sheet) {
+          sheet.style.transform =
+            "translate3d(0, " + Math.round(g.height * 1.02) + "px, 0)";
+        }
+        dismiss();
+        return;
+      }
+      if (sheet) sheet.style.transform = "";
+    },
+    [dismiss],
+  );
 
   const canNativeShare = typeof navigator !== "undefined" && !!navigator.share;
   const state = closing ? "is-closing" : entered ? "is-open" : "";
@@ -253,7 +289,13 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
 
         <div className="share-head">
           <h2>Share</h2>
-          <button type="button" className="share-close" onClick={dismiss} aria-label="Close">
+          <button
+            type="button"
+            className="share-close"
+            onClick={dismiss}
+            aria-label="Close"
+            data-cursor="disable"
+          >
             <PiXBold aria-hidden="true" />
           </button>
         </div>
@@ -273,14 +315,24 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
             className={`share-copy ${copied ? "is-copied" : ""}`}
             onClick={copy}
             ref={copyRef}
+            data-cursor="disable"
           >
-            {copied ? <PiCheckBold aria-hidden="true" /> : <PiCopyBold aria-hidden="true" />}
+            {copied ? (
+              <PiCheckBold aria-hidden="true" />
+            ) : (
+              <PiCopyBold aria-hidden="true" />
+            )}
             {copied ? "Copied" : "Copy"}
           </button>
         </div>
 
         {canNativeShare && (
-          <button type="button" className="share-native" onClick={nativeShare}>
+          <button
+            type="button"
+            className="share-native"
+            onClick={nativeShare}
+            data-cursor="disable"
+          >
             <PiShareFatBold aria-hidden="true" />
             Share to an app
           </button>
@@ -291,7 +343,7 @@ const ShareSheet = ({ url, image, title, domain, onClose }: Props) => {
         </span>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

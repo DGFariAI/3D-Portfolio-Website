@@ -29,13 +29,20 @@ const ShareButton = ({
       setOpen(next);
       onOpenChange?.(next);
     },
-    [onOpenChange]
+    [onOpenChange],
   );
 
-  const close = useCallback(() => setAndReport(false), [setAndReport]);
+  /* Two halves of closing, on purpose. The page stops being blurred as soon as
+     dismissal starts; the sheet stays mounted a little longer so its own exit
+     can play. Running both off one event made them queue instead of overlap. */
+  const startClose = useCallback(() => onOpenChange?.(false), [onOpenChange]);
+  const close = useCallback(() => setOpen(false), []);
 
   const shareUrl =
-    url ?? (typeof window === "undefined" ? "https://dgfari.com" : `${window.location.origin}/`);
+    url ??
+    (typeof window === "undefined"
+      ? "https://dgfari.com"
+      : `${window.location.origin}/`);
 
   return (
     <>
@@ -64,6 +71,7 @@ const ShareButton = ({
           image={image}
           title={title}
           domain={domain}
+          onClosing={startClose}
           onClose={close}
         />
       )}

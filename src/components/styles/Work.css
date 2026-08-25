@@ -239,7 +239,7 @@
    widths. On a phone the card is a fraction of that width, so the same absolute
    offsets drag the first card off the left edge and clip it. Neutralise them
    below the desktop breakpoint; the cards centre normally there. */
-@media only screen and (max-width: 899px), only screen and (hover: none) {
+@media only screen and (max-width: 1024px) {
   .work-box:first-child .work-image {
     transform: none;
   }

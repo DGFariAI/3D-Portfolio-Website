@@ -28,8 +28,8 @@ import BrandCursor from "../components/BrandCursor";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=23",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=18",
+  webm: "/videos/character/dgfari-learn.webm?v=24",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=19",
 };
 
 interface HubLink {
@@ -187,6 +187,31 @@ const Hub = () => {
     navigate("/blogs");
   };
 
+  /* The cursor collapses over the book, the way it does over every other
+     control on the page. The book is not an element, though, it is a region
+     inside her, so the attribute that drives the cursor is set and cleared on
+     the same hit test the click uses. Written straight to the DOM node rather
+     than held in state: this fires on every pointer move, and re-rendering her
+     to toggle one attribute would be a re-render per frame of mouse travel. */
+  const trackBook = (e: MouseEvent<HTMLButtonElement>) => {
+    const el = e.currentTarget;
+    const b = el.getBoundingClientRect();
+    const fx = (e.clientX - b.left) / b.width;
+    const fy = (e.clientY - b.top) / b.height;
+    const onBook =
+      fx >= BOOK.x0 && fx <= BOOK.x1 && fy >= BOOK.y0 && fy <= BOOK.y1;
+
+    if (onBook) el.dataset.cursor = "disable";
+    else delete el.dataset.cursor;
+    // The hand cursor belongs on the book too, and nowhere else on her.
+    el.style.cursor = onBook ? "pointer" : "default";
+  };
+
+  const leaveBook = (e: MouseEvent<HTMLButtonElement>) => {
+    delete e.currentTarget.dataset.cursor;
+    e.currentTarget.style.cursor = "default";
+  };
+
   // The blur behind the sheet is applied to this page once, not recomputed per
   // frame by the sheet's own backdrop-filter, so the avatar has to hold still
   // while it is up: a playing video under a filter re-runs that filter on every
@@ -245,6 +270,8 @@ const Hub = () => {
       <button
         className="hub-avatar"
         onClick={openBlog}
+        onMouseMove={trackBook}
+        onMouseLeave={leaveBook}
         aria-label="Read DGFari Learn, my blog"
       >
         <span className="hub-avatar-glow" aria-hidden="true" />

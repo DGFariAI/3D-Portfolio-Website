@@ -260,7 +260,19 @@
    paused until this has finished, in Hub.tsx, so the only thing the blur has
    to re-run over for these few hundred milliseconds is a still page. */
 .hub {
-  transition: filter 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  /* blur(0px), not left unset. Going from blur(6px) to `none` asks the browser
+     to interpolate between a filter and the absence of one, which it is not
+     obliged to do smoothly and which Safari in particular does not: the value
+     snaps at the end instead of easing, which is exactly what the jump on exit
+     was. Between two blur values there is nothing to interpret. */
+  filter: blur(0px);
+  /* An even curve rather than a front-loaded one. Easing hard out of the blur
+     put most of the change in the first fifth of the duration and left a long
+     imperceptible tail, which reads as a snap to clear followed by nothing. */
+  transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Tells the browser this element's filter is about to change, so it keeps it
+     on its own layer rather than re-rasterising the page under it each step. */
+  will-change: filter;
 }
 
 .hub.is-sharing {
@@ -878,16 +890,9 @@
    exactly where the wordmark-and-panel pair is centred. So the right column
    centres against her with no measured offset to keep in sync.
 
-   880 rather than a round 1000 for a specific reason. When a phone is asked to
-   "request desktop site" it ignores the viewport meta tag and lays the page out
-   at 980px, then scales that whole canvas down to the screen. At a 1000px
-   breakpoint the request landed 20px short and served the phone layout, which
-   is why desktop mode looked like the mobile view shrunk rather than the
-   desktop one. Measured: 980px rendered the stacked column with 43% of the
-   canvas empty. Anything under 980 fixes it, and 880 also picks up genuine
-   half-screen desktop windows without catching portrait tablets, which are
-   768 to 834 wide and are better off stacked. */
-@media screen and (min-width: 880px) and (hover: hover) {
+   A phone asked for the desktop site lays out at 980px and falls under this,
+   so it keeps the stacked layout, which is what it should have. */
+@media screen and (min-width: 1000px) {
   .hub {
     width: min(1400px, calc(100vw - 80px));
     display: grid;
@@ -1063,7 +1068,7 @@
 /* It was a phone sheet on a monitor: anchored flush to the bottom edge, with a
    drag grabber that means nothing to a mouse. Same content, the shape a
    pointer expects. The drag itself is gated to touch in ShareSheet.tsx. */
-@media screen and (min-width: 880px) and (hover: hover) {
+@media screen and (min-width: 1000px) {
   .share-layer {
     align-items: center;
   }
@@ -1099,21 +1104,3 @@
   }
 }
 
-/* --- a phone that asked for the desktop site ----------------------------- */
-
-/* A canvas taller than it is wide is not a desktop window. It is a phone in
-   desktop mode: the browser ignores the viewport meta tag, lays the page out at
-   980px wide, and scales the whole canvas down to the screen, which hands us
-   something like 980x2121.
-
-   The width alone says desktop, so the two-column layout is right and stays.
-   Grounding her is not: standing her on the floor of a 2121px page left her
-   stranded at the bottom with the links floating a third of a screen above
-   her. On a canvas like this she centres, which puts the two columns back
-   beside each other. */
-@media screen and (min-width: 880px) and (hover: hover) and (max-aspect-ratio: 1/1) {
-  .hub-avatar,
-  .hub-avatar.hub-avatar {
-    align-self: center;
-  }
-}

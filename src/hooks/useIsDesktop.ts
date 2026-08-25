@@ -7,10 +7,6 @@ import { useEffect, useState } from "react";
  * mechanisms (`window.innerWidth > 1024` in some files, a matchMedia query in
  * others), which meant a change in one place silently disagreed with the rest.
  * It matches the `max-width: 1024px` mobile block in the stylesheets.
- *
- * Work is the exception and owns its own breakpoint, in WorkImage.tsx: its
- * cards overlapped when a phone asked for the desktop site and was laid out at
- * 980px, so that section alone switches at 900. Nothing else does.
  */
 export const DESKTOP_MIN_WIDTH = 1025;
 const DESKTOP_QUERY = `(min-width: ${DESKTOP_MIN_WIDTH}px)`;

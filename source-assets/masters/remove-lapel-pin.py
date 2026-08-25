@@ -123,6 +123,19 @@ for i, p in enumerate(files):
         skipped += 1
         continue
 
+    # Match the clone's brightness to where it is going. Measured, the coat 34
+    # pixels up sits at 6 to 8 while the coat around the pin sits at 12 to 17,
+    # so pasting it straight down left a disc darker than the cloth it landed
+    # on, and the gap between the two drifted from frame to frame. That is what
+    # was flickering. Both references are medians over coat only, so neither the
+    # pin nor the page can pull them.
+    coat_dst = (dist > RADIUS + 3) & (dist < RADIUS + 13) & (lum < 60)
+    sl = src.mean(axis=2)
+    coat_src = (dist < RADIUS + 6) & (sl < 60)
+    if int(coat_dst.sum()) > 30 and int(coat_src.sum()) > 30:
+        src = src + (np.median(sub[coat_dst], axis=0) - np.median(src[coat_src], axis=0))
+        src = np.clip(src, 0, 255)
+
     a[y0:y1, x0:x1, :3] = sub * (1 - m[..., None]) + src * m[..., None]
     Image.fromarray(a.astype(np.uint8), 'RGBA').save(p)
     patched += 1

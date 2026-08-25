@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
-import { useMediaQuery } from "../hooks/useMediaQuery";
+import { useIsDesktop } from "../hooks/useIsDesktop";
 
 interface Props {
   image: string;
@@ -13,12 +13,7 @@ interface Props {
 }
 
 const WorkImage = (props: Props) => {
-  /* Work switches at 900, not at the site-wide 1025.
-     A phone asked for the desktop site is laid out at 980px, and these cards
-     overlapped there. Work.css moves at 900 for that reason, and this has to
-     agree with it or the per-card framing nudges below are applied against the
-     wrong card widths. Deliberately local: no other section changes at 900. */
-  const isDesktop = useMediaQuery("(min-width: 900px)");
+  const isDesktop = useIsDesktop();
   const wrapRef = useRef<HTMLDivElement | null>(null);
   // Whether this card's video may start loading at all. Every card used to
   // mount its <video> with preload="auto" on first render, so a single page

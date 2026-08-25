@@ -249,9 +249,20 @@
    while it is open, so the browser paints the blurred result once and reuses
    it for the whole gesture. The look is identical and it holds throughout.
 
-   Applied without a transition on purpose: animating a blur radius means
-   re-running the blur on every frame of the animation, which is the cost this
-   is here to avoid. The backdrop tint fades in over it instead. */
+   This used to be applied with no transition at all, for the same reason:
+   animating a blur radius re-runs the blur every frame. It is transitioned now
+   because snapping was worse. Coming back, the page went from blurred to sharp
+   in a single frame while the clip resumed on the same one, and the two
+   together read as a jolt rather than a return.
+
+   Affordable because of what is true here specifically: nothing behind the
+   sheet is moving. The clip is paused while the sheet is open and is held
+   paused until this has finished, in Hub.tsx, so the only thing the blur has
+   to re-run over for these few hundred milliseconds is a still page. */
+.hub {
+  transition: filter 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .hub.is-sharing {
   filter: blur(6px);
 }
@@ -522,6 +533,19 @@
   display: block;
   width: 100%;
   height: auto;
+  /* The bottom fade lives here rather than in the clip's own alpha.
+
+     It used to be baked in, fading the bottom 16% of the frame during the key.
+     That was invisible while she floated with air beneath her, but once she
+     stands on the floor of the page it became a wall of black where her jacket
+     is: the frame is opaque all the way down, and the ramp was erasing the
+     last 138px of her, button and all.
+
+     In CSS it can differ by where she sits, which is the whole point. Floating,
+     she needs a real fade so she does not end on a cut line. Grounded, her
+     bottom edge is the bottom of the window, so she needs almost none. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 90%, transparent 100%);
 }
 
 /* The portfolio's .character-rim, ported rather than approximated.
@@ -911,6 +935,13 @@
     max-width: 800px;
     max-width: min(800px, calc(100svh / 1.078));
     margin: 0;
+  }
+
+  /* She meets the bottom of the window here, so the fade only has to take the
+     hard edge off rather than hide it. */
+  .hub-avatar-media {
+    -webkit-mask-image: linear-gradient(to bottom, #000 97%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 97%, transparent 100%);
   }
 
   .hub-intro {

@@ -28,8 +28,8 @@ import BrandCursor from "../components/BrandCursor";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=21",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=16",
+  webm: "/videos/character/dgfari-learn.webm?v=22",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=17",
 };
 
 interface HubLink {
@@ -195,8 +195,16 @@ const Hub = () => {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (sharing) v.pause();
-    else void v.play().catch(() => {});
+    if (sharing) {
+      v.pause();
+      return;
+    }
+    // Held back until the page has finished coming out of the blur. Restarting
+    // the clip on the same frame the blur starts animating means decoding video
+    // underneath a filter that is being re-run every frame, which is what made
+    // the return feel like it stuttered instead of settled.
+    const t = window.setTimeout(() => void v.play().catch(() => {}), 340);
+    return () => window.clearTimeout(t);
   }, [sharing, showVideo]);
 
   return (

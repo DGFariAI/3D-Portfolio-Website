@@ -1,53 +1,54 @@
-/* Matched to .cursor-main in Cursor.css: the same violet, the same halo, the
-   same difference blend. The values are copied rather than shared because that
-   file belongs to the portfolio route's chunk. */
+/* The portfolio's cursor. Structure and values mirror .cursor-main in
+   Cursor.css, copied rather than shared because that file belongs to the
+   portfolio route's chunk.
+
+   One element, not a wrapper around a mark. mix-blend-mode blends an element
+   with its backdrop, and a parent that creates a stacking context becomes that
+   backdrop: wrapping this in a positioned box with will-change on it grouped
+   the page away and left a plain violet dot with no invert at all. The blend
+   and the transform have to live on the same element for the difference to
+   reach the page. */
 
 .brand-cursor {
+  --size: 0px;
   position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99;
+  top: calc(var(--size) / -2);
+  left: calc(var(--size) / -2);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50px;
   pointer-events: none;
-  /* Its own layer, so moving it never asks the page under it to repaint. */
-  will-change: transform;
-}
-
-/* The mark is a child rather than the positioned box itself, so its scale and
-   the pointer tracking do not have to share one transform. */
-.brand-cursor > span {
-  display: block;
-  width: 50px;
-  height: 50px;
-  margin: -25px 0 0 -25px;
-  border-radius: 50%;
+  z-index: 99;
   background-color: #e6c3ff;
-  box-shadow: 0 0 30px 0 rgb(175, 131, 255);
+  box-shadow: 0px 0px 30px 0px rgb(175, 131, 255);
   mix-blend-mode: difference;
-  transform: scale(0);
-  transition: transform 0.3s ease-out;
+  transition: top 0.3s ease-out, left 0.3s ease-out, width 0.3s ease-out,
+    height 0.3s ease-out;
 }
 
-.brand-cursor.is-live > span {
-  transform: scale(1);
-}
-
-/* Over anything clickable. The portfolio grows its cursor on hover too, so the
-   behaviour carries across as well as the look. */
-.brand-cursor.is-hot > span {
-  transform: scale(1.5);
-}
-
-/* Below this the portfolio hides its cursor as well: a window this narrow is
-   usually a touch device, and the pointer query alone does not catch a small
-   desktop window being used with a trackpad on a phone-sized viewport. */
-@media screen and (max-width: 599px) {
+/* Same threshold the portfolio uses: below this it is a touch screen and there
+   is no pointer to follow. */
+@media only screen and (min-width: 600px) {
   .brand-cursor {
-    display: none;
+    --size: 50px;
+  }
+
+  .brand-cursor.cursor-disable {
+    --size: 0px;
   }
 }
 
+/* Opens into a bar the height of whatever it is over, the way the portfolio
+   does on its icon rails. */
+.brand-cursor.cursor-icons {
+  top: 10px;
+  left: 10px;
+  height: calc(var(--cursorH) - 20px);
+  transition: all 0.5s ease-out, height 0.5s ease-in-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .brand-cursor > span {
+  .brand-cursor {
     transition: none;
   }
 }

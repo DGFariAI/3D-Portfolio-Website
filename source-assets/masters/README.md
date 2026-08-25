@@ -163,3 +163,28 @@ inserted frame scores 1.08 on single-frame deviation against a clip median of
 0.90, so it does not itself stand out.
 
 The clip is now 265 frames over 10.392s.
+
+## The crossfade had to go
+
+A second flicker showed up at the start of the loop, right as she begins to
+turn the page. It was not a blink. Her eyes read 43.7, then 29.3, then 37.1:
+down and back up inside two frames, which no eyelid does.
+
+It was the loop crossfade. Blending the last seven frames over the first seven
+blends her eyelids too, and her eyes are not in the same position at both ends,
+so one lid ghosted over the other. Frame 4 sat at the middle of the blend and
+carried the worst single-frame deviation in the whole clip, 1.37 against a
+median of 0.90.
+
+The crossfade is removed. All 270 frames of the window are kept and the loop
+simply wraps. Measured, the wrap step is 1.86 against ordinary frame-to-frame
+motion whose median is 0.62 and whose maximum is 6.04, so it lands at the 87th
+percentile: a larger than average step, nowhere near an outlier, and far
+cheaper than a ghosted eyelid on every loop.
+
+Frame 4 now steps -0.6 instead of -14.4, and deviates 0.84 instead of 1.37.
+
+The note further up about a 0.267s crossfade describes the old build. The cut
+points it defends are still the right ones; only the blend is gone.
+
+The clip is now 271 frames over 10.627s.

@@ -20,7 +20,9 @@
   min-height: var(--vh);
   width: min(560px, calc(100vw - 40px));
   margin: 0 auto;
-  padding: 30px 0 24px;
+  /* Tight, because every pixel here is height the clip could be using and the
+     page must never scroll. */
+  padding: 14px 0 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -475,16 +477,24 @@
 .hub-avatar {
   position: relative;
   display: block;
+  /* No longer a button: see the note in Hub.tsx. */
   /* Capped against viewport height as well as width: the whole point of this
      page is that every link is visible without scrolling, and she is the only
      element big enough to push them off a short screen. The clip is roughly
      1:1.08, so 33vh of width lands near 36vh of height. */
-  width: min(390px, 88vw, 35vh);
+  /* Two declarations on purpose. The first is a safe cap that every browser
+     understands. The second sizes her from the height actually left over once
+     the wordmark, rules, four links and footer have taken theirs, which is the
+     only way this holds at every screen height rather than at the handful I
+     happened to test. If a browser does not know svh it drops that line at
+     parse time and keeps the first, which is why the fallback comes first. */
+  width: min(430px, 92vw, 35vh);
+  width: min(430px, 92vw, calc((100svh - 530px) / 1.08));
   /* She is the centre of the page, so she gets air on both sides rather than
      sitting in the same 14px rhythm as everything else: the wordmark lifts
      away above her and the rule drops away below. Set here rather than in a
      rule of its own, because this block also sets margin and would win. */
-  margin: 12px 0 18px;
+  margin: 4px 0 22px;
   padding: 0;
   border: 0;
   background: none;
@@ -578,6 +588,31 @@
   flex-shrink: 0;
   fill: var(--accentColor);
   filter: drop-shadow(0 0 6px rgba(194, 164, 255, 0.7));
+}
+
+/* The only control inside her.
+
+   Read off the frame with a percentage grid: the covers run from 26% to 92%
+   across and from 52% down to the bottom edge, so this is the book and nothing
+   else. Transparent, because the book is already its own affordance. */
+.hub-book {
+  position: absolute;
+  z-index: 2;
+  left: 26%;
+  top: 52%;
+  width: 66%;
+  height: 46%;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hub-book:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 2px;
 }
 
 /* --- links -------------------------------------------------------------- */
@@ -730,8 +765,9 @@
   }
 
   .hub-avatar {
-    width: min(345px, 86vw, 34vh);
-    margin: 8px 0 14px;
+    width: min(380px, 92vw, 34vh);
+    width: min(380px, 92vw, calc((100svh - 495px) / 1.08));
+    margin: 2px 0 18px;
   }
 
   .hub-link {
@@ -772,8 +808,9 @@
 
   .hub-avatar,
   .hub-avatar.hub-avatar {
-    width: min(345px, 86vw, 27vh);
-    margin: 4px 0 8px;
+    width: min(380px, 92vw, 28.5vh);
+    width: min(380px, 92vw, calc((100svh - 460px) / 1.08));
+    margin: 0 0 10px;
   }
 
   .hub-divider {
@@ -785,5 +822,16 @@
   .hub-avatar-glow {
     box-shadow: inset 46px 25px 60px 0 rgba(85, 0, 255, 0.65);
     filter: blur(14px);
+  }
+}
+
+/* Short and wide, so a laptop rather than a phone: the links keep their full
+   desktop type here, which takes about 40px more height than the phone rules
+   do, so she gets correspondingly less. Measured at 1280x720 and 1366x768. */
+@media screen and (max-height: 740px) and (min-width: 481px) {
+  .hub-avatar,
+  .hub-avatar.hub-avatar {
+    width: min(380px, 92vw, 26vh);
+    width: min(380px, 92vw, calc((100svh - 505px) / 1.08));
   }
 }

@@ -20,8 +20,8 @@ import "./styles/Hub.css";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=9",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=9",
+  webm: "/videos/character/dgfari-learn.webm?v=10",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=10",
 };
 
 interface HubLink {
@@ -202,11 +202,11 @@ const Hub = () => {
         </h1>
       </header>
 
-      {/* The avatar is a shortcut into the blog. It is deliberately not the only
-          way in: the hint below it says so in words, because an unlabelled
-          video is invisible to anyone who does not think to click it, and to
-          every screen reader and crawler. */}
-      <button className="hub-avatar" onClick={openBlog} aria-label="Read DGFari Learn, my blog">
+      {/* She is a picture, not a control: only the book she is holding opens the
+          blog. The button sits over it as its own element rather than wrapping
+          the whole clip, so clicking her hair or the empty space beside her
+          does nothing, which is what you would expect of a photograph. */}
+      <div className="hub-avatar">
         <span className="hub-avatar-glow" aria-hidden="true" />
         {showVideo ? (
           <video
@@ -224,7 +224,13 @@ const Hub = () => {
         ) : (
           <img className="hub-avatar-media" src={AVATAR.poster} alt="" />
         )}
-      </button>
+
+        <button
+          className="hub-book"
+          onClick={openBlog}
+          aria-label="Read DGFari Learn, my blog"
+        />
+      </div>
 
       <Divider />
 

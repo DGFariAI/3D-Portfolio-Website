@@ -890,9 +890,14 @@
    exactly where the wordmark-and-panel pair is centred. So the right column
    centres against her with no measured offset to keep in sync.
 
-   A phone asked for the desktop site lays out at 980px and falls under this,
-   so it keeps the stacked layout, which is what it should have. */
-@media screen and (min-width: 1000px) {
+   880 rather than a round 1000, so that a phone asked for the desktop site
+   gets the desktop layout. That request ignores the viewport meta tag and lays
+   the page out at 980px, then scales the whole canvas down to the screen: at a
+   1000px breakpoint it landed 20px short and was served the phone layout,
+   which is why desktop mode looked like the mobile view shrunk. 880 also picks
+   up half-screen desktop windows without catching portrait tablets, which are
+   768 to 834 wide and are better off stacked. */
+@media screen and (min-width: 880px) {
   .hub {
     width: min(1400px, calc(100vw - 80px));
     display: grid;
@@ -1068,7 +1073,7 @@
 /* It was a phone sheet on a monitor: anchored flush to the bottom edge, with a
    drag grabber that means nothing to a mouse. Same content, the shape a
    pointer expects. The drag itself is gated to touch in ShareSheet.tsx. */
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 880px) {
   .share-layer {
     align-items: center;
   }
@@ -1104,3 +1109,16 @@
   }
 }
 
+/* --- a very tall canvas -------------------------------------------------- */
+
+/* A phone in desktop mode is handed something like 980x2121: wide enough for
+   two columns, which is right, but far too tall to stand her on the floor of.
+   Grounded against 2121px she ended up stranded at the bottom with the links
+   floating a third of a screen above her. On a canvas taller than it is wide
+   she centres instead, which puts the two columns back beside each other. */
+@media screen and (min-width: 880px) and (max-aspect-ratio: 1/1) {
+  .hub-avatar,
+  .hub-avatar.hub-avatar {
+    align-self: center;
+  }
+}

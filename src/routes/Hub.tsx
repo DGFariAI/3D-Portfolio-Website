@@ -27,7 +27,7 @@ import "./styles/Hub.css";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=16",
+  webm: "/videos/character/dgfari-learn.webm?v=17",
   poster: "/videos/character/dgfari-learn-poster.webp?v=12",
 };
 

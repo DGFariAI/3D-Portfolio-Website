@@ -135,3 +135,31 @@ flipping hand, which ghosts. Restricting it with a mask over the title does not
 save it: her hand travels into the title region when she reaches across to turn
 the page, so a fixed rectangle averages the hand too. A mask cannot be placed
 from one frame when the thing it must avoid moves.
+
+## The blink at 8.7s
+
+The generation closes her eyelid almost entirely in a single frame: 71% of the
+whole closure happened between two frames, and the remaining 29% then crawled
+over eight. Snap-then-crawl is what reads as a glitch. It is in the generated
+footage, not in the pipeline, and it survives at any frame rate because the
+intermediate lid position was never drawn.
+
+The fix draws it. One frame is inserted before the snap, built by motion
+interpolation of the eye box only:
+
+    ffmpeg -i seven.mp4 -vf minterpolate=fps=51:mi_mode=mci:mc_mode=aobmc:
+           me_mode=bidir:vsbmc=1
+
+Motion interpolation rather than averaging, because averaging two lid positions
+gives a translucent lid with the iris showing through it, while interpolation
+moves the lid and keeps the lashes sharp. The rest of the inserted frame is a
+copy of the frame after it, which is safe here because the book and hands are
+nearly still at this moment: 0.03 to 0.46 per frame against a clip median of
+1.25 and a page-flip average of 2.86. So nothing is interpolated except the
+eyelid, and the body simply holds for 39ms.
+
+Measured: the largest single-frame lid jump fell from 32.1 to 16.3, and the
+inserted frame scores 1.08 on single-frame deviation against a clip median of
+0.90, so it does not itself stand out.
+
+The clip is now 265 frames over 10.392s.

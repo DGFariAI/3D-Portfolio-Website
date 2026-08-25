@@ -188,3 +188,17 @@ The note further up about a 0.267s crossfade describes the old build. The cut
 points it defends are still the right ones; only the blend is gone.
 
 The clip is now 271 frames over 10.627s.
+
+## Two exports, and why
+
+The clip ships at 880x948, not the 620x668 it was keyed at. The desktop layout
+stands her on the bottom edge of the page, which needs roughly 740px of her on
+a 900px screen, and at 620px she went soft past about 660px wide.
+
+Measured on the book title at the size she is actually displayed, the 880px
+export is 13.5% sharper than upscaling the 620px one. crf 46 was tried and
+bought only 2.7 more points for another 396KB, so crf 50 ships: 965KB against
+724KB, for 2.06x the pixels.
+
+The blink work survives the re-encode. Title wobble is 0.0061 and the worst
+single jump 0.0473, against 0.0060 and 0.0527 at crf 46.

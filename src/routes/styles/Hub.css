@@ -861,15 +861,25 @@
    768 to 834 wide and are better off stacked. */
 @media screen and (min-width: 880px) {
   .hub {
-    width: min(1240px, calc(100vw - 120px));
+    width: min(1400px, calc(100vw - 80px));
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    align-content: center;
+    /* Her column is the wider one. She is the reason anyone stays on this page
+       and the links are what they came to click, so the split is deliberate
+       rather than even. */
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    /* A flexible row above and below the two content rows. They absorb the
+       height her column gains by running to the floor, which keeps the wordmark
+       and the links centred on the page instead of being dragged down with
+       her. */
+    grid-template-rows: 1fr auto auto 1fr;
+    align-content: stretch;
     justify-content: center;
     column-gap: clamp(48px, 5vw, 84px);
     row-gap: 20px;
-    padding: 24px 0;
+    /* None: she stands on the bottom edge of the page, so any padding here
+       would be a gap under her feet. The spacer rows hold the content off the
+       edges instead. */
+    padding: 0;
     /* Nothing to lift against: with two columns the page is genuinely centred
        rather than a tall stack that needed nudging off centre. */
     transform: none;
@@ -878,24 +888,30 @@
   /* Doubled to outrank the short-screen rules above, which use the same trick.
      A 1440x700 laptop matches both, and two columns is the better answer there
      too: it needs less height than the stack it replaces. */
+  /* Grounded rather than floating, which is what the portfolio does with its
+     hero and About clips. She stands on the bottom edge of the page and the
+     clip's own alpha ramp, which fades its bottom 16%, dissolves her into it
+     instead of cutting her off.
+
+     This is why the clip was re-exported at 880px. At 620px she went soft
+     past about 660px wide, and reaching the floor of a 900px page needs 740px
+     of her. Measured on the book title, the 880px export is 13.5% sharper at
+     this size than upscaling the old one. */
   .hub-avatar,
   .hub-avatar.hub-avatar {
     grid-column: 1;
-    grid-row: 1 / span 2;
-    align-self: center;
-    justify-self: center;
-    /* Sized by her own column now, not by the height four links and a footer
-       left behind. Capped under the clip's native 620px so she is never
-       upscaled, and under the viewport so the page still never scrolls. */
+    grid-row: 1 / -1;
+    align-self: end;
+    justify-self: start;
     width: 100%;
-    max-width: 560px;
-    max-width: min(560px, calc((100svh - 96px) / 1.08));
+    max-width: 880px;
+    max-width: min(880px, calc(100svh / 1.078));
     margin: 0;
   }
 
   .hub-intro {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 2;
     align-self: end;
     align-items: flex-start;
     text-align: left;
@@ -917,7 +933,7 @@
 
   .hub-panel {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 3;
     align-self: start;
     display: flex;
     flex-direction: column;
@@ -983,5 +999,21 @@
 
   .hub-links {
     gap: clamp(12px, 2vh, 18px);
+  }
+
+  /* The backlight is specified in px against a 430px avatar, so at nearly 700
+     it was proportionally too tight around her head. Scaled by the same ratio
+     rather than retuned by eye, which keeps the spill on her hair and collar
+     in the same relationship it was measured at. */
+  .hub-avatar-glow {
+    box-shadow: inset 107px 57px 139px 0 rgba(85, 0, 255, 0.65);
+    filter: blur(32px);
+  }
+
+  /* 16px read as a speck beside a 43px wordmark. 24px made it as loud as the
+     verified badge, which puts a utility level with the identity mark. 20px is
+     present and still subordinate. */
+  .hub-share {
+    font-size: 20px;
   }
 }

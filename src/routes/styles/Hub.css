@@ -482,7 +482,12 @@
 .hub-avatar {
   position: relative;
   display: block;
-  /* No longer a button: see the note in Hub.tsx. */
+  padding: 0;
+  border: 0;
+  background: none;
+  /* Default rather than pointer: most of her is not a target, and a hand
+     cursor over her face would promise something that does not happen. */
+  cursor: default;
   /* Capped against viewport height as well as width: the whole point of this
      page is that every link is visible without scrolling, and she is the only
      element big enough to push them off a short screen. The clip is roughly
@@ -593,31 +598,6 @@
   flex-shrink: 0;
   fill: var(--accentColor);
   filter: drop-shadow(0 0 6px rgba(194, 164, 255, 0.7));
-}
-
-/* The only control inside her.
-
-   Read off the frame with a percentage grid: the covers run from 26% to 92%
-   across and from 52% down to the bottom edge, so this is the book and nothing
-   else. Transparent, because the book is already its own affordance. */
-.hub-book {
-  position: absolute;
-  z-index: 2;
-  left: 26%;
-  top: 52%;
-  width: 66%;
-  height: 46%;
-  padding: 0;
-  border: 0;
-  border-radius: 10px;
-  background: none;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.hub-book:focus-visible {
-  outline: 2px solid var(--accentColor);
-  outline-offset: 2px;
 }
 
 /* --- links -------------------------------------------------------------- */

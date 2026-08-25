@@ -1,4 +1,11 @@
-import { ComponentType, CSSProperties, useEffect, useRef, useState } from "react";
+import {
+  ComponentType,
+  CSSProperties,
+  MouseEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   PiCameraFill,
@@ -20,8 +27,8 @@ import "./styles/Hub.css";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=10",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=10",
+  webm: "/videos/character/dgfari-learn.webm?v=11",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=11",
 };
 
 interface HubLink {
@@ -152,7 +159,29 @@ const Hub = () => {
     };
   }, []);
 
-  const openBlog = () => navigate("/blogs");
+  /* Where the book sits inside the clip, read off the frame with a percentage
+     grid: the covers run 26% to 92% across and 52% to the bottom edge. */
+  const BOOK = { x0: 0.26, x1: 0.92, y0: 0.52, y1: 0.98 };
+
+  /* Only the book opens the blog.
+   *
+   * Tested as an overlaid element first, and it made the clip stutter: a
+   * positioned box on top of a video with an alpha channel pulls it out of its
+   * own compositing layer, so the browser recomposites her every frame. Hit
+   * testing the coordinates costs nothing and puts nothing over her.
+   *
+   * detail === 0 means the button was activated by keyboard rather than a
+   * pointer, where there are no coordinates to test and the whole control
+   * should just work. */
+  const openBlog = (e: MouseEvent<HTMLButtonElement>) => {
+    if (e.detail !== 0) {
+      const b = e.currentTarget.getBoundingClientRect();
+      const fx = (e.clientX - b.left) / b.width;
+      const fy = (e.clientY - b.top) / b.height;
+      if (fx < BOOK.x0 || fx > BOOK.x1 || fy < BOOK.y0 || fy > BOOK.y1) return;
+    }
+    navigate("/blogs");
+  };
 
   // The blur behind the sheet is applied to this page once, not recomputed per
   // frame by the sheet's own backdrop-filter, so the avatar has to hold still
@@ -202,11 +231,10 @@ const Hub = () => {
         </h1>
       </header>
 
-      {/* She is a picture, not a control: only the book she is holding opens the
-          blog. The button sits over it as its own element rather than wrapping
-          the whole clip, so clicking her hair or the empty space beside her
-          does nothing, which is what you would expect of a photograph. */}
-      <div className="hub-avatar">
+      {/* Only the book she is holding opens the blog. The whole clip is the
+          button, but the handler ignores anything outside the book, so
+          clicking her hair or the space beside her does nothing. */}
+      <button className="hub-avatar" onClick={openBlog} aria-label="Read DGFari Learn, my blog">
         <span className="hub-avatar-glow" aria-hidden="true" />
         {showVideo ? (
           <video
@@ -224,13 +252,7 @@ const Hub = () => {
         ) : (
           <img className="hub-avatar-media" src={AVATAR.poster} alt="" />
         )}
-
-        <button
-          className="hub-book"
-          onClick={openBlog}
-          aria-label="Read DGFari Learn, my blog"
-        />
-      </div>
+      </button>
 
       <Divider />
 

@@ -43,3 +43,37 @@ anything behind her shows through her face. Before hardening only 27% of her
 forehead and 1.3% of the book cover were fully opaque. Raising the bitrate does
 not fix it: crf 38 scored 94% against crf 44's 93%. Hardening took it to 100%,
 and made the file smaller, because flat regions compress.
+
+## The green flecks, and what actually fixed them
+
+Residual green survived the key at fast-moving edges, showing as flecks during
+the page turn. It had always been there, and got noticed only once she was made
+larger: the clip before it carried six times more, 886 pixels in its worst frame
+against 145.
+
+Restructuring the pipeline to fix it was a dead end, recorded here so nobody
+repeats it. Keying before the slow-down, denoising after the key, temporal
+mixing, slowing by frame duplication and keying harder all removed the green,
+and every one of them cost either the matte or the weight: opacity down to
+28-66% where the backlight shines through her face, or 2.2 to 3.1MB against
+675KB. Keying harder at 0.50 similarity started eating her outright.
+
+What fixed it is one clamp on the colour, applied where the fill already runs:
+
+```
+g' = min(g, (r + b) / 2 + 12)      for visible pixels
+```
+
+Green can never run more than a little ahead of red and blue, which is the
+definition of a green fleck, and nothing else in frame is green so nothing else
+moves. Zero green pixels, the matte untouched at 99.6% opaque, and the file came
+out smaller than before.
+
+## Clicking the book
+
+Only the book opens the blog, and it is done by hit testing coordinates in the
+click handler rather than by overlaying a button on the clip. An overlaid
+element was tried and made the picture stutter: a positioned box on top of a
+video with an alpha channel pulls it out of its own compositing layer, so the
+browser recomposites her every frame.
+

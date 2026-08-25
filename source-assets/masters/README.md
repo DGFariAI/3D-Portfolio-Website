@@ -100,3 +100,26 @@ which at the size she actually renders is close to invisible. If the cover ever
 needs to be genuinely sharp, that is a regeneration with the book held still,
 not an encoding setting.
 
+
+## The title stutter during the page flip
+
+The "DGFari Learn" lettering on the cover is fine metallic type on near-black.
+While she flips a page the whole book shifts a little, and VP9 spends its bits
+on the moving page rather than on holding that lettering steady, so the title
+appears to shimmer.
+
+Frame averaging fixes it (`tmix=frames=3` cut the jerkiness on the title from
+1.58 to 0.80) but it averages her flipping hand too, which ghosts. So the
+averaging is applied through a mask instead: a feathered rectangle over the
+title only, x 341..527 and y 347..561 of the 620x668 frame, 22px feather. The
+right edge stops at 85% because her right hand starts at 88%.
+
+    [base][tmix=3][feathered mask] maskedmerge
+
+The mask's alpha plane is 0 everywhere, so the matte is always taken from the
+base and never from the averaged copy, which would have softened the cutout
+edges globally.
+
+Measured: title jerkiness 1.58 -> 0.97, both hands unchanged to within the
+re-encode noise floor, and the feather band shows less frame-to-frame change
+than untouched areas do, so there is no seam.

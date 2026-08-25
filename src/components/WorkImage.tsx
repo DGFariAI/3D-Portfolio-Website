@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
-import { useIsDesktop } from "../hooks/useIsDesktop";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 interface Props {
   image: string;
@@ -13,7 +13,10 @@ interface Props {
 }
 
 const WorkImage = (props: Props) => {
-  const isDesktop = useIsDesktop();
+  /* Work switches at 900, not at the site-wide 1025, and has to agree with
+     Work.css or these per-card framing offsets are applied against the wrong
+     card widths. Deliberately local: no other section moves at 900. */
+  const isDesktop = useMediaQuery("(min-width: 900px)");
   const wrapRef = useRef<HTMLDivElement | null>(null);
   // Whether this card's video may start loading at all. Every card used to
   // mount its <video> with preload="auto" on first render, so a single page

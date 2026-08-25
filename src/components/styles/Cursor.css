@@ -23,7 +23,10 @@
 .cursor-disable {
   --size: 0px;
 }
-@media only screen and (min-width: 600px) {
+/* The hover test matters as much as the width. A phone asked for the desktop
+   site reports 980px across while still having no pointer to follow, and the
+   mark just sat where it was left. */
+@media only screen and (min-width: 600px) and (hover: hover) {
   .cursor-main {
     --size: 50px;
   }

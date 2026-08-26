@@ -23,6 +23,11 @@
   box-shadow: inset -50px 40px 50px rgba(84, 0, 255, 0.6);
   filter: blur(60px);
   border-radius: 50%;
+  /* The keyframes below are what positioned this: they carry the translate as
+     well as the rotation, so every route that switches the animation off (the
+     low tier, reduced motion, and now coarse pointers) sent the light to the
+     corner. Hold the offset here so the spin is purely decorative. */
+  transform: translate(-95%, -75%);
   animation: loadingCircle 5s linear infinite;
 }
 .nav-fade {

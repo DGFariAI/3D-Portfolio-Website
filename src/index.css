@@ -197,6 +197,7 @@ html {
   animation: none;
 }
 
+
 .tier-medium .landing-circle1,
 .tier-medium .landing-circle2 {
   filter: blur(44px);
@@ -214,10 +215,35 @@ html {
   filter: blur(14px);
 }
 
+/* Both lights are fixed, heavily blurred and rotating forever, and none of that
+   sits on its own compositing layer by default. That means the browser has to
+   re-blur a 300px disc against freshly scrolled content every frame, which is
+   what made the right-hand light look like it was stepping up and down with the
+   scroll rather than staying put. Promoting them is the fix; dropping the spin
+   on a touch device removes the reason to repaint at all, and under a 44px blur
+   a radially symmetric disc looks identical spinning or still. */
+.landing-circle1,
+.landing-circle2 {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* The class is doubled deliberately. The rule that starts these animations
+   lives in Landing.css, which the bundler emits after this file, so a plain
+   .landing-circle1 here loses the tie on source order and the spin carries on
+   regardless. Repeating the class outbids it. The reduced-motion block below
+   had the same flaw and never actually took effect. */
+@media (hover: none) {
+  .landing-circle1.landing-circle1,
+  .landing-circle2.landing-circle2 {
+    animation: none;
+  }
+}
+
 /* Honour the platform preference everywhere, not just in the tier logic. */
 @media (prefers-reduced-motion: reduce) {
-  .landing-circle1,
-  .landing-circle2 {
+  .landing-circle1.landing-circle1,
+  .landing-circle2.landing-circle2 {
     animation: none;
   }
 }

@@ -135,8 +135,13 @@ const TechStack = () => {
       const techEl = document.querySelector(".techstack");
       if (!techEl) return;
       const rectTop = (techEl as HTMLElement).getBoundingClientRect().top;
-      // Activate as soon as the section's top reaches 90% of the viewport height (earlier reveal)
-      setIsActive(rectTop <= window.innerHeight * 0.9);
+      // The spheres are frozen until this flips, and once it does they still
+      // have to fall and settle. Waiting until the section was almost in view
+      // meant that settle happened behind the visitor: by the time the balls
+      // had come to rest she was already at the Contact section, so they read
+      // as appearing late rather than as being there. Wake the scene a good
+      // two viewports out so the physics is finished before she arrives.
+      setIsActive(rectTop <= window.innerHeight * 2.2);
     };
     document.querySelectorAll(".header a").forEach((elem) => {
       const element = elem as HTMLAnchorElement;

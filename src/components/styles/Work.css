@@ -291,3 +291,20 @@
     justify-content: flex-start;
   }
 }
+
+/* A phone asking for the desktop site reports a canvas no laptop ever has:
+   980x2121 rather than 1440x900. The cards are width-bound at that size, so
+   nothing inside them can grow to meet a viewport more than twice the height
+   they were designed for, and the leftover ran as a single 1400px band of black
+   between the last card and the Contact section, which is what read as the page
+   having run out before it got there. The section has to stay 100vh because the
+   pin measures from it, so the content is centred in it instead: the same slack
+   split evenly above and below reads as margin rather than as a void. */
+@media only screen and (min-width: 900px) and (min-height: 1100px) {
+  .work-container {
+    justify-content: center;
+  }
+  .work-section h2 {
+    margin-top: 0;
+  }
+}

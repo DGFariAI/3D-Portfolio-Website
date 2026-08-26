@@ -14,6 +14,14 @@ let refreshBound = false;
 
 export default function setSplitText() {
   ScrollTrigger.config({ ignoreMobileResize: true });
+
+  // Phones are left out of this on purpose, as they always were. Running it
+  // there hid the About Me heading and paragraph until a trigger fired and put
+  // a slide on the What I Do heading, and between them the section did not
+  // settle and the Build and Market box below it did not come in cleanly. The
+  // reveal is a desktop-width effect; on a phone the text is simply there.
+  if (window.innerWidth < 900) return;
+
   const paras: NodeListOf<ParaElement> = document.querySelectorAll(".para");
   const titles: NodeListOf<ParaElement> = document.querySelectorAll(".title");
 
@@ -24,12 +32,10 @@ export default function setSplitText() {
   // still filled the screen.
   const TriggerStart = window.innerWidth <= 1024 ? "center 55%" : "20% 60%";
 
-  // One behaviour at every width, and it is the desktop one: the reveal plays
-  // on the way down, reverses on the way back up and plays again on the next
-  // pass. It used to be a one-shot below 1025 and this function used to skip
-  // phones altogether, so the same section revealed three different ways
-  // depending on the screen. The Build and Market timeline has never had a
-  // width test, and these now match it.
+  // One behaviour at every width this runs at, and it is the desktop one: the
+  // reveal plays on the way down, reverses on the way back up and plays again
+  // on the next pass. It had become a one-shot below 1025, so the same section
+  // revealed two different ways depending on the screen.
   const ToggleAction = "play pause resume reverse";
 
   paras.forEach((para: ParaElement) => {

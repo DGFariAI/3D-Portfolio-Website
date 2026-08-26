@@ -17,6 +17,7 @@ import SEO from "../components/SEO";
 import ShareButton from "../components/ShareButton";
 import "./styles/Hub.css";
 import BrandCursor from "../components/BrandCursor";
+import Reveal from "../components/Reveal";
 
 /**
  * The avatar clip: her reading DGFari Learn, keyed off green into a VP9 WebM
@@ -229,6 +230,7 @@ const Hub = () => {
 
   return (
     <div className={`hub ${sharing ? "is-sharing" : ""}`}>
+      <Reveal />
       <BrandCursor />
       <SEO
         title="DGFari"

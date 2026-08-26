@@ -24,10 +24,20 @@ const useEmbers = () =>
   );
 
 /**
- * Plays on every hub load: embers travel in from the left/right edges of the
- * viewport, converge behind the mark, then an iris reveals the real logo
- * asset and a glow settles. Pure CSS/DOM - no video - so the background is
- * always exactly the hub's own, and it scales to any viewport instead of
+ * Set the moment this module is first evaluated by the browser, which only
+ * happens on an actual page load/refresh - not on a React Router navigation
+ * back to "/" from Portfolio, AI, etc, which remounts Hub (and this
+ * component) without reloading the page or re-running module code. That's
+ * the distinction that's wanted: replay on refresh, stay quiet on an
+ * in-app trip back to the hub.
+ */
+let hasPlayedThisPageLoad = false;
+
+/**
+ * Plays once per real page load: embers travel in from the left/right edges
+ * of the viewport, converge behind the mark, then an iris reveals the real
+ * logo asset and a glow settles. Pure CSS/DOM - no video - so the background
+ * is always exactly the hub's own, and it scales to any viewport instead of
  * being a fixed-aspect clip.
  *
  * Portalled to document.body rather than rendered inline in Hub's tree: .hub
@@ -42,11 +52,23 @@ const useEmbers = () =>
  */
 const Reveal = () => {
   const embers = useEmbers();
-  const [phase, setPhase] = useState<"playing" | "exiting" | "done">(() =>
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  const [phase, setPhase] = useState<"playing" | "exiting" | "done">(() => {
+    if (hasPlayedThisPageLoad) return "done";
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
       ? "done"
-      : "playing",
-  );
+      : "playing";
+  });
+
+  // Mutating the flag belongs here, not in the useState initializer above:
+  // React 18 StrictMode double-invokes lazy initializers in dev specifically
+  // to catch impure ones, and a state initializer that mutates shared module
+  // state on every call is exactly that - the first (discarded) invocation
+  // flipped the flag, so the second saw it as already-played and the reveal
+  // never showed at all. Effects are the correct place for this kind of
+  // side effect.
+  useEffect(() => {
+    hasPlayedThisPageLoad = true;
+  }, []);
 
   const finish = () => {
     setPhase((p) => (p === "playing" ? "exiting" : p));

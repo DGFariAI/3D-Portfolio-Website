@@ -54,9 +54,9 @@ const Reveal = () => {
 
   useEffect(() => {
     if (phase !== "playing") return;
-    // Embers ~0-950ms, iris reveal ~350-2050ms, glow builds and settles by
-    // ~2450ms, held to ~2900ms - then the exit crossfade starts.
-    const t = window.setTimeout(finish, 2900);
+    // Embers ~0-1700ms, iris reveal ~400-3000ms, glow builds and settles by
+    // ~3200ms, held to ~3800ms - then the exit crossfade starts.
+    const t = window.setTimeout(finish, 3800);
     return () => window.clearTimeout(t);
   }, [phase]);
 

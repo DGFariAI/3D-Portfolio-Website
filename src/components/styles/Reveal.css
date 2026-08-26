@@ -29,7 +29,7 @@
   box-shadow: 0 0 10px 2px rgba(180, 120, 255, 0.8);
   opacity: 0;
   transform: translate(-50%, -50%) translate(var(--sx), var(--sy));
-  animation: reveal-ember-in 900ms cubic-bezier(0.2, 0.6, 0.3, 1) var(--delay)
+  animation: reveal-ember-in 1300ms cubic-bezier(0.2, 0.6, 0.3, 1) var(--delay)
     forwards;
   pointer-events: none;
 }
@@ -73,13 +73,14 @@
 
 .reveal-logo-top {
   /* Irises out from the center, matching where the embers converge to,
-     rather than sweeping left-to-right against that motion. Slowed down
-     deliberately - a quick reveal read as a snap, not a materialization. */
+     rather than sweeping left-to-right against that motion. Slow and
+     deliberate - a quick reveal read as a snap, not a materialization. */
   clip-path: circle(0% at 50% 50%);
-  filter: drop-shadow(0 0 0 rgba(194, 164, 255, 0));
+  filter: drop-shadow(0 0 0 rgba(202, 122, 255, 0))
+    drop-shadow(0 0 0 rgba(202, 122, 255, 0));
   animation:
-    reveal-wipe 1700ms 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
-    reveal-glow 2100ms 350ms ease-out forwards;
+    reveal-wipe 2600ms 400ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    reveal-glow 2800ms 400ms ease-out forwards;
 }
 
 @keyframes reveal-wipe {
@@ -89,13 +90,14 @@
 }
 
 /* A single steady build to a settled glow - no pulse, no scale change,
-   nothing that throbs. It brightens once and holds there. */
+   nothing that throbs. It brightens once and holds there. Same two-shadow
+   spec and color as the hover glow on the hub's Portfolio icon
+   (.hub-link-mark in Hub.css: 5px tight pass + 16px bloom, same violet),
+   rather than a separate, brighter glow invented just for this. */
 @keyframes reveal-glow {
-  from {
-    filter: drop-shadow(0 0 0 rgba(194, 164, 255, 0));
-  }
   to {
-    filter: drop-shadow(0 0 26px rgba(194, 164, 255, 0.75));
+    filter: drop-shadow(0 0 5px rgba(202, 122, 255, 0.85))
+      drop-shadow(0 0 16px rgba(202, 122, 255, 0.85));
   }
 }
 

@@ -292,6 +292,17 @@
   .what-box-in {
     height: 500px;
     margin-left: -50px;
+
+    /* Laid out from the start rather than revealed into existence. While this
+       was display:none the reveal added 228px to the page the first time it
+       fired, which moved everything below it down, including the Work pin that
+       ScrollTrigger had already measured. Its cached pin end was left 228px
+       short, so scrolling back up from Contact re-pinned Work early and the
+       section snapped up 192px. The box holds its space now and GSAP fades it
+       in through autoAlpha, so the page height never changes and the pin stays
+       where it was measured. */
+    display: flex;
+    visibility: hidden;
   }
   .what-content {
     padding: 50px;

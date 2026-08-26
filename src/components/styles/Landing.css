@@ -55,7 +55,14 @@
 }
 
 .landing-circle2 {
-  top: 50%;
+  /* A percentage on a fixed element resolves against the viewport, and on a
+     phone the viewport grows and shrinks as the URL bar retracts and comes
+     back. Half of that swing moved this light up and down the screen while
+     scrolling, which is what read as it jumping. --vh is 100svh, the small
+     viewport, which is defined not to change when the browser UI moves, so the
+     light is anchored to something that holds still. On a desktop there is no
+     URL bar and this resolves to exactly what 50% did. */
+  top: calc(var(--vh) / 2);
   right: 0%;
   transform: translate(calc(100% - 2px), -50%);
   z-index: 9;

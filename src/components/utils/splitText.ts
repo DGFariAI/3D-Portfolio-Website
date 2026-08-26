@@ -20,7 +20,14 @@ export default function setSplitText() {
   const paras: NodeListOf<ParaElement> = document.querySelectorAll(".para");
   const titles: NodeListOf<ParaElement> = document.querySelectorAll(".title");
 
-  const TriggerStart = window.innerWidth <= 1024 ? "top 60%" : "20% 60%";
+  // Below 1025 this is the cue the Build and Market panels use, so the
+  // headings and the paragraph now arrive on the same terms they do: the
+  // section's middle has to reach a little above halfway up the viewport, not
+  // merely its top edge. That canvas is 2121px tall, so "top 60%" fired while
+  // the hero still filled most of the screen and the text appeared to reveal
+  // itself before the visitor had got to it.
+  const TriggerStart =
+    window.innerWidth <= 1024 ? "center 55%" : "20% 60%";
 
   // A phone asking for the desktop site shows and hides its URL bar as you
   // scroll. That resizes the viewport, which refreshes ScrollTrigger, which

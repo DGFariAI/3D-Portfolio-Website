@@ -28,7 +28,7 @@ import BrandCursor from "../components/BrandCursor";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=29",
+  webm: "/videos/character/dgfari-learn.webm?v=30",
   poster: "/videos/character/dgfari-learn-poster.webp?v=24",
 };
 

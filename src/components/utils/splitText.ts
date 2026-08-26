@@ -5,8 +5,6 @@ interface ParaElement extends HTMLElement {
   anim?: gsap.core.Animation;
 }
 
-type TriggeredTween = gsap.core.Tween & { scrollTrigger?: ScrollTrigger };
-
 gsap.registerPlugin(ScrollTrigger);
 
 // This function re-runs on every ScrollTrigger refresh, and it used to register
@@ -16,52 +14,31 @@ let refreshBound = false;
 
 export default function setSplitText() {
   ScrollTrigger.config({ ignoreMobileResize: true });
-  if (window.innerWidth < 900) return;
   const paras: NodeListOf<ParaElement> = document.querySelectorAll(".para");
   const titles: NodeListOf<ParaElement> = document.querySelectorAll(".title");
 
-  // Below 1025 this is the cue the Build and Market panels use, so the
-  // headings and the paragraph now arrive on the same terms they do: the
-  // section's middle has to reach a little above halfway up the viewport, not
-  // merely its top edge. That canvas is 2121px tall, so "top 60%" fired while
-  // the hero still filled most of the screen and the text appeared to reveal
-  // itself before the visitor had got to it.
-  const TriggerStart =
-    window.innerWidth <= 1024 ? "center 55%" : "20% 60%";
+  // Below 1025 this is the cue the Build and Market panels use, so the headings
+  // and the paragraph arrive on the same terms they do: the section's middle
+  // has to reach a little above halfway up the viewport, not merely its top
+  // edge. That canvas is 2121px tall, so an edge test fired while the hero
+  // still filled the screen.
+  const TriggerStart = window.innerWidth <= 1024 ? "center 55%" : "20% 60%";
 
-  // A phone asking for the desktop site shows and hides its URL bar as you
-  // scroll. That resizes the viewport, which refreshes ScrollTrigger, which
-  // calls this function again, and a fromTo renders its "from" state the moment
-  // it is built: every element dropped straight back to invisible and animated
-  // in again. Measured at 980x2121, three resizes replayed the About title, its
-  // paragraph and the What I Do heading three times each, which is the reveal
-  // firing over and over rather than settling.
-  //
-  // Below 1025 the reveal is therefore a one-shot. An element that has already
-  // played is marked and then skipped entirely on later runs, so no refresh can
-  // rebuild its tween and pull it back to zero. A real desktop has no URL bar
-  // that comes and goes and keeps the scroll-linked behaviour it has today.
-  const revealOnce = window.innerWidth <= 1024;
-  const ToggleAction = revealOnce
-    ? "play none none none"
-    : "play pause resume reverse";
-
-  // Once played, drop the trigger as well. Nothing is left that a later refresh
-  // could recompute, so the element simply stays where the animation left it.
-  const settle = (el: ParaElement, tween: TriggeredTween) => {
-    if (!revealOnce) return;
-    el.dataset.revealed = "1";
-    tween.scrollTrigger?.kill();
-  };
+  // One behaviour at every width, and it is the desktop one: the reveal plays
+  // on the way down, reverses on the way back up and plays again on the next
+  // pass. It used to be a one-shot below 1025 and this function used to skip
+  // phones altogether, so the same section revealed three different ways
+  // depending on the screen. The Build and Market timeline has never had a
+  // width test, and these now match it.
+  const ToggleAction = "play pause resume reverse";
 
   paras.forEach((para: ParaElement) => {
     para.classList.add("visible");
-    if (revealOnce && para.dataset.revealed === "1") return;
     if (para.anim) {
       para.anim.progress(1).kill();
     }
 
-    const tween: TriggeredTween = gsap.fromTo(
+    para.anim = gsap.fromTo(
       para,
       { autoAlpha: 0, y: 80 },
       {
@@ -74,19 +51,16 @@ export default function setSplitText() {
         duration: 1,
         ease: "power3.out",
         y: 0,
-        onComplete: () => settle(para, tween),
       }
     );
-    para.anim = tween;
   });
 
   titles.forEach((title: ParaElement) => {
-    if (revealOnce && title.dataset.revealed === "1") return;
     if (title.anim) {
       title.anim.progress(1).kill();
     }
 
-    const tween: TriggeredTween = gsap.fromTo(
+    title.anim = gsap.fromTo(
       title,
       { autoAlpha: 0, y: 80, rotate: 10 },
       {
@@ -100,10 +74,8 @@ export default function setSplitText() {
         ease: "power2.inOut",
         y: 0,
         rotate: 0,
-        onComplete: () => settle(title, tween),
       }
     );
-    title.anim = tween;
   });
 
   if (!refreshBound) {

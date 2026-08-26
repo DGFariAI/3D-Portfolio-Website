@@ -6,7 +6,11 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: var(--backgroundColor);
+  /* Matches body's actual painted background, not --backgroundColor: body
+     sets an explicit #000 (index.css) that opaquely covers the :root
+     background everywhere, so #000 - not the variable - is what the hub
+     really shows. Using the variable here was the mismatch. */
+  background: #000;
   opacity: 1;
   transition: opacity 0.45s ease;
 }
@@ -68,7 +72,9 @@
 }
 
 .reveal-logo-top {
-  clip-path: inset(0 100% 0 0);
+  /* Irises out from the center, matching where the embers converge to,
+     rather than sweeping left-to-right against that motion. */
+  clip-path: circle(0% at 50% 50%);
   filter: drop-shadow(0 0 0 rgba(194, 164, 255, 0));
   animation:
     reveal-wipe 900ms 320ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
@@ -77,7 +83,7 @@
 
 @keyframes reveal-wipe {
   to {
-    clip-path: inset(0 0 0 0);
+    clip-path: circle(100% at 50% 50%);
   }
 }
 

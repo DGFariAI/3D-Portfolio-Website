@@ -65,8 +65,6 @@ const Reveal = () => {
       role="presentation"
       aria-hidden="true"
     >
-      <span className="reveal-glow-wash" />
-
       {embers.map((e) => (
         <span
           key={e.id}

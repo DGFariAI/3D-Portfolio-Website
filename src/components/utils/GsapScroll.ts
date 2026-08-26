@@ -62,19 +62,37 @@ export function setAllTimeline() {
 
 export function setWhatIDoTimeline() {
   gsap.registerPlugin(ScrollTrigger);
+
+  // The Build and Market panels are .what-content, and this timeline owns them
+  // rather than splitText, which is why they carried on vanishing after the
+  // headings had been settled. onLeaveBack below is what does it: scrolling
+  // back up past the start put the whole group back to hidden, ready to play
+  // again on the way down.
+  //
+  // Below 1025, which is a phone asking for the desktop site, the reveal plays
+  // once and then holds. once also drops the trigger the moment it has fired,
+  // so the URL bar appearing and disappearing cannot refresh it back to the
+  // start. A real desktop keeps the behaviour it has today.
+  const revealOnce = window.innerWidth <= 1024;
+
   // Reveal What I Do container and then its panels (Design/Manage)
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: ".about-section",
       start: "center 55%",
       end: "bottom top",
-      toggleActions: "restart none none none",
+      toggleActions: revealOnce
+        ? "play none none none"
+        : "restart none none none",
       invalidateOnRefresh: true,
-      onLeaveBack: () => {
-        tl.pause(0).progress(0);
-        gsap.set(".what-box-in", { clearProps: "all", display: "none", autoAlpha: 0, y: 40 });
-        gsap.set(".what-content", { clearProps: "opacity,transform", autoAlpha: 0, y: 20 });
-      },
+      once: revealOnce,
+      onLeaveBack: revealOnce
+        ? undefined
+        : () => {
+            tl.pause(0).progress(0);
+            gsap.set(".what-box-in", { clearProps: "all", display: "none", autoAlpha: 0, y: 40 });
+            gsap.set(".what-content", { clearProps: "opacity,transform", autoAlpha: 0, y: 20 });
+          },
     },
   });
 

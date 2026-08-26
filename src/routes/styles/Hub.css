@@ -120,10 +120,26 @@
   transition: color 0.25s ease, transform 0.25s ease, filter 0.25s ease;
 }
 
-.hub-share:hover {
-  color: var(--accentColor);
-  filter: drop-shadow(0 0 11px rgba(140, 90, 255, 0.75));
-  transform: translateY(calc(-50% - var(--share-lift))) scale(1.08);
+/* Hover has to ask for a device that really hovers. On a phone the tap that
+   opens the sheet leaves :hover stuck on the button, and it stays stuck until
+   something else is tapped. Dragging the sheet down to dismiss never taps
+   anything else, so the icon was left filled in and glowing with the sheet
+   already gone. Behind this query a phone simply never enters the state, and
+   :active still gives the press its feedback. */
+@media (hover: hover) {
+  .hub-share:hover {
+    color: var(--accentColor);
+    filter: drop-shadow(0 0 11px rgba(140, 90, 255, 0.75));
+    transform: translateY(calc(-50% - var(--share-lift))) scale(1.08);
+  }
+
+  .hub-share:hover .hub-share-line {
+    opacity: 0;
+  }
+
+  .hub-share:hover .hub-share-solid {
+    opacity: 1;
+  }
 }
 
 .hub-share:active,
@@ -150,13 +166,11 @@
   opacity: 0;
 }
 
-.hub-share:hover .hub-share-line,
 .hub-share:focus-visible .hub-share-line,
 .hub-share.is-open .hub-share-line {
   opacity: 0;
 }
 
-.hub-share:hover .hub-share-solid,
 .hub-share:focus-visible .hub-share-solid,
 .hub-share.is-open .hub-share-solid {
   opacity: 1;

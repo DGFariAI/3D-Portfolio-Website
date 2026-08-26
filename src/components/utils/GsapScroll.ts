@@ -94,6 +94,23 @@ export function setWhatIDoTimeline() {
             gsap.set(".what-content", { clearProps: "opacity,transform", autoAlpha: 0, y: 20 });
           },
     },
+
+    // The panel is display:none until this plays, so switching it on adds its
+    // height to the page. Everything below moves down with it, including the
+    // Work pin, and ScrollTrigger had already measured that pin: its cached end
+    // was left short by exactly that height, so coming back up from Contact
+    // re-pinned Work early and the section snapped upwards.
+    //
+    // One recalculation once the reveal has finished is enough, because below
+    // 1025 it only ever plays once. It is deferred a frame so the refresh does
+    // not run from inside a ScrollTrigger callback, and at this point Work is
+    // still far below the fold, so nothing on screen moves. A real desktop can
+    // replay this timeline and is left alone.
+    onComplete: revealOnce
+      ? () => {
+          requestAnimationFrame(() => ScrollTrigger.refresh());
+        }
+      : undefined,
   });
 
   tl.set(".what-box-in", { display: "flex" });

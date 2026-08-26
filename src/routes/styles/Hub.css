@@ -588,7 +588,7 @@
   position: absolute;
   z-index: 0;
   left: 47.5%;
-  top: 24%;
+  top: 27%;
   width: 58%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
@@ -1127,5 +1127,17 @@
   .hub-avatar,
   .hub-avatar.hub-avatar {
     align-self: center;
+  }
+
+  /* The column reads high on a canvas this tall even though it is centred: the
+     grid puts it at 50.6% down, but she is the weight in the frame and the eye
+     settles below the middle, so mathematically centred looks lifted. Dropped
+     by 5% of the viewport, which is about 105px here.
+
+     Only on this canvas. A real phone is below 880px wide and never reaches
+     this block, so its layout is untouched. */
+  .hub-intro,
+  .hub-panel {
+    transform: translateY(5vh);
   }
 }

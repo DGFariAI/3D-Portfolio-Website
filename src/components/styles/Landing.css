@@ -491,11 +491,18 @@ h2.landing-info-h2 {
     transform: translateY(-11%);
   }
 
-  /* Tighter halo — a glow behind her head, not a wash over the whole screen. */
+  /* Tighter halo — a glow behind her head, not a wash over the whole screen.
+
+     Sized against the viewport rather than in fixed pixels. At 160px it was
+     55% of the width of a 390px phone, which is the look this was tuned for,
+     but only 22% of the 980px canvas a phone gets when it asks for the desktop
+     site, where it read as no glow at all. In vw it holds that proportion at
+     any width: 41vw is 160px at 390 and 402px at 980. The blur goes with it for
+     the same reason, 7.95vw being the 31px it was. */
   .character-rim {
-    width: 160px;
-    height: 160px;
-    filter: blur(31px);
+    width: 41vw;
+    height: 41vw;
+    filter: blur(7.95vw);
     transform: translate(-50%, -30%) scale(1);
   }
 }

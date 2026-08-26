@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
  * else there — the hero, What I Do, the cursor, the tech stack — stays on the
  * mobile path, which is what that canvas should be showing.
  */
-export const DESKTOP_MIN_WIDTH = 900;
+export const DESKTOP_MIN_WIDTH = 1025;
 const DESKTOP_QUERY = `(min-width: ${DESKTOP_MIN_WIDTH}px)`;
 
 /** Synchronous check, for code outside React. */

@@ -569,9 +569,15 @@
    smaller. Container query units would express this more directly, but this is
    the front door and it should not depend on a recent CSS feature to lay out.
 
-   It is placed on her, not on the middle of the box. She reads at an angle and
-   her head silhouette centres at 40.6% across the frame, not 50%, so a centred
-   glow sat almost ten percent to the right of her.
+   It is placed on her, not on the middle of the box. Measured on the current
+   clip: the crown of her hair reaches y=8 of 862, her head silhouette is widest
+   between x=193 and x=563, which centres it at 47.2% across, and her face
+   centres at 49.6%. So the glow sits at 49%, on her head and a touch to the
+   right of the hair's midpoint, which is where the light reads as coming from
+   behind her rather than from beside her.
+
+   The old 40.6% was measured on the previous generation, where she sat further
+   left in frame. It was left of her head here.
 
    Sized and raised to sit behind the whole head. Her hair spans 276px of the
    620px frame and the crown reaches y=9, so a glow smaller than her head left
@@ -580,8 +586,8 @@
 .hub-avatar-glow {
   position: absolute;
   z-index: 0;
-  left: 40.6%;
-  top: 28%;
+  left: 49%;
+  top: 24%;
   width: 58%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);

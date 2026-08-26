@@ -28,8 +28,8 @@ import BrandCursor from "../components/BrandCursor";
  * generated from live in source-assets/masters.
  */
 const AVATAR = {
-  webm: "/videos/character/dgfari-learn.webm?v=28",
-  poster: "/videos/character/dgfari-learn-poster.webp?v=23",
+  webm: "/videos/character/dgfari-learn.webm?v=29",
+  poster: "/videos/character/dgfari-learn-poster.webp?v=24",
 };
 
 interface HubLink {

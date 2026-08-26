@@ -73,12 +73,13 @@
 
 .reveal-logo-top {
   /* Irises out from the center, matching where the embers converge to,
-     rather than sweeping left-to-right against that motion. */
+     rather than sweeping left-to-right against that motion. Slowed down
+     deliberately - a quick reveal read as a snap, not a materialization. */
   clip-path: circle(0% at 50% 50%);
   filter: drop-shadow(0 0 0 rgba(194, 164, 255, 0));
   animation:
-    reveal-wipe 900ms 320ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
-    reveal-bloom 700ms 1250ms ease-out forwards;
+    reveal-wipe 1700ms 350ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    reveal-glow 2100ms 350ms ease-out forwards;
 }
 
 @keyframes reveal-wipe {
@@ -87,18 +88,14 @@
   }
 }
 
-@keyframes reveal-bloom {
-  0% {
+/* A single steady build to a settled glow - no pulse, no scale change,
+   nothing that throbs. It brightens once and holds there. */
+@keyframes reveal-glow {
+  from {
     filter: drop-shadow(0 0 0 rgba(194, 164, 255, 0));
-    transform: scale(1);
   }
-  50% {
-    filter: drop-shadow(0 0 34px rgba(194, 164, 255, 0.85));
-    transform: scale(1.045);
-  }
-  100% {
-    filter: drop-shadow(0 0 16px rgba(194, 164, 255, 0.55));
-    transform: scale(1);
+  to {
+    filter: drop-shadow(0 0 26px rgba(194, 164, 255, 0.75));
   }
 }
 

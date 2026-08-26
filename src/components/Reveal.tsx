@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import "./styles/Reveal.css";
 
 const LOGO = "/images/logos/dgfari-portfolio.png";
@@ -24,10 +25,20 @@ const useEmbers = () =>
 
 /**
  * Plays on every hub load: embers travel in from the left/right edges of the
- * viewport, converge behind the mark, then a light sweep reveals the real
- * logo asset (masked, not redrawn) and a glow bloom settles. Pure CSS/DOM -
- * no video - so the background is always exactly the hub's own, and it
- * scales to any viewport instead of being a fixed-aspect clip.
+ * viewport, converge behind the mark, then an iris reveals the real logo
+ * asset and a glow settles. Pure CSS/DOM - no video - so the background is
+ * always exactly the hub's own, and it scales to any viewport instead of
+ * being a fixed-aspect clip.
+ *
+ * Portalled to document.body rather than rendered inline in Hub's tree: .hub
+ * has `transform: translateY(-14px)`, and a transform makes an element both
+ * a new stacking context and the containing block for fixed descendants
+ * (BrandCursor.tsx hit the identical issue and portals for the same reason).
+ * Left inline, this component's "fixed, full-viewport, z-index: 999999"
+ * only ever resolved against .hub's own box and stacking level - covering
+ * just the hub's ~560px column instead of the real viewport, and losing to
+ * BrandCursor's z-index because .hub itself stacks below it at the root.
+ * That's what let the nav buttons' edges and the cursor show through.
  */
 const Reveal = () => {
   const embers = useEmbers();
@@ -43,9 +54,9 @@ const Reveal = () => {
 
   useEffect(() => {
     if (phase !== "playing") return;
-    // Embers ~0-950ms, sweep ~350-1250ms, bloom pulse ~1250-1750ms, hold to
-    // ~2100ms - then start the exit crossfade.
-    const t = window.setTimeout(finish, 2100);
+    // Embers ~0-950ms, iris reveal ~350-2050ms, glow builds and settles by
+    // ~2450ms, held to ~2900ms - then the exit crossfade starts.
+    const t = window.setTimeout(finish, 2900);
     return () => window.clearTimeout(t);
   }, [phase]);
 
@@ -57,7 +68,7 @@ const Reveal = () => {
 
   if (phase === "done") return null;
 
-  return (
+  return createPortal(
     <div
       className={`reveal ${phase === "exiting" ? "reveal-exit" : ""}`}
       onClick={finish}
@@ -91,7 +102,8 @@ const Reveal = () => {
           style={{ backgroundImage: `url(${LOGO})` }}
         />
       </span>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

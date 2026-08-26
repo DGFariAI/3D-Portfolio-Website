@@ -91,13 +91,14 @@
 
 /* A single steady build to a settled glow - no pulse, no scale change,
    nothing that throbs. It brightens once and holds there. Same two-shadow
-   spec and color as the hover glow on the hub's Portfolio icon
-   (.hub-link-mark in Hub.css: 5px tight pass + 16px bloom, same violet),
-   rather than a separate, brighter glow invented just for this. */
+   technique and color as the hub's Portfolio icon hover glow
+   (.hub-link-mark in Hub.css), but dialed back from that spec's own
+   values: held full-screen on true black for seconds rather than glanced
+   at on a small icon, the identical numbers read as too hot. */
 @keyframes reveal-glow {
   to {
-    filter: drop-shadow(0 0 5px rgba(202, 122, 255, 0.85))
-      drop-shadow(0 0 16px rgba(202, 122, 255, 0.85));
+    filter: drop-shadow(0 0 4px rgba(202, 122, 255, 0.55))
+      drop-shadow(0 0 12px rgba(202, 122, 255, 0.45));
   }
 }
 

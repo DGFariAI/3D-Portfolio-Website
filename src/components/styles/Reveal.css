@@ -93,11 +93,11 @@
    nothing that throbs. It brightens once and holds there. Same two-shadow
    violet technique as the hub's Portfolio icon hover glow (.hub-link-mark
    in Hub.css), landed partway between that spec's own values (too hot when
-   held full-screen for seconds) and an earlier dimmer pass (too faint). */
+   held full-screen for seconds) and a dimmer pass that undershot it. */
 @keyframes reveal-glow {
   to {
-    filter: drop-shadow(0 0 5px rgba(202, 122, 255, 0.7))
-      drop-shadow(0 0 14px rgba(202, 122, 255, 0.6));
+    filter: drop-shadow(0 0 6px rgba(202, 122, 255, 0.78))
+      drop-shadow(0 0 16px rgba(202, 122, 255, 0.68));
   }
 }
 

@@ -1129,3 +1129,27 @@
     align-self: center;
   }
 }
+
+
+/* --- the stacked layout in a desktop window ------------------------------ */
+
+/* Below 880px the hub falls back to its stacked layout, and that happens on a
+   desktop too whenever the window is narrowed. In that window the column sat
+   hard against the top: measured at 800x900, 860x1080 and 700x1000 there were
+   zero lit pixels above it and 36 to 79 below, because the layout carries a
+   14px lift and uneven padding that were tuned for a phone, where the column
+   nearly fills the screen and the lift is what stops it touching the notch.
+
+   A desktop window is taller than a phone relative to this content, so the lift
+   has nothing to fight and only pushes the column high. Just the lift goes: the
+   padding was widened too at first and that made it worse, because the column
+   already fills the window, so the extra padding took from the bottom without
+   giving anything back at the top.
+
+   Only here: the hover test asks about the device rather than the width, so a
+   phone never enters this block and its placement is untouched. */
+@media screen and (max-width: 879px) and (hover: hover) {
+  .hub {
+    transform: none;
+  }
+}

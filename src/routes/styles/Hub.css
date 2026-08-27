@@ -459,13 +459,15 @@
    true. Light text, since the fill is now dark: the resting button is a
    pale accent with near-black text, and keeping that here would leave the
    label unreadable. */
-/* The deeper of the two violets in the logo mark itself (its pale partner is
-   #d9a4fc), so the confirmation is drawn from the brand's own palette rather
-   than a colour invented for it. Text stays the resting near-black: on this
-   field that measures about 5.7:1, where white would only reach 3.3:1. */
+/* The resting accent, darkened and nothing else: --accentColor is
+   hsl(260, 100%, 82%), this is the same hue and saturation at 74%. Reads as
+   the same button in a second state rather than a different colour arriving,
+   which is what every separate hue tried here failed to do. Dark enough to
+   register the change, and the resting near-black label still measures about
+   6:1 on it. */
 .share-copy.is-copied,
 .share-copy.is-copied:hover {
-  background: #be63f9;
+  background: #a77aff;
 }
 
 .share-copy:focus-visible,

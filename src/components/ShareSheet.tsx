@@ -25,10 +25,8 @@ interface Props {
 }
 
 const CLOSE_MS = 260;
-/** How long the button holds its copied state before returning to rest. Long
- *  enough to read and register, short enough that it does not sit there
- *  claiming the moment after it has passed. */
-const COPIED_MS = 3000;
+/** How long the button holds its copied state before returning to rest. */
+const COPIED_MS = 7000;
 /** How far the sheet has to travel before letting go dismisses it. */
 const DISMISS_PX = 90;
 /** A flick this fast dismisses from anywhere, which is how a short, fast

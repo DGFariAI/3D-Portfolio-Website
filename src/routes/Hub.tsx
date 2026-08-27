@@ -234,7 +234,7 @@ const Hub = () => {
       <BrandCursor />
       <SEO
         title="DGFari"
-        description="Kingdom builder and marketer. Portfolio, writing, art and studio, all in one place."
+        description="Kingdom builder and marketer. Portfolio, AI, art, studio and writing, all in one place."
         path="/"
       />
 

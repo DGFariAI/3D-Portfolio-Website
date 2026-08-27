@@ -460,14 +460,13 @@
    pale accent with near-black text, and keeping that here would leave the
    label unreadable. */
 /* The resting accent, darkened and nothing else: --accentColor is
-   hsl(260, 100%, 82%), this is the same hue and saturation at 74%. Reads as
+   hsl(260, 100%, 82%), this is the same hue and saturation at 78%. Reads as
    the same button in a second state rather than a different colour arriving,
-   which is what every separate hue tried here failed to do. Dark enough to
-   register the change, and the resting near-black label still measures about
-   6:1 on it. */
+   which is what every separate hue tried here failed to do. Enough of a step
+   to register, and the resting near-black label measures about 7:1 on it. */
 .share-copy.is-copied,
 .share-copy.is-copied:hover {
-  background: #a77aff;
+  background: #b48fff;
 }
 
 .share-copy:focus-visible,

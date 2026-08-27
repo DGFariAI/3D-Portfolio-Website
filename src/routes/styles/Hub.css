@@ -459,14 +459,13 @@
    true. Light text, since the fill is now dark: the resting button is a
    pale accent with near-black text, and keeping that here would leave the
    label unreadable. */
+/* The deeper of the two violets in the logo mark itself (its pale partner is
+   #d9a4fc), so the confirmation is drawn from the brand's own palette rather
+   than a colour invented for it. Text stays the resting near-black: on this
+   field that measures about 5.7:1, where white would only reach 3.3:1. */
 .share-copy.is-copied,
 .share-copy.is-copied:hover {
-  /* The verified badge's violet, so the two saturated marks on this page
-     agree. White rather than a tinted off-white on top: the field is mid
-     rather than dark, and the badge pairs it with a white check for the
-     same reason. */
-  background: #8b5cf6;
-  color: #fff;
+  background: #be63f9;
 }
 
 .share-copy:focus-visible,

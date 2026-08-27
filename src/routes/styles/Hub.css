@@ -461,8 +461,12 @@
    label unreadable. */
 .share-copy.is-copied,
 .share-copy.is-copied:hover {
-  background: #46248c;
-  color: #ede5ff;
+  /* The verified badge's violet, so the two saturated marks on this page
+     agree. White rather than a tinted off-white on top: the field is mid
+     rather than dark, and the badge pairs it with a white check for the
+     same reason. */
+  background: #8b5cf6;
+  color: #fff;
 }
 
 .share-copy:focus-visible,

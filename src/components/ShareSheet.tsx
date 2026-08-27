@@ -65,7 +65,6 @@ const ShareSheet = ({
   const backdropRef = useRef<HTMLButtonElement | null>(null);
   const sheetRef = useRef<HTMLDivElement | null>(null);
   const copyRef = useRef<HTMLButtonElement | null>(null);
-  const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dismiss = useCallback(() => {
@@ -119,7 +118,6 @@ const ShareSheet = ({
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = previousOverflow;
-      if (copiedTimer.current) clearTimeout(copiedTimer.current);
       if (closeTimer.current) clearTimeout(closeTimer.current);
     };
   }, [dismiss]);
@@ -128,9 +126,11 @@ const ShareSheet = ({
     try {
       // The URL and nothing else.
       await navigator.clipboard.writeText(url);
+      // Stays set for the life of the sheet rather than reverting on a timer:
+      // the link is still on the clipboard after two seconds, so a button that
+      // has gone back to saying "Copy" is telling the visitor something false.
+      // The sheet unmounts on close, which is what resets this.
       setCopied(true);
-      if (copiedTimer.current) clearTimeout(copiedTimer.current);
-      copiedTimer.current = setTimeout(() => setCopied(false), 2000);
     } catch {
       // Clipboard access can be refused. Saying nothing beats claiming a copy
       // that did not happen; the URL is on screen to select by hand.

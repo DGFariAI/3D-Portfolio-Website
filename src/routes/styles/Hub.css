@@ -453,8 +453,16 @@
   transform: scale(0.97);
 }
 
-.share-copy.is-copied {
-  background: #7ee0a8;
+/* Deep violet rather than the usual green "success" colour, and it holds
+   until the sheet is dismissed rather than reverting on a timer, so the
+   button reads as "this link is on your clipboard" for as long as that is
+   true. Light text, since the fill is now dark: the resting button is a
+   pale accent with near-black text, and keeping that here would leave the
+   label unreadable. */
+.share-copy.is-copied,
+.share-copy.is-copied:hover {
+  background: #46248c;
+  color: #ede5ff;
 }
 
 .share-copy:focus-visible,

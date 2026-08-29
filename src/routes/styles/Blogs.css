@@ -1,13 +1,9 @@
 /* DGFari Learn, index.
  *
- * Shares the hub's tokens straight from :root (--accentColor, --backgroundColor,
- * Geist) so the two pages read as one product. Like the hub, this route pulls in
- * no animation library: the motion here is CSS transitions flipped by one
- * IntersectionObserver, which is a fraction of the cost of GSAP for what
- * amounts to some staggered fades.
- *
- * One accent, one radius scale, one type scale. Nothing on this page introduces
- * a second of any of them. */
+ * Same tokens as the hub (--accentColor, --backgroundColor, Geist) and the same
+ * two devices that give the hub its depth: a violet field behind the character,
+ * and glow that answers the pointer. No GSAP and no three.js here; the motion is
+ * CSS flipped by one IntersectionObserver. */
 
 .learn,
 .learn *,
@@ -17,27 +13,109 @@
 }
 
 .learn {
-  --measure: 720px;
   --rule: rgba(234, 229, 236, 0.1);
   --muted: #a79db0;
   --muted-dim: #7e7488;
 
+  position: relative;
   min-height: var(--vh);
-  width: min(var(--measure), calc(100vw - 40px));
+  padding: 56px 20px 110px;
+  overflow-x: clip;
+}
+
+.learn-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 72px 0 96px;
+}
+
+/* --- ambient field ------------------------------------------------------- */
+
+/* Two slow violet blooms behind the page. Fixed, so they stay put while the
+   column scrolls past and the page reads as having air behind it rather than
+   being painted on the black. */
+.learn-aura {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.learn-aura span {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  will-change: transform;
+}
+
+.learn-aura-a {
+  top: -14vh;
+  left: -8vw;
+  width: 58vw;
+  height: 58vw;
+  max-width: 760px;
+  max-height: 760px;
+  background: radial-gradient(
+    circle,
+    rgba(150, 84, 255, 0.2) 0%,
+    rgba(150, 84, 255, 0.07) 45%,
+    transparent 70%
+  );
+  animation: learn-drift-a 26s ease-in-out infinite alternate;
+}
+
+.learn-aura-b {
+  right: -14vw;
+  bottom: -18vh;
+  width: 52vw;
+  height: 52vw;
+  max-width: 680px;
+  max-height: 680px;
+  background: radial-gradient(
+    circle,
+    rgba(202, 122, 255, 0.14) 0%,
+    rgba(120, 70, 220, 0.06) 48%,
+    transparent 72%
+  );
+  animation: learn-drift-b 32s ease-in-out infinite alternate;
+}
+
+@keyframes learn-drift-a {
+  to {
+    transform: translate3d(6vw, 5vh, 0) scale(1.12);
+  }
+}
+
+@keyframes learn-drift-b {
+  to {
+    transform: translate3d(-5vw, -4vh, 0) scale(1.1);
+  }
+}
+
+/* Large blur radii are expensive to re-rasterise every frame. On weak hardware
+   the blooms stay, the movement goes. Same trade the hub makes. */
+.tier-low .learn-aura span {
+  filter: blur(60px);
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-aura span {
+    animation: none;
+  }
 }
 
 /* --- reveal -------------------------------------------------------------- */
 
-/* Transform and opacity only, so each reveal stays on the compositor instead of
-   forcing layout. The delay is per-item, set from --i in the markup. */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(14px);
-  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: calc(var(--i, 0) * 70ms);
+  transform: translateY(16px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 80ms);
 }
 
 [data-reveal].is-in {
@@ -53,19 +131,13 @@
   }
 }
 
-/* --- head ---------------------------------------------------------------- */
-
-.learn-head {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
+/* --- back ---------------------------------------------------------------- */
 
 .learn-back {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 40px;
+  margin-bottom: 44px;
   font-size: 13px;
   letter-spacing: 0.6px;
   color: var(--muted);
@@ -85,95 +157,179 @@
   transform: translateX(-3px);
 }
 
-.learn-head h1 {
-  margin: 0;
-  font-size: clamp(38px, 7vw, 60px);
-  font-weight: 600;
-  line-height: 1.02;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+/* --- hero ---------------------------------------------------------------- */
+
+/* Asymmetric on purpose, and the same arrangement as the hub: her on one side,
+   the words on the other. Someone arriving from the front door should feel they
+   walked into the next room of the same building. */
+.learn-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 76px;
 }
 
-.learn-head h1 span {
-  color: var(--accentColor);
+.learn-eyebrow {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+}
+
+.learn-hero h1 {
+  margin: 0;
+  font-size: clamp(62px, 13vw, 132px);
+  font-weight: 600;
+  line-height: 0.86;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  /* The mark's own two violets, top to bottom, so the wordmark is lit by the
+     same gradient the flame is. */
+  background: linear-gradient(168deg, #f4ecff 4%, #d9a4fc 44%, #a855f7 96%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .learn-tagline {
-  max-width: 44ch;
-  margin: 18px 0 0;
+  max-width: 40ch;
+  margin: 24px 0 0;
   font-size: 17px;
-  line-height: 1.6;
+  line-height: 1.62;
   color: var(--muted);
 }
 
-/* --- sparkle rule -------------------------------------------------------- */
-
-.learn-rule {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin: 52px 0;
+.learn-count {
+  margin: 20px 0 0;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted-dim);
 }
 
-.learn-rule span {
-  flex: 1;
-  height: 1px;
-  background: var(--rule);
+/* --- hero figure --------------------------------------------------------- */
+
+.learn-hero-figure {
+  position: relative;
+  justify-self: end;
+  width: 100%;
+  max-width: 300px;
 }
 
-.learn-rule svg {
-  width: 11px;
-  height: 11px;
-  flex-shrink: 0;
-  fill: var(--accentColor);
-  opacity: 0.75;
+.learn-hero-figure video,
+.learn-hero-figure img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
-/* --- lead post ----------------------------------------------------------- */
+/* Her halo. Same construction as .hub-avatar-glow, scaled to this smaller
+   figure and held back further, since here she is decoration beside the type
+   rather than the subject of the page. */
+.learn-figure-glow {
+  position: absolute;
+  z-index: 0;
+  top: 27%;
+  left: 47.5%;
+  width: 58%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: #f59bf8;
+  box-shadow: inset 34px 18px 44px 0 rgba(85, 0, 255, 0.65);
+  filter: blur(14px);
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.tier-low .learn-figure-glow {
+  filter: blur(10px);
+}
+
+/* --- lead ---------------------------------------------------------------- */
 
 .learn-lead a {
+  position: relative;
   display: block;
-  padding: 30px 32px 28px;
+  padding: 34px 36px 30px;
+  overflow: hidden;
   border: 1px solid rgba(194, 164, 255, 0.16);
-  border-radius: 22px;
+  border-radius: 24px;
   background: linear-gradient(
-    170deg,
-    rgba(194, 164, 255, 0.06) 0%,
-    rgba(194, 164, 255, 0.02) 45%,
-    transparent 100%
+    152deg,
+    rgba(168, 85, 247, 0.12) 0%,
+    rgba(120, 70, 200, 0.05) 38%,
+    rgba(255, 255, 255, 0.015) 100%
   );
-  transition: border-color 0.28s ease, transform 0.28s ease,
-    box-shadow 0.28s ease;
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.learn-lead-mark {
+  position: absolute;
+  top: 50%;
+  right: -34px;
+  width: 232px;
+  height: 232px;
+  transform: translateY(-50%) rotate(8deg);
+  opacity: 0.06;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.5s ease;
 }
 
 @media (hover: hover) {
   .learn-lead a:hover {
-    transform: translateY(-3px);
-    border-color: rgba(194, 164, 255, 0.4);
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5),
-      0 0 34px rgba(140, 90, 255, 0.14);
+    transform: translateY(-4px);
+    border-color: rgba(194, 164, 255, 0.42);
+    box-shadow: 0 22px 54px rgba(0, 0, 0, 0.55),
+      0 0 44px rgba(150, 84, 255, 0.18);
+  }
+
+  .learn-lead a:hover .learn-lead-mark {
+    opacity: 0.12;
+    transform: translateY(-50%) rotate(8deg) scale(1.06);
   }
 }
 
 .learn-flag {
-  display: inline-block;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   margin-bottom: 18px;
-  padding: 5px 12px;
+  padding: 5px 13px 5px 11px;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 1.4px;
   text-transform: uppercase;
   color: var(--accentColor);
-  border: 1px solid rgba(194, 164, 255, 0.28);
+  border: 1px solid rgba(194, 164, 255, 0.3);
   border-radius: 999px;
+  background: rgba(194, 164, 255, 0.06);
+}
+
+/* A lit dot, so "Latest" reads as a live state rather than a label. */
+.learn-flag::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accentColor);
+  box-shadow: 0 0 8px 1px rgba(194, 164, 255, 0.9);
 }
 
 .learn-lead h2 {
+  position: relative;
   margin: 0;
-  font-size: clamp(26px, 4.4vw, 36px);
+  max-width: 17ch;
+  font-size: clamp(28px, 4.8vw, 40px);
   font-weight: 600;
-  line-height: 1.18;
-  letter-spacing: -0.2px;
+  line-height: 1.14;
+  letter-spacing: -0.5px;
   transition: color 0.25s ease;
 }
 
@@ -182,14 +338,16 @@
 }
 
 .learn-excerpt {
-  max-width: 58ch;
-  margin: 14px 0 0;
+  position: relative;
+  max-width: 54ch;
+  margin: 15px 0 0;
   font-size: 16px;
   line-height: 1.65;
   color: var(--muted);
 }
 
 .learn-meta {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 9px;
@@ -204,13 +362,13 @@
 }
 
 .learn-cue {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 22px;
+  margin-top: 24px;
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.3px;
   color: var(--accentColor);
 }
 
@@ -220,27 +378,43 @@
 }
 
 .learn-lead a:hover .learn-cue svg {
-  transform: translateX(4px);
+  transform: translateX(5px);
 }
 
-/* --- list ---------------------------------------------------------------- */
+/* --- archive label ------------------------------------------------------- */
 
+/* Label plus a rule that runs to the edge, so the section is announced rather
+   than just starting. */
 .learn-more-label {
-  margin: 64px 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 76px 0 8px;
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 1.8px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted-dim);
 }
+
+.learn-more-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rule), transparent);
+}
+
+/* --- list ---------------------------------------------------------------- */
 
 .learn-list {
   margin: 0;
   padding: 0;
   list-style: none;
+  counter-reset: entry;
 }
 
 .learn-list li {
+  counter-increment: entry;
   border-bottom: 1px solid var(--rule);
 }
 
@@ -249,71 +423,105 @@
 }
 
 .learn-list a {
-  display: flex;
+  position: relative;
+  display: grid;
+  grid-template-columns: 62px minmax(0, 1fr) 44px;
   align-items: center;
-  gap: 24px;
-  padding: 28px 4px;
-  transition: padding 0.28s ease;
+  gap: 10px;
+  padding: 30px 8px;
+  transition: background-color 0.32s ease;
+}
+
+/* The index numeral. Large, ghosted, and it lights up with the row: it gives
+   the archive a spine and tells you how deep you are without a word. */
+.learn-list a::before {
+  content: counter(entry, decimal-leading-zero);
+  align-self: start;
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+  color: rgba(234, 229, 236, 0.16);
+  transition: color 0.32s ease, transform 0.32s ease;
 }
 
 .learn-list-main {
-  flex: 1;
   min-width: 0;
 }
 
 .learn-list h3 {
   margin: 0;
-  font-size: clamp(19px, 2.6vw, 23px);
+  font-size: clamp(20px, 2.8vw, 26px);
   font-weight: 600;
-  line-height: 1.28;
-  letter-spacing: -0.1px;
+  line-height: 1.24;
+  letter-spacing: -0.2px;
   transition: color 0.25s ease;
 }
 
-.learn-list-arrow {
-  flex-shrink: 0;
-  font-size: 15px;
+.learn-list-go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  width: 38px;
+  height: 38px;
+  font-size: 14px;
   color: var(--muted-dim);
+  border: 1px solid transparent;
+  border-radius: 50%;
   opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 0.28s ease, transform 0.28s ease, color 0.28s ease;
+  transform: translateX(-6px);
+  transition: opacity 0.32s ease, transform 0.32s ease, color 0.32s ease,
+    border-color 0.32s ease, background-color 0.32s ease;
 }
 
-/* Pointer only. On a touch screen there is no hover to resolve it, so the
-   arrow would sit invisible forever and the row would lose its affordance. */
 @media (hover: hover) {
   .learn-list a:hover {
-    padding-left: 14px;
+    background: linear-gradient(
+      90deg,
+      rgba(168, 85, 247, 0.07) 0%,
+      rgba(168, 85, 247, 0.02) 55%,
+      transparent 100%
+    );
+  }
+
+  .learn-list a:hover::before {
+    color: var(--accentColor);
+    transform: translateY(-2px);
   }
 
   .learn-list a:hover h3 {
     color: var(--accentColor);
   }
 
-  .learn-list a:hover .learn-list-arrow {
+  .learn-list a:hover .learn-list-go {
     opacity: 1;
     transform: none;
     color: var(--accentColor);
+    border-color: rgba(194, 164, 255, 0.35);
+    background: rgba(194, 164, 255, 0.08);
   }
 }
 
+/* No hover to resolve it on a touch screen, so the affordance is simply
+   present instead of waiting for an event that never comes. */
 @media (hover: none) {
-  .learn-list-arrow {
-    opacity: 0.55;
+  .learn-list-go {
+    opacity: 0.5;
     transform: none;
   }
 }
 
 .learn-list a:focus-visible {
   outline: 2px solid var(--accentColor);
-  outline-offset: 4px;
-  border-radius: 10px;
+  outline-offset: 3px;
+  border-radius: 12px;
 }
 
 /* --- empty --------------------------------------------------------------- */
 
 .learn-empty {
-  margin-top: 52px;
+  margin-top: 40px;
   padding: 44px 0;
   border-top: 1px solid var(--rule);
   color: var(--muted-dim);
@@ -326,33 +534,62 @@
 
 /* --- narrow -------------------------------------------------------------- */
 
+@media screen and (max-width: 760px) {
+  /* She moves above the words and shrinks. Beside a 62px headline in a phone
+     column there is room for one of them, not both. */
+  .learn-hero {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-bottom: 56px;
+  }
+
+  .learn-hero-figure {
+    order: -1;
+    justify-self: start;
+    max-width: 190px;
+    margin-bottom: 6px;
+  }
+}
+
 @media screen and (max-width: 560px) {
   .learn {
-    padding: 48px 0 72px;
+    padding: 40px 20px 80px;
   }
 
   .learn-back {
     margin-bottom: 30px;
   }
 
-  .learn-rule {
-    margin: 38px 0;
+  .learn-lead a {
+    padding: 26px 22px 24px;
+    border-radius: 20px;
   }
 
-  /* The card's inset shrinks rather than the type: at this width the padding
-     is what squeezes the measure, and a 26px headline in a 300px column is
-     what actually reads as cramped. */
-  .learn-lead a {
-    padding: 24px 20px 22px;
-    border-radius: 18px;
+  .learn-lead-mark {
+    right: -56px;
+    width: 190px;
+    height: 190px;
   }
 
   .learn-more-label {
-    margin-top: 48px;
+    margin-top: 56px;
   }
 
+  /* The numeral moves above the title rather than beside it: a 62px gutter is
+     most of a phone's usable width. */
   .learn-list a {
-    gap: 14px;
-    padding: 22px 2px;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 8px 12px;
+    padding: 24px 4px;
+  }
+
+  .learn-list a::before {
+    grid-column: 1 / -1;
+    font-size: 18px;
+  }
+
+  .learn-list-go {
+    grid-column: 2;
+    grid-row: 2;
   }
 }

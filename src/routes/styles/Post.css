@@ -1,0 +1,350 @@
+/* A single piece of writing.
+ *
+ * This page has one job and it is not decoration: it is a reading surface, and
+ * everything here is set for the eye rather than for the screenshot. The
+ * measure is capped in ch rather than px so it tracks the font, the body sits
+ * at 1.78 line height, and the type is a touch larger than UI text because
+ * this is prose someone will spend five minutes inside. */
+
+.post,
+.post *,
+.post *::before,
+.post *::after {
+  box-sizing: border-box;
+}
+
+.post {
+  --measure: 68ch;
+  --rule: rgba(234, 229, 236, 0.1);
+  --muted: #a79db0;
+  --muted-dim: #7e7488;
+
+  min-height: var(--vh);
+  padding: 72px 20px 104px;
+}
+
+.post-inner {
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+
+/* --- head ---------------------------------------------------------------- */
+
+.post-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 44px;
+  font-size: 13px;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.post-back svg {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.post-back:hover {
+  color: var(--accentColor);
+}
+
+.post-back:hover svg {
+  transform: translateX(-3px);
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.post-tags li {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  color: var(--accentColor);
+  border: 1px solid rgba(194, 164, 255, 0.24);
+  border-radius: 999px;
+}
+
+.post-head h1 {
+  margin: 0;
+  font-size: clamp(32px, 5.6vw, 46px);
+  font-weight: 600;
+  line-height: 1.14;
+  letter-spacing: -0.4px;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 20px 0 0;
+  padding-bottom: 40px;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: var(--muted-dim);
+  border-bottom: 1px solid var(--rule);
+}
+
+.post-meta span[aria-hidden] {
+  opacity: 0.5;
+}
+
+/* --- body ---------------------------------------------------------------- */
+
+.post-body {
+  padding-top: 40px;
+  font-size: 18px;
+  line-height: 1.78;
+  color: #ddd6e2;
+}
+
+.post-body > p:first-child {
+  /* A lede. The opening paragraph carries more weight than the rest, which is
+     what tells the eye where the piece begins. */
+  font-size: 20px;
+  line-height: 1.68;
+  color: #eae5ec;
+}
+
+.post-body p {
+  margin: 0 0 26px;
+}
+
+.post-body h2 {
+  margin: 52px 0 18px;
+  font-size: clamp(22px, 3.4vw, 27px);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.2px;
+  color: #f2eef4;
+}
+
+.post-body h3 {
+  margin: 40px 0 14px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #f2eef4;
+}
+
+.post-body strong {
+  font-weight: 600;
+  color: #f6f2f8;
+}
+
+.post-body em {
+  font-style: italic;
+  color: #e6dfea;
+}
+
+.post-body a {
+  color: var(--accentColor);
+  border-bottom: 1px solid rgba(194, 164, 255, 0.35);
+  transition: border-color 0.2s ease;
+}
+
+.post-body a:hover {
+  border-color: var(--accentColor);
+}
+
+/* The aphorisms carry these pieces, so the pull quote is a real element and
+   not an indented paragraph: accent rule, lifted colour, room around it. */
+.post-body blockquote {
+  margin: 38px 0;
+  padding: 4px 0 4px 26px;
+  border-left: 2px solid var(--accentColor);
+}
+
+.post-body blockquote p {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.6;
+  font-style: italic;
+  color: #f0eaf4;
+}
+
+.post-body ul,
+.post-body ol {
+  margin: 0 0 26px;
+  padding-left: 26px;
+}
+
+.post-body li {
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.post-body li::marker {
+  color: var(--accentColor);
+}
+
+.post-body hr {
+  height: 1px;
+  margin: 44px 0;
+  border: 0;
+  background: var(--rule);
+}
+
+.post-body code {
+  padding: 2px 6px;
+  font-size: 0.88em;
+  border-radius: 6px;
+  background: rgba(194, 164, 255, 0.1);
+  color: #e3d5ff;
+}
+
+.post-body pre {
+  margin: 0 0 26px;
+  padding: 18px 20px;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.post-body pre code {
+  padding: 0;
+  background: none;
+}
+
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  margin: 32px 0;
+  border-radius: 14px;
+}
+
+/* --- rule ---------------------------------------------------------------- */
+
+.post-rule {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 56px 0 40px;
+}
+
+.post-rule span {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.post-rule svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  fill: var(--accentColor);
+  opacity: 0.75;
+}
+
+/* --- foot ---------------------------------------------------------------- */
+
+.post-next {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 26px;
+  border: 1px solid rgba(194, 164, 255, 0.16);
+  border-radius: 18px;
+  transition: border-color 0.28s ease, transform 0.28s ease,
+    background-color 0.28s ease;
+}
+
+.post-next-label {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+}
+
+.post-next-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  transition: color 0.25s ease;
+}
+
+.post-next svg {
+  flex-shrink: 0;
+  font-size: 14px;
+  color: var(--muted-dim);
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+@media (hover: hover) {
+  .post-next:hover {
+    transform: translateY(-2px);
+    border-color: rgba(194, 164, 255, 0.4);
+    background: rgba(194, 164, 255, 0.04);
+  }
+
+  .post-next:hover .post-next-title {
+    color: var(--accentColor);
+  }
+
+  .post-next:hover svg {
+    transform: translateX(4px);
+    color: var(--accentColor);
+  }
+}
+
+.post-next:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 4px;
+}
+
+/* --- narrow -------------------------------------------------------------- */
+
+@media screen and (max-width: 560px) {
+  .post {
+    padding: 48px 20px 72px;
+  }
+
+  .post-back {
+    margin-bottom: 32px;
+  }
+
+  .post-body {
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .post-body > p:first-child {
+    font-size: 18px;
+  }
+
+  .post-body blockquote {
+    margin: 30px 0;
+    padding-left: 18px;
+  }
+
+  .post-body blockquote p {
+    font-size: 18px;
+  }
+
+  /* Stacks: the label, the title and the arrow in one row leaves the title
+     about twelve characters at this width. */
+  .post-next {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .post-next-label {
+    width: 100%;
+  }
+}

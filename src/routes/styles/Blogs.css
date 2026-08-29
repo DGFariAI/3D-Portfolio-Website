@@ -1,73 +1,358 @@
-/* Same reasoning as the hub: border-box for this route's subtree only. */
-.blogs,
-.blogs *,
-.blogs *::before,
-.blogs *::after {
+/* DGFari Learn, index.
+ *
+ * Shares the hub's tokens straight from :root (--accentColor, --backgroundColor,
+ * Geist) so the two pages read as one product. Like the hub, this route pulls in
+ * no animation library: the motion here is CSS transitions flipped by one
+ * IntersectionObserver, which is a fraction of the cost of GSAP for what
+ * amounts to some staggered fades.
+ *
+ * One accent, one radius scale, one type scale. Nothing on this page introduces
+ * a second of any of them. */
+
+.learn,
+.learn *,
+.learn *::before,
+.learn *::after {
   box-sizing: border-box;
 }
 
-.blogs {
+.learn {
+  --measure: 720px;
+  --rule: rgba(234, 229, 236, 0.1);
+  --muted: #a79db0;
+  --muted-dim: #7e7488;
+
   min-height: var(--vh);
-  width: min(720px, calc(100vw - 40px));
+  width: min(var(--measure), calc(100vw - 40px));
   margin: 0 auto;
-  padding: 64px 0 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+  padding: 72px 0 96px;
 }
 
-.blogs-head h1 {
+/* --- reveal -------------------------------------------------------------- */
+
+/* Transform and opacity only, so each reveal stays on the compositor instead of
+   forcing layout. The delay is per-item, set from --i in the markup. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --- head ---------------------------------------------------------------- */
+
+.learn-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.learn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 40px;
+  font-size: 13px;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.learn-back svg {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+}
+
+.learn-back:hover {
+  color: var(--accentColor);
+}
+
+.learn-back:hover svg {
+  transform: translateX(-3px);
+}
+
+.learn-head h1 {
   margin: 0;
-  font-size: 44px;
+  font-size: clamp(38px, 7vw, 60px);
   font-weight: 600;
+  line-height: 1.02;
   letter-spacing: 1px;
   text-transform: uppercase;
 }
 
-.blogs-head h1 span {
+.learn-head h1 span {
   color: var(--accentColor);
 }
 
-.blogs-head p {
-  margin: 10px 0 0;
-  font-size: 16px;
-  color: #a79db0;
+.learn-tagline {
+  max-width: 44ch;
+  margin: 18px 0 0;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
 }
 
-.blogs-empty {
+/* --- sparkle rule -------------------------------------------------------- */
+
+.learn-rule {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 18px;
-  padding: 40px 0;
-  border-top: 1px solid rgba(234, 229, 236, 0.12);
-  color: #8d8494;
+  align-items: center;
+  gap: 14px;
+  margin: 52px 0;
 }
 
-.blogs-empty p {
+.learn-rule span {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.learn-rule svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  fill: var(--accentColor);
+  opacity: 0.75;
+}
+
+/* --- lead post ----------------------------------------------------------- */
+
+.learn-lead a {
+  display: block;
+  padding: 30px 32px 28px;
+  border: 1px solid rgba(194, 164, 255, 0.16);
+  border-radius: 22px;
+  background: linear-gradient(
+    170deg,
+    rgba(194, 164, 255, 0.06) 0%,
+    rgba(194, 164, 255, 0.02) 45%,
+    transparent 100%
+  );
+  transition: border-color 0.28s ease, transform 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+@media (hover: hover) {
+  .learn-lead a:hover {
+    transform: translateY(-3px);
+    border-color: rgba(194, 164, 255, 0.4);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5),
+      0 0 34px rgba(140, 90, 255, 0.14);
+  }
+}
+
+.learn-flag {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--accentColor);
+  border: 1px solid rgba(194, 164, 255, 0.28);
+  border-radius: 999px;
+}
+
+.learn-lead h2 {
+  margin: 0;
+  font-size: clamp(26px, 4.4vw, 36px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.2px;
+  transition: color 0.25s ease;
+}
+
+.learn-lead a:hover h2 {
+  color: var(--accentColor);
+}
+
+.learn-excerpt {
+  max-width: 58ch;
+  margin: 14px 0 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.learn-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 0;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  color: var(--muted-dim);
+}
+
+.learn-meta span[aria-hidden] {
+  opacity: 0.5;
+}
+
+.learn-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: var(--accentColor);
+}
+
+.learn-cue svg {
+  font-size: 12px;
+  transition: transform 0.25s ease;
+}
+
+.learn-lead a:hover .learn-cue svg {
+  transform: translateX(4px);
+}
+
+/* --- list ---------------------------------------------------------------- */
+
+.learn-more-label {
+  margin: 64px 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+}
+
+.learn-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learn-list li {
+  border-bottom: 1px solid var(--rule);
+}
+
+.learn-list li:first-child {
+  border-top: 1px solid var(--rule);
+}
+
+.learn-list a {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 4px;
+  transition: padding 0.28s ease;
+}
+
+.learn-list-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.learn-list h3 {
+  margin: 0;
+  font-size: clamp(19px, 2.6vw, 23px);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.1px;
+  transition: color 0.25s ease;
+}
+
+.learn-list-arrow {
+  flex-shrink: 0;
+  font-size: 15px;
+  color: var(--muted-dim);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.28s ease, transform 0.28s ease, color 0.28s ease;
+}
+
+/* Pointer only. On a touch screen there is no hover to resolve it, so the
+   arrow would sit invisible forever and the row would lose its affordance. */
+@media (hover: hover) {
+  .learn-list a:hover {
+    padding-left: 14px;
+  }
+
+  .learn-list a:hover h3 {
+    color: var(--accentColor);
+  }
+
+  .learn-list a:hover .learn-list-arrow {
+    opacity: 1;
+    transform: none;
+    color: var(--accentColor);
+  }
+}
+
+@media (hover: none) {
+  .learn-list-arrow {
+    opacity: 0.55;
+    transform: none;
+  }
+}
+
+.learn-list a:focus-visible {
+  outline: 2px solid var(--accentColor);
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+/* --- empty --------------------------------------------------------------- */
+
+.learn-empty {
+  margin-top: 52px;
+  padding: 44px 0;
+  border-top: 1px solid var(--rule);
+  color: var(--muted-dim);
+}
+
+.learn-empty p {
   margin: 0;
   font-size: 16px;
 }
 
-.blogs-back {
-  font-size: 14px;
-  letter-spacing: 1px;
-  color: var(--accentColor);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.25s ease;
-}
+/* --- narrow -------------------------------------------------------------- */
 
-.blogs-back:hover {
-  border-color: var(--accentColor);
-}
-
-@media screen and (max-width: 480px) {
-  .blogs {
-    padding-top: 40px;
-    gap: 28px;
+@media screen and (max-width: 560px) {
+  .learn {
+    padding: 48px 0 72px;
   }
 
-  .blogs-head h1 {
-    font-size: 34px;
+  .learn-back {
+    margin-bottom: 30px;
+  }
+
+  .learn-rule {
+    margin: 38px 0;
+  }
+
+  /* The card's inset shrinks rather than the type: at this width the padding
+     is what squeezes the measure, and a 26px headline in a 300px column is
+     what actually reads as cramped. */
+  .learn-lead a {
+    padding: 24px 20px 22px;
+    border-radius: 18px;
+  }
+
+  .learn-more-label {
+    margin-top: 48px;
+  }
+
+  .learn-list a {
+    gap: 14px;
+    padding: 22px 2px;
   }
 }

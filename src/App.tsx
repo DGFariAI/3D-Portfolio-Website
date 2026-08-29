@@ -10,6 +10,7 @@ import { useDeviceTier } from "./hooks/useDeviceTier";
 const Hub = lazy(() => import("./routes/Hub"));
 const Portfolio = lazy(() => import("./routes/Portfolio"));
 const Blogs = lazy(() => import("./routes/Blogs"));
+const Post = lazy(() => import("./routes/Post"));
 const ComingSoon = lazy(() => import("./routes/ComingSoon"));
 
 const App = () => {
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/" element={<Hub />} />
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs/:slug" element={<Post />} />
         <Route
           path="/ai"
           element={
